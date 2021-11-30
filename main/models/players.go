@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"rwby-adventures/config"
+
+	"gorm.io/gorm"
+)
 
 type PlayerStatus struct {
 	gorm.Model
@@ -63,4 +67,28 @@ type Player struct {
 	// Foreign keys
 	Missions PlayerMission `gorm:"foreignkey:DiscordID"`
 	Status   PlayerStatus  `gorm:"foreignkey:DiscordID"`
+}
+
+func GetPlayer(id string) *Player {
+	p := &Player{
+		DiscordID: id,
+	}
+	e := config.Database.
+		Preload("Status").
+		Preload("Missions").
+		Find(p, id)
+	if e.Error != nil {
+		p = &Player{
+			DiscordID: id,
+			IsNew:     true,
+			Missions: PlayerMission{
+				DiscordID: id,
+			},
+			Status: PlayerStatus{
+				DiscordID: id,
+			},
+		}
+		config.Database.Create(p)
+	}
+	return p
 }
