@@ -61,8 +61,13 @@ func GetPlayer(id string) *Player {
 		Find(p, id)
 	if e.Error != nil {
 		p = &Player{
-			DiscordID: id,
-			IsNew:     true,
+			DiscordID:  id,
+			IsNew:      true,
+			CharLimit:  30,
+			Maxlootbox: 3,
+			Boxes: PlayerBoxes{
+				Boxes: 1,
+			},
 			Missions: PlayerMission{
 				DiscordID: id,
 			},

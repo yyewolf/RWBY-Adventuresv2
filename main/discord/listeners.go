@@ -22,6 +22,7 @@ type ListenerContext struct {
 
 	Author *discordgo.User
 	Player *models.Player
+	Guild  *models.Guild
 
 	Data interface{}
 

@@ -24,8 +24,16 @@ func StartDiscord() {
 		Menu:        discord.GeneralMenu,
 		Call:        commands.Me,
 	}
+	del := &discord.Command{
+		Name:        "delete",
+		Description: "Delete all your informations.",
+		Aliases:     discord.CmdAlias{"del"},
+		Menu:        discord.GeneralMenu,
+		Call:        commands.Delete,
+	}
 	discord.AddCmd(help)
 	discord.AddCmd(me)
+	discord.AddCmd(del)
 
 	discord.MakeEmbed()
 

@@ -16,7 +16,7 @@ func Start() {
 	rand.Seed(time.Now().UnixNano())
 
 	CommandRouter = router{
-		Prefix:         ">",
+		Prefix:         "r!",
 		ListenerPrefix: "<",
 		RateLimit:      2000,
 	}

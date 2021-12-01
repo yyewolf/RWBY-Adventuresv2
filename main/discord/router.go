@@ -18,6 +18,7 @@ type CmdContext struct {
 
 	Author        *discordgo.User
 	Player        *models.Player
+	Guild         *models.Guild
 	IsInteraction bool
 	IsComponent   bool
 	Menu          *Menus
@@ -174,6 +175,7 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 			Data:      data,
 		}
 		ctx.Player = models.GetPlayer(ctx.Author.ID)
+		ctx.Guild = models.GetGuild(ctx.GuildID)
 		callback(ctx)
 		return
 	}
@@ -190,6 +192,7 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	ctx.Player = models.GetPlayer(ctx.Author.ID)
+	ctx.Guild = models.GetGuild(ctx.GuildID)
 	/*
 		Rate limits :
 	*/
@@ -245,6 +248,10 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	ctx.Arguments = realArgs
 
+	if !ctx.Player.IsNew {
+		HandleNewPlayer(ctx)
+		return
+	}
 	deepestLink.Call(ctx)
 }
 
@@ -275,6 +282,7 @@ func routeInteraction(s *discordgo.Session, interaction *discordgo.InteractionCr
 	}
 
 	ctx.Player = models.GetPlayer(ctx.Author.ID)
+	ctx.Guild = models.GetGuild(ctx.GuildID)
 
 	/*
 		Find command & args :
@@ -317,17 +325,21 @@ func routeInteraction(s *discordgo.Session, interaction *discordgo.InteractionCr
 		})
 	*/
 
+	if ctx.Player.IsNew {
+		HandleNewPlayer(ctx)
+		return
+	}
 	deepestLink.Call(ctx)
 }
 
-func (c *CmdContext) handleError() {
+func (c *CmdContext) HandleError() {
 	c.Reply(ReplyParams{
 		Content:   "There has been an error, please contact the support if this happens again.",
 		Ephemeral: true,
 	})
 }
 
-func (l *ListenerContext) handleError() {
+func (l *ListenerContext) HandleError() {
 	l.reply(ReplyParams{
 		Content:   "There has been an error, please contact the support if this happens again.",
 		Ephemeral: true,

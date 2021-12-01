@@ -25,5 +25,8 @@ func init() {
 		&SpecialBoxes{},
 		&PlayerBoxes{},
 	)
+	config.Database.AutoMigrate(
+		&Guild{},
+	)
 	fmt.Println("[DATABASE] Automigrated models.")
 }

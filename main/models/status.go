@@ -18,5 +18,5 @@ type PlayerStatus struct {
 	LastReport  int64 `gorm:"column:last_report;not null"`
 	LastDungeon int64 `gorm:"column:last_dungeon;not null"`
 
-	OrderBy string `gorm:"column:order_by;not null"`
+	OrderBy string `gorm:"column:order_by;not null;default:''"`
 }
