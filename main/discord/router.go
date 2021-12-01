@@ -248,7 +248,7 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	ctx.Arguments = realArgs
 
-	if !ctx.Player.IsNew {
+	if ctx.Player.IsNew {
 		HandleNewPlayer(ctx)
 		return
 	}

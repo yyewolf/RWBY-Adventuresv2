@@ -3,13 +3,20 @@ package commands
 import (
 	"rwby-adventures/config"
 	"rwby-adventures/discord"
-
-	"gorm.io/gorm/clause"
 )
 
 func Delete(ctx *discord.CmdContext) {
-	config.Database.Select(clause.Associations).Delete(ctx.Player, ctx.Author.ID)
 	config.Database.Delete(ctx.Player, ctx.Author.ID)
+	config.Database.Delete(ctx.Player.Status, ctx.Author.ID)
+	config.Database.Delete(ctx.Player.Missions, ctx.Author.ID)
+	config.Database.Delete(ctx.Player.Shop, ctx.Author.ID)
+	config.Database.Delete(ctx.Player.LastBoxes, ctx.Author.ID)
+	config.Database.Delete(ctx.Player.Gamble, ctx.Author.ID)
+	config.Database.Delete(ctx.Player.LimitedBoxes, ctx.Author.ID)
+	config.Database.Delete(ctx.Player.SpecialBoxes, ctx.Author.ID)
+	config.Database.Delete(ctx.Player.Boxes, ctx.Author.ID)
+	config.Database.Delete(ctx.Player.Characters, ctx.Author.ID)
+	config.Database.Delete(ctx.Player.Grimms, ctx.Author.ID)
 	ctx.Reply(discord.ReplyParams{
 		Content: "Ok Boomer.",
 	})

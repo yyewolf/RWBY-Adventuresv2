@@ -65,6 +65,7 @@ func GetPlayer(id string) *Player {
 			IsNew:      true,
 			CharLimit:  30,
 			Maxlootbox: 3,
+			Balance:    500,
 			Boxes: PlayerBoxes{
 				Boxes: 1,
 			},
@@ -78,7 +79,6 @@ func GetPlayer(id string) *Player {
 				DiscordID: id,
 			},
 		}
-		config.Database.Create(p)
 	}
 	config.Database.Order(p.Status.OrderBy).Find(&p.Characters, "discord_id=?", p.DiscordID)
 	config.Database.Order(p.Status.OrderBy).Find(&p.Grimms, "discord_id=?", p.DiscordID)

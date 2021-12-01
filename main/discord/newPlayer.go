@@ -1,7 +1,6 @@
 package discord
 
 import (
-	"fmt"
 	"rwby-adventures/config"
 
 	"github.com/bwmarrin/discordgo"
@@ -47,6 +46,5 @@ func HandleNewPlayer(ctx *CmdContext) {
 	p.IsNew = false
 	p.Badges = 0
 	p.Settings = config.CanDMPlayer
-	e := config.Database.Create(p)
-	fmt.Println(e.Error)
+	config.Database.Create(p)
 }
