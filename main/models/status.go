@@ -1,9 +1,6 @@
 package models
 
-import "github.com/jinzhu/gorm"
-
 type PlayerStatus struct {
-	gorm.Model
 	DiscordID string `gorm:"primary_key;column:discord_id"`
 
 	AuctioningID   string `gorm:"column:auctioning_id;not null"`

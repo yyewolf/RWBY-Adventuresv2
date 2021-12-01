@@ -1,9 +1,6 @@
 package models
 
-import "github.com/jinzhu/gorm"
-
 type PlayerShop struct {
-	gorm.Model
 	DiscordID string `gorm:"primary_key;column:discord_id"`
 
 	XPBoost       bool `gorm:"column:xpboost;not null"`

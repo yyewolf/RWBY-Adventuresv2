@@ -1,9 +1,11 @@
 package models
 
-import "github.com/jinzhu/gorm"
+const (
+	CharType = iota
+	GrimmType
+)
 
-type PlayerCharacterStats struct {
-	gorm.Model
+type CharacterStats struct {
 	CharID      string  `gorm:"primary_key;column:char_id"`
 	Value       float64 `gorm:"column:value;not null"`
 	Health      int     `gorm:"column:health;not null"`
@@ -13,8 +15,7 @@ type PlayerCharacterStats struct {
 	DodgeChance int     `gorm:"column:dodge_chance;not null"`
 }
 
-type PlayerCharacter struct {
-	gorm.Model
+type Character struct {
 	CharID        string `gorm:"primary_key;column:char_id"`
 	UserID        string `gorm:"column:user_id;not null"`
 	Name          string `gorm:"column:name;not null"`
@@ -26,5 +27,5 @@ type PlayerCharacter struct {
 	IsInFavorites bool   `gorm:"column:is_in_favorites;not null"`
 	Buffs         int    `gorm:"column:buffs;not null"`
 	// Foreign keys
-	Stats PlayerCharacterStats `gorm:"foreignkey:CharID"`
+	Stats CharacterStats `gorm:"foreignkey:CharID"`
 }

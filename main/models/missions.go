@@ -1,9 +1,6 @@
 package models
 
-import "github.com/jinzhu/gorm"
-
 type PlayerMission struct {
-	gorm.Model
 	DiscordID string `gorm:"primary_key;column:discord_id"`
 
 	//Mission Related
