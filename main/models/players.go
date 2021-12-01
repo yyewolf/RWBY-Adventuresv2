@@ -6,67 +6,38 @@ import (
 	"gorm.io/gorm"
 )
 
-type PlayerStatus struct {
-	gorm.Model
-	DiscordID string `gorm:"primary_key;column:discord_id"`
-
-	AuctioningID   string `gorm:"column:auctioning_id"`
-	AuctioningTime int64  `gorm:"column:auctioning_time"`
-	DeletingID     string `gorm:"column:deleting_id"`
-
-	LastXP      int64 `gorm:"column:last_xp"`
-	Voted       bool  `gorm:"column:has_voted"`
-	DailyStreak int   `gorm:"column:daily_streak"`
-	LastOpening int64 `gorm:"column:last_opening"`
-
-	MarketPublic  bool `gorm:"column:market_public"`
-	ProfilePublic bool `gorm:"column:profile_public"`
-
-	LastReport  int64 `gorm:"column:last_report"`
-	LastDungeon int64 `gorm:"column:last_dungeon"`
-}
-
-type PlayerMission struct {
-	gorm.Model
-	DiscordID string `gorm:"primary_key;column:discord_id"`
-
-	//Mission Related
-	CanGoToMission bool `gorm:"column:mission_can"`
-	IsInMission    bool `gorm:"column:mission_in"`
-	MissionType    int  `gorm:"column:mission_type"`
-	MissionMsgLeft int  `gorm:"column:mission_msgleft"`
-
-	//Hunt Related
-	CanGoHunt   bool `gorm:"column:hunt_can"`
-	IsInHunt    bool `gorm:"column:hunt_in"`
-	HuntType    int  `gorm:"column:hunt_type"`
-	HuntMsgLeft int  `gorm:"column:hunt_msgleft"`
-}
-
 type Player struct {
 	gorm.Model
-	DiscordID string `gorm:"primary_key;column:discord_id"`
-	IsNew     bool   `gorm:"column:is_new"`
+	DiscordID    string `gorm:"primary_key;column:discord_id"`
+	IsNew        bool   `gorm:"column:is_new;not null"`
+	Balance      int64  `gorm:"column:balance;not null"`
+	Level        int64  `gorm:"column:level;not null"`
+	CP           int64  `gorm:"column:cp;not null"`
+	MaxCP        int64  `gorm:"column:max_cp;not null"`
+	CharLimit    int    `gorm:"column:max_char;not null"`
+	Maxlootbox   int    `gorm:"column:max_lootbox;not null"`
+	SelectedID   string `gorm:"column:selected_id;not null"`
+	SelectedType int    `gorm:"column:selected_type;not null"`
+	Badges       int64  `gorm:"column:badges;not null"`
+	Settings     int64  `gorm:"column:settings;not null"`
+	Disabled     bool   `gorm:"column:disabled;not null"`
 
-	Balance int64 `gorm:"column:balance"`
-
-	Level int64 `gorm:"column:level"`
-	CP    int64 `gorm:"column:cp"`
-	MaxCP int64 `gorm:"column:max_cp"`
-
-	CharLimit int `gorm:"column:max_char"`
-
-	Maxlootbox int `gorm:"column:max_lootbox"`
-
-	SelectedID   string `gorm:"column:selected_id"`
-	SelectedType int    `gorm:"column:selected_type"`
-
-	Badges   int64 `gorm:"column:badges"`
-	Settings int64 `gorm:"column:settings"`
-	Disabled bool  `gorm:"column:disabled"`
 	// Foreign keys
-	Missions PlayerMission `gorm:"foreignkey:DiscordID"`
-	Status   PlayerStatus  `gorm:"foreignkey:DiscordID"`
+	Missions      PlayerMission   `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	Status        PlayerStatus    `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	Shop          PlayerShop      `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	SelectedChar  PlayerCharacter `gorm:"foreignkey:UserID;references:SelectedID"`
+	SelectedGrimm PlayerGrimm     `gorm:"foreignkey:UserID;references:SelectedID"`
+	LastBoxes     PlayerLootTime  `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	Gamble        PlayerGamble    `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	LimitedBoxes  []LimitedBoxes  `gorm:"foreignkey:DiscordID"`
+	SpecialBoxes  []SpecialBoxes  `gorm:"foreignkey:DiscordID"`
+
+	// Loaded later
+	Characters    []PlayerCharacter `gorm:"foreignkey:DiscordID"`
+	Grimms        []PlayerGrimm     `gorm:"foreignkey:DiscordID"`
+	CharInMission PlayerCharacter
+	GrimmInHunt   PlayerGrimm
 }
 
 func GetPlayer(id string) *Player {
@@ -76,6 +47,13 @@ func GetPlayer(id string) *Player {
 	e := config.Database.
 		Preload("Status").
 		Preload("Missions").
+		Preload("Shop").
+		Preload("SelectedChar").
+		Preload("SelectedGrimm").
+		Preload("LastBoxes").
+		Preload("Gamble").
+		Preload("LimitedBoxes").
+		Preload("SpecialBoxes").
 		Find(p, id)
 	if e.Error != nil {
 		p = &Player{
@@ -87,8 +65,15 @@ func GetPlayer(id string) *Player {
 			Status: PlayerStatus{
 				DiscordID: id,
 			},
+			Shop: PlayerShop{
+				DiscordID: id,
+			},
 		}
 		config.Database.Create(p)
 	}
+	config.Database.Order(p.Status.OrderBy).Find(&p.Characters, "discord_id=?", p.DiscordID)
+	config.Database.Order(p.Status.OrderBy).Find(&p.Grimms, "discord_id=?", p.DiscordID)
+	config.Database.Order(p.Status.OrderBy).Find(&p.CharInMission, "discord_id=? and mission_in", p.DiscordID)
+	config.Database.Order(p.Status.OrderBy).Find(&p.GrimmInHunt, "discord_id=? and hunt_in", p.DiscordID)
 	return p
 }

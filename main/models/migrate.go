@@ -10,6 +10,19 @@ func init() {
 		&Player{},
 		&PlayerStatus{},
 		&PlayerMission{},
+		&PlayerShop{},
+	)
+	config.Database.AutoMigrate(
+		&PlayerCharacter{},
+		&PlayerCharacterStats{},
+		&PlayerGrimm{},
+		&PlayerCharacterStats{},
+	)
+	config.Database.AutoMigrate(
+		&PlayerLootTime{},
+		&PlayerGamble{},
+		&LimitedBoxes{},
+		&SpecialBoxes{},
 	)
 	fmt.Println("[DATABASE] Automigrated models.")
 }

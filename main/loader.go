@@ -1,11 +1,8 @@
 package main
 
 import (
-	"os"
-	"os/signal"
 	"rwby-adventures/commands"
 	"rwby-adventures/discord"
-	"syscall"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -33,11 +30,4 @@ func StartDiscord() {
 	discord.MakeEmbed()
 
 	discord.CommandRouter.LoadSlashCommands([]*discordgo.Session{discord.Session})
-
-	// Wait here until CTRL-C or other term signal is received.
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
-	<-sc
-
-	discord.Session.Close()
 }
