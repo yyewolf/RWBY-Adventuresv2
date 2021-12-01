@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"rwby-adventures/discord"
+	"rwby-adventures/main/discord"
 
 	"github.com/bwmarrin/discordgo"
 )

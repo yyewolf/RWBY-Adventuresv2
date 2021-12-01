@@ -1,8 +1,8 @@
 package main
 
 import (
-	"rwby-adventures/commands"
-	"rwby-adventures/discord"
+	"rwby-adventures/main/commands"
+	"rwby-adventures/main/discord"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -18,7 +18,7 @@ func StartDiscord() {
 		Call:        commands.Help,
 	}
 	me := &discord.Command{
-		Name:        "info",
+		Name:        "profile",
 		Description: "View your infos.",
 		Aliases:     discord.CmdAlias{"me"},
 		Menu:        discord.GeneralMenu,
@@ -31,11 +31,27 @@ func StartDiscord() {
 		Menu:        discord.GeneralMenu,
 		Call:        commands.Delete,
 	}
+	addchar := &discord.Command{
+		Name:        "addchar",
+		Description: "Test.",
+		Aliases:     discord.CmdAlias{"ac"},
+		Menu:        discord.GeneralMenu,
+		Call:        commands.Addchar,
+	}
+	info := &discord.Command{
+		Name:        "info",
+		Description: "Test.",
+		Menu:        discord.GeneralMenu,
+		Call:        commands.Info,
+	}
 	discord.AddCmd(help)
 	discord.AddCmd(me)
 	discord.AddCmd(del)
+	discord.AddCmd(addchar)
+	discord.AddCmd(info)
 
 	discord.MakeEmbed()
+	discord.LoadAllCharacters()
 
 	discord.CommandRouter.LoadSlashCommands([]*discordgo.Session{discord.Session})
 }

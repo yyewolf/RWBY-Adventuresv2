@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 	"rwby-adventures/config"
-	"rwby-adventures/discord"
+	"rwby-adventures/main/discord"
 	"rwby-adventures/models"
 	"strconv"
 	"time"

@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 	"os/signal"
-	"rwby-adventures/discord"
+	"rwby-adventures/main/discord"
 	"syscall"
 )
 
