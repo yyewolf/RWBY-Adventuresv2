@@ -14,7 +14,7 @@ type CmdContext struct {
 	ChannelID string
 	GuildID   string
 
-	Arguments []*CommandArg
+	Arguments Args
 
 	Author        *discordgo.User
 	Player        *models.Player
@@ -32,21 +32,6 @@ type Choice struct {
 	Name  string
 	Value string
 }
-
-type CommandArg struct {
-	Name  string
-	Value interface{}
-}
-
-type Arg struct {
-	Name        string
-	Description string
-	Size        int
-	Required    bool
-	Choices     []*Choice
-	Type        discordgo.ApplicationCommandOptionType
-}
-
 type CmdAlias []string
 
 func (a CmdAlias) Has(alias string) bool {

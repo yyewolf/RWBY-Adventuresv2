@@ -66,7 +66,7 @@ func (r *router) LoadSlashCommands(sessions []*discordgo.Session) {
 		for _, dcmd := range dcmds {
 			remove := true
 			for _, botcmd := range cmds {
-				if botcmd.Name == dcmd.Name && botcmd.Type == dcmd.Type {
+				if botcmd.Name == dcmd.Name && botcmd.Type == dcmd.Type && len(botcmd.Options) == len(dcmd.Options) {
 					remove = false
 					break
 				}
@@ -80,7 +80,7 @@ func (r *router) LoadSlashCommands(sessions []*discordgo.Session) {
 		for _, botcmd := range cmds {
 			add := true
 			for _, dcmd := range dcmds {
-				if botcmd.Name == dcmd.Name && botcmd.Type == dcmd.Type {
+				if botcmd.Name == dcmd.Name && botcmd.Type == dcmd.Type && len(botcmd.Options) == len(dcmd.Options) {
 					add = false
 					break
 				}

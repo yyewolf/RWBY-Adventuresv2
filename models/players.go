@@ -1,7 +1,7 @@
 package models
 
 import (
-	"rwby-adventures/main/config"
+	"rwby-adventures/config"
 	"time"
 )
 
@@ -144,4 +144,34 @@ func (p *Player) CharAmount() int {
 
 func (p *Player) GrimmAmount() int {
 	return len(p.Grimms)
+}
+
+func (p *Player) GetLatestChar() (bool, *Character, *Grimm, int) {
+	var indexc, indexg int
+	c := &Character{OwnedAt: time.Now()}
+	g := &Grimm{}
+	config.Database.
+		Preload("Stats").
+		Order("owned_at desc").
+		First(c, "user_id=? and not in_mission", p.DiscordID)
+	config.Database.
+		Preload("Stats").
+		Order("owned_at desc").
+		First(g, "user_id=? and not in_hunt", p.DiscordID)
+	for i, char := range p.Characters {
+		if char.CharID == c.CharID {
+			indexc = i
+			break
+		}
+	}
+	for i, grimm := range p.Grimms {
+		if grimm.GrimmID == g.GrimmID {
+			indexg = i
+			break
+		}
+	}
+	if c.OwnedAt.After(g.OwnedAt) {
+		return false, c, g, indexc
+	}
+	return true, c, g, indexg
 }

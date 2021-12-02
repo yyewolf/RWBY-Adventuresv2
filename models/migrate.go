@@ -2,7 +2,7 @@ package models
 
 import (
 	"fmt"
-	"rwby-adventures/main/config"
+	"rwby-adventures/config"
 )
 
 func init() {
@@ -16,7 +16,7 @@ func init() {
 		&Character{},
 		&CharacterStats{},
 		&Grimm{},
-		&CharacterStats{},
+		&GrimmStat{},
 	)
 	config.Database.AutoMigrate(
 		&PlayerLootTime{},

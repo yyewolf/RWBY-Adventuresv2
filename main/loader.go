@@ -2,6 +2,8 @@ package main
 
 import (
 	"rwby-adventures/main/commands"
+	commands_inventory "rwby-adventures/main/commands/inventory"
+	commands_temporary "rwby-adventures/main/commands/temporary"
 	"rwby-adventures/main/discord"
 
 	"github.com/bwmarrin/discordgo"
@@ -9,6 +11,14 @@ import (
 
 func StartDiscord() {
 	discord.Start()
+
+	addchar := &discord.Command{
+		Name:        "addchar",
+		Description: "Test.",
+		Aliases:     discord.CmdAlias{"ac"},
+		Menu:        discord.GeneralMenu,
+		Call:        commands_temporary.Addchar,
+	}
 
 	help := &discord.Command{
 		Name:        "help",
@@ -22,27 +32,36 @@ func StartDiscord() {
 		Description: "View your infos.",
 		Aliases:     discord.CmdAlias{"me"},
 		Menu:        discord.GeneralMenu,
-		Call:        commands.Me,
+		Call:        commands_inventory.Me,
 	}
 	del := &discord.Command{
 		Name:        "delete",
 		Description: "Delete all your informations.",
 		Aliases:     discord.CmdAlias{"del"},
 		Menu:        discord.GeneralMenu,
-		Call:        commands.Delete,
-	}
-	addchar := &discord.Command{
-		Name:        "addchar",
-		Description: "Test.",
-		Aliases:     discord.CmdAlias{"ac"},
-		Menu:        discord.GeneralMenu,
-		Call:        commands.Addchar,
+		Call:        commands_temporary.Delete,
 	}
 	info := &discord.Command{
 		Name:        "info",
 		Description: "Test.",
 		Menu:        discord.GeneralMenu,
-		Call:        commands.Info,
+		Call:        commands_inventory.Info,
+		Args: []discord.Arg{
+			{
+				Name:        "id",
+				Description: "Identification number of your persona.",
+				Size:        1,
+				Required:    false,
+				Type:        discordgo.ApplicationCommandOptionString,
+			},
+			{
+				Name:        "latest",
+				Description: "Whether or not you want to view the infos of your latest persona.",
+				Size:        1,
+				Required:    false,
+				Type:        discordgo.ApplicationCommandOptionBoolean,
+			},
+		},
 	}
 	discord.AddCmd(help)
 	discord.AddCmd(me)
@@ -51,7 +70,6 @@ func StartDiscord() {
 	discord.AddCmd(info)
 
 	discord.MakeEmbed()
-	discord.LoadAllCharacters()
 
 	discord.CommandRouter.LoadSlashCommands([]*discordgo.Session{discord.Session})
 }

@@ -1,6 +1,6 @@
 package models
 
-import "rwby-adventures/main/config"
+import "rwby-adventures/config"
 
 type Guild struct {
 	GuildID                    string `gorm:"primary_key;column:guild_id"`

@@ -2,7 +2,8 @@ package models
 
 import (
 	chars "rwby-adventures/characters"
-	"rwby-adventures/main/config"
+	"rwby-adventures/config"
+	"time"
 )
 
 const (
@@ -21,16 +22,17 @@ type CharacterStats struct {
 }
 
 type Character struct {
-	CharID        string `gorm:"primary_key;column:id"`
-	UserID        string `gorm:"column:user_id;not null"`
-	Name          string `gorm:"column:name;not null"`
-	Level         int    `gorm:"column:level;not null"`
-	XP            int64  `gorm:"column:xp;not null"`
-	XPCap         int64  `gorm:"column:xp_max;not null"`
-	Rarity        int    `gorm:"column:rarity;not null"`
-	InMission     bool   `gorm:"column:in_mission;not null"`
-	IsInFavorites bool   `gorm:"column:is_in_favorites;not null"`
-	Buffs         int    `gorm:"column:buffs;not null"`
+	CharID        string    `gorm:"primary_key;column:id"`
+	UserID        string    `gorm:"column:user_id;not null"`
+	Name          string    `gorm:"column:name;not null"`
+	Level         int       `gorm:"column:level;not null"`
+	XP            int64     `gorm:"column:xp;not null"`
+	XPCap         int64     `gorm:"column:xp_max;not null"`
+	Rarity        int       `gorm:"column:rarity;not null"`
+	InMission     bool      `gorm:"column:in_mission;not null"`
+	IsInFavorites bool      `gorm:"column:is_in_favorites;not null"`
+	Buffs         int       `gorm:"column:buffs;not null"`
+	OwnedAt       time.Time `gorm:"column:owned_at;not null"`
 	// Foreign keys
 	Stats CharacterStats `gorm:"foreignkey:CharID"`
 }

@@ -1,4 +1,4 @@
-package commands
+package commands_inventory
 
 import (
 	"fmt"
