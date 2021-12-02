@@ -69,6 +69,7 @@ type Menus struct {
 	MenuID        string
 	Source        *discordgo.MessageEmbed
 	SourceContext *CmdContext
+	Data          interface{}
 
 	Call func(*CmdContext)
 }

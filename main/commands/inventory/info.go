@@ -7,9 +7,16 @@ import (
 	"rwby-adventures/main/static"
 	"rwby-adventures/models"
 	"strconv"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
+
+type infoMenuData struct {
+	UserID    string
+	PersonaID string
+	isGrimm   bool
+}
 
 func Info(ctx *discord.CmdContext) {
 	var char *models.Character
@@ -111,6 +118,17 @@ func charInfo(ctx *discord.CmdContext, char *models.Character, number int) {
 		},
 	}
 
+	discord.ActiveMenus.Set(ctx.ID, &discord.Menus{
+		MenuID:        ctx.ID,
+		SourceContext: ctx,
+		Call:          menuInfo,
+		Data: &infoMenuData{
+			UserID:    ctx.Author.ID,
+			PersonaID: char.CharID,
+			isGrimm:   false,
+		},
+	}, 0)
+
 	ctx.Reply(discord.ReplyParams{
 		Content: Complex,
 	})
@@ -157,7 +175,34 @@ func grimmInfo(ctx *discord.CmdContext, grimm *models.Grimm, number int) {
 		},
 	}
 
+	discord.ActiveMenus.Set(ctx.ID, &discord.Menus{
+		MenuID:        ctx.ID,
+		SourceContext: ctx,
+		Call:          menuInfo,
+		Data: &infoMenuData{
+			UserID:    ctx.Author.ID,
+			PersonaID: grimm.GrimmID,
+			isGrimm:   true,
+		},
+	}, 0)
+
 	ctx.Reply(discord.ReplyParams{
 		Content: Complex,
 	})
+}
+
+func menuInfo(ctx *discord.CmdContext) {
+	split := strings.Split(ctx.ComponentData.CustomID, "-")
+	switch split[1] {
+	case "remove":
+		break
+	case "addfav":
+		break
+	case "remfav":
+		break
+	case "pick":
+		break
+	default:
+		return
+	}
 }
