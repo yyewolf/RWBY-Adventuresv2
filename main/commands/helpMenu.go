@@ -6,6 +6,14 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+var HelpCommand = &discord.Command{
+	Name:        "help",
+	Description: "View the help menu.",
+	Aliases:     discord.CmdAlias{"h"},
+	Menu:        discord.GeneralMenu,
+	Call:        Help,
+}
+
 func Help(ctx *discord.CmdContext) {
 	menu := string(discord.GeneralMenu)
 	menuID := ctx.ID

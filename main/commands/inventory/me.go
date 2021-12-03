@@ -12,6 +12,14 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+var PlayerInfoCommand = &discord.Command{
+	Name:        "profile",
+	Description: "View your infos.",
+	Aliases:     discord.CmdAlias{"me"},
+	Menu:        discord.GeneralMenu,
+	Call:        Me,
+}
+
 func TimeLeftString(startTime, endTime int64) string {
 	t := (startTime + endTime) - time.Now().Unix()
 	H := int(float64(t) / float64(3600))

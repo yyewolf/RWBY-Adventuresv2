@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"rwby-adventures/config"
 	"rwby-adventures/grimms"
 	"time"
@@ -63,26 +64,24 @@ func (c *Grimm) RarityString() (x string) {
 	switch c.Rarity {
 	case 0: // Normal
 		x = "□ Normal"
-		break
 	case 1: // Abnormal
 		x = "◇ Abnormal"
-		break
 	case 2: // Sparse
 		x = "♡ Sparse"
-		break
 	case 3: // Freaky
 		x = "♤ Freaky"
-		break
 	case 4: // Mysterious
 		x = "♧ Mysterious"
-		break
 	case 5: // Bloody
 		x = "☆ Bloody"
-		break
 	}
 
 	for i := 0; i < c.Buffs; i++ {
 		x += "+"
 	}
 	return x
+}
+
+func (g *Grimm) FullString() string {
+	return fmt.Sprintf("`%s level %d (%d/%dXP) %s (%.2f%%)", g.RarityString(), g.Level, g.XP, g.XPCap, g.Name, g.Stats.Value)
 }

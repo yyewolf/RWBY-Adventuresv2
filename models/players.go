@@ -146,7 +146,7 @@ func (p *Player) GrimmAmount() int {
 	return len(p.Grimms)
 }
 
-func (p *Player) GetLatestChar() (bool, *Character, *Grimm, int) {
+func (p *Player) GetLatestPersona() (bool, *Character, *Grimm, int) {
 	var indexc, indexg int
 	c := &Character{OwnedAt: time.Now()}
 	g := &Grimm{}

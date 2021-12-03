@@ -12,10 +12,34 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+var InfoCommand = &discord.Command{
+	Name:        "info",
+	Description: "Test.",
+	Menu:        discord.GeneralMenu,
+	Call:        Info,
+	Args: []discord.Arg{
+		{
+			Name:        "id",
+			Description: "Identification number of your persona.",
+			Size:        1,
+			Required:    false,
+			Type:        discordgo.ApplicationCommandOptionString,
+		},
+		{
+			Name:        "latest",
+			Description: "Whether or not you want to view the infos of your latest persona.",
+			Size:        1,
+			Required:    false,
+			Type:        discordgo.ApplicationCommandOptionBoolean,
+		},
+	},
+}
+
 type infoMenuData struct {
-	UserID    string
-	PersonaID string
-	isGrimm   bool
+	UserID  string
+	Char    *models.Character
+	Grimm   *models.Grimm
+	isGrimm bool
 }
 
 func Info(ctx *discord.CmdContext) {
@@ -66,7 +90,7 @@ func Info(ctx *discord.CmdContext) {
 	latest, err := ctx.Arguments.GetArg("latest", 1)
 	if err == nil {
 		if v, ok := latest.Value.(bool); ok && v {
-			isGrimm, char, grimm, index = ctx.Player.GetLatestChar()
+			isGrimm, char, grimm, index = ctx.Player.GetLatestPersona()
 			index += 1
 		}
 	}
@@ -85,7 +109,7 @@ func charInfo(ctx *discord.CmdContext, char *models.Character, number int) {
 
 	// DiscordGo Stuff
 
-	Complex := &discordgo.MessageSend{
+	complex := &discordgo.MessageSend{
 		Files: []*discordgo.File{
 			{
 				Reader: imgDecoded,
@@ -123,14 +147,14 @@ func charInfo(ctx *discord.CmdContext, char *models.Character, number int) {
 		SourceContext: ctx,
 		Call:          menuInfo,
 		Data: &infoMenuData{
-			UserID:    ctx.Author.ID,
-			PersonaID: char.CharID,
-			isGrimm:   false,
+			UserID:  ctx.Author.ID,
+			Char:    char,
+			isGrimm: false,
 		},
 	}, 0)
 
 	ctx.Reply(discord.ReplyParams{
-		Content: Complex,
+		Content: complex,
 	})
 }
 
@@ -173,6 +197,7 @@ func grimmInfo(ctx *discord.CmdContext, grimm *models.Grimm, number int) {
 			},
 			Footer: discord.DefaultFooter,
 		},
+		Components: infoComponent(ctx.ID),
 	}
 
 	discord.ActiveMenus.Set(ctx.ID, &discord.Menus{
@@ -180,9 +205,9 @@ func grimmInfo(ctx *discord.CmdContext, grimm *models.Grimm, number int) {
 		SourceContext: ctx,
 		Call:          menuInfo,
 		Data: &infoMenuData{
-			UserID:    ctx.Author.ID,
-			PersonaID: grimm.GrimmID,
-			isGrimm:   true,
+			UserID:  ctx.Author.ID,
+			Grimm:   grimm,
+			isGrimm: true,
 		},
 	}, 0)
 
@@ -192,17 +217,71 @@ func grimmInfo(ctx *discord.CmdContext, grimm *models.Grimm, number int) {
 }
 
 func menuInfo(ctx *discord.CmdContext) {
+	// Reply to the interaction so it is seamless for the player
+	ctx.Session.InteractionRespond(ctx.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseDeferredMessageUpdate,
+	})
+	if ctx.Author.ID != ctx.Menu.SourceContext.Author.ID {
+		return
+	}
+	d := ctx.Menu.Data.(*infoMenuData)
 	split := strings.Split(ctx.ComponentData.CustomID, "-")
 	switch split[1] {
 	case "remove":
-		break
+		remove(ctx, &removeData{
+			Char:     d.Char,
+			Grimm:    d.Grimm,
+			isGrimm:  d.isGrimm,
+			FollowUp: true,
+		})
 	case "addfav":
-		break
+
 	case "remfav":
-		break
+
 	case "pick":
-		break
+
 	default:
 		return
+	}
+}
+
+func infoComponent(menuID string) []discordgo.MessageComponent {
+	return []discordgo.MessageComponent{
+		&discordgo.ActionsRow{
+			Components: []discordgo.MessageComponent{
+				&discordgo.Button{
+					Label: "Remove",
+					Emoji: discordgo.ComponentEmoji{
+						Name: "❎",
+					},
+					Style:    discordgo.SecondaryButton,
+					CustomID: menuID + "-remove",
+				},
+				&discordgo.Button{
+					Label: "Add Favorite",
+					Emoji: discordgo.ComponentEmoji{
+						Name: "⭐",
+					},
+					Style:    discordgo.SecondaryButton,
+					CustomID: menuID + "-addfav",
+				},
+				&discordgo.Button{
+					Label: "Remove Favorite",
+					Emoji: discordgo.ComponentEmoji{
+						Name: "💥",
+					},
+					Style:    discordgo.SecondaryButton,
+					CustomID: menuID + "-remfav",
+				},
+				&discordgo.Button{
+					Label: "Pick",
+					Emoji: discordgo.ComponentEmoji{
+						Name: "⛏️",
+					},
+					Style:    discordgo.SecondaryButton,
+					CustomID: menuID + "-pick",
+				},
+			},
+		},
 	}
 }

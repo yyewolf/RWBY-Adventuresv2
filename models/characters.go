@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	chars "rwby-adventures/characters"
 	"rwby-adventures/config"
 	"time"
@@ -115,4 +116,8 @@ func (c *Character) RarityString() (x string) {
 		x += "+"
 	}
 	return x
+}
+
+func (c *Character) FullString() string {
+	return fmt.Sprintf("`%s level %d (%d/%dXP) %s (%.2f%%)", c.RarityString(), c.Level, c.XP, c.XPCap, c.Name, c.Stats.Value)
 }
