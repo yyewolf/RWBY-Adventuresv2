@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func init() {
+func LoadCharacters() {
 	BaseCharacters = chars.BaseCharacters
 
 	for i := range BaseCharacters {

@@ -25,22 +25,22 @@ type Player struct {
 	Jar           int64  `gorm:"column:jar;not null"`
 
 	// Foreign keys
-	Missions      PlayerMission  `gorm:"foreignkey:DiscordID;references:DiscordID"`
-	Status        PlayerStatus   `gorm:"foreignkey:DiscordID;references:DiscordID"`
-	Shop          PlayerShop     `gorm:"foreignkey:DiscordID;references:DiscordID"`
-	SelectedChar  Character      `gorm:"foreignkey:UserID;references:SelectedID"`
-	SelectedGrimm Grimm          `gorm:"foreignkey:UserID;references:SelectedID"`
-	LastBoxes     PlayerLootTime `gorm:"foreignkey:DiscordID;references:DiscordID"`
-	Gamble        PlayerGamble   `gorm:"foreignkey:DiscordID;references:DiscordID"`
-	Boxes         PlayerBoxes    `gorm:"foreignkey:DiscordID;references:DiscordID"`
-	LimitedBoxes  []LimitedBoxes `gorm:"foreignkey:DiscordID"`
-	SpecialBoxes  []SpecialBoxes `gorm:"foreignkey:DiscordID"`
+	Missions     PlayerMission  `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	Status       PlayerStatus   `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	Shop         PlayerShop     `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	LastBoxes    PlayerLootTime `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	Gamble       PlayerGamble   `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	Boxes        PlayerBoxes    `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	LimitedBoxes []LimitedBoxes `gorm:"foreignkey:DiscordID"`
+	SpecialBoxes []SpecialBoxes `gorm:"foreignkey:DiscordID"`
 
 	// Loaded later
-	Characters    []Character `gorm:"foreignkey:DiscordID"`
-	Grimms        []Grimm     `gorm:"foreignkey:DiscordID"`
-	CharInMission Character
-	GrimmInHunt   Grimm
+	Characters    []Character `gorm:"foreignkey:UserID"`
+	Grimms        []Grimm     `gorm:"foreignkey:UserID"`
+	SelectedChar  Character   `gorm:"-"`
+	SelectedGrimm Grimm       `gorm:"-"`
+	CharInMission Character   `gorm:"-"`
+	GrimmInHunt   Grimm       `gorm:"-"`
 }
 
 func GetPlayer(id string) *Player {
@@ -51,15 +51,13 @@ func GetPlayer(id string) *Player {
 		Preload("Status").
 		Preload("Missions").
 		Preload("Shop").
-		Preload("SelectedChar").
-		Preload("SelectedGrimm").
 		Preload("LastBoxes").
 		Preload("Gamble").
 		Preload("LimitedBoxes").
 		Preload("SpecialBoxes").
 		Preload("Boxes").
 		Find(p, id)
-	if e.Error != nil {
+	if e.Error != nil || e.RowsAffected == 0 {
 		p = &Player{
 			DiscordID:  id,
 			IsNew:      true,
@@ -83,8 +81,10 @@ func GetPlayer(id string) *Player {
 	}
 	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.Characters, "user_id = ?", p.DiscordID)
 	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.Grimms, "user_id = ?", p.DiscordID)
-	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.CharInMission, "user_id = ? and mission_in", p.DiscordID)
-	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.GrimmInHunt, "user_id = ? and hunt_in", p.DiscordID)
+	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.CharInMission, "user_id = ? and in_mission", p.DiscordID)
+	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.GrimmInHunt, "user_id = ? and in_hunt", p.DiscordID)
+	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.SelectedChar, "user_id = ? and id = ?", p.DiscordID, p.SelectedID)
+	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.SelectedGrimm, "user_id = ? and id = ?", p.DiscordID, p.SelectedID)
 	return p
 }
 

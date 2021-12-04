@@ -48,6 +48,13 @@ func Info(ctx *discord.CmdContext) {
 	arg, _ := ctx.Arguments.GetArg("id", 0)
 	isGrimm, index, err := arg.CharGrimmParse()
 	if err != nil {
+		if ctx.Player.SelectedChar.Name == ctx.Player.SelectedGrimm.Name {
+			ctx.Reply(discord.ReplyParams{
+				Content:   "You have not selected any persona.",
+				Ephemeral: true,
+			})
+			return
+		}
 		char = &ctx.Player.SelectedChar
 		grimm = &ctx.Player.SelectedGrimm
 		isGrimm = ctx.Player.SelectedType == models.GrimmType
@@ -140,6 +147,7 @@ func charInfo(ctx *discord.CmdContext, char *models.Character, number int) {
 			},
 			Footer: discord.DefaultFooter,
 		},
+		Components: infoComponent(ctx.ID),
 	}
 
 	discord.ActiveMenus.Set(ctx.ID, &discord.Menus{
@@ -234,11 +242,16 @@ func menuInfo(ctx *discord.CmdContext) {
 			isGrimm:  d.isGrimm,
 			FollowUp: true,
 		})
+	case "pick":
+		Select(ctx, &SelectData{
+			Char:     d.Char,
+			Grimm:    d.Grimm,
+			isGrimm:  d.isGrimm,
+			FollowUp: true,
+		})
 	case "addfav":
 
 	case "remfav":
-
-	case "pick":
 
 	default:
 		return

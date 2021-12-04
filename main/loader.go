@@ -32,6 +32,7 @@ func StartDiscord() {
 	discord.AddCmd(commands_inventory.PlayerInfoCommand)
 	discord.AddCmd(commands_inventory.InfoCommand)
 	discord.AddCmd(commands_inventory.RemoveCommand)
+	discord.AddCmd(commands_inventory.SelectCommand)
 
 	discord.MakeEmbed()
 

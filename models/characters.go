@@ -119,5 +119,5 @@ func (c *Character) RarityString() (x string) {
 }
 
 func (c *Character) FullString() string {
-	return fmt.Sprintf("`%s level %d (%d/%dXP) %s (%.2f%%)", c.RarityString(), c.Level, c.XP, c.XPCap, c.Name, c.Stats.Value)
+	return fmt.Sprintf("`%s level %d (%d/%dXP) %s (%.2f%%)`", c.RarityString(), c.Level, c.XP, c.XPCap, c.Name, c.Stats.Value)
 }

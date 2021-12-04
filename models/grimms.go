@@ -30,7 +30,7 @@ type Grimm struct {
 	Buffs         int       `gorm:"column:buffs;not null"`
 	OwnedAt       time.Time `gorm:"column:owned_at;not null"`
 	// Foreign keys
-	Stats GrimmStat `gorm:"foreignkey:CharID"`
+	Stats GrimmStat `gorm:"foreignkey:GrimmID"`
 }
 
 func (c *Grimm) ToRealGrimm() grimms.GrimmStruct {
@@ -83,5 +83,5 @@ func (c *Grimm) RarityString() (x string) {
 }
 
 func (g *Grimm) FullString() string {
-	return fmt.Sprintf("`%s level %d (%d/%dXP) %s (%.2f%%)", g.RarityString(), g.Level, g.XP, g.XPCap, g.Name, g.Stats.Value)
+	return fmt.Sprintf("`%s level %d (%d/%dXP) %s (%.2f%%)`", g.RarityString(), g.Level, g.XP, g.XPCap, g.Name, g.Stats.Value)
 }

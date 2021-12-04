@@ -10,7 +10,7 @@ import (
 
 func Addchar(ctx *discord.CmdContext) {
 	ID := uuid.NewV4().String()
-	config.Database.Save(&models.Character{
+	config.Database.Create(&models.Character{
 		CharID: ID,
 		Level:  1,
 		Rarity: 3,
@@ -19,8 +19,7 @@ func Addchar(ctx *discord.CmdContext) {
 		Name:   "Weiss Schnee",
 		UserID: ctx.Author.ID,
 		Stats: models.CharacterStats{
-			CharID: ID,
-			Value:  52.32,
+			Value: 52.32,
 		},
 	})
 	ctx.Reply(discord.ReplyParams{

@@ -216,10 +216,10 @@ func removeMenu(ctx *discord.CmdContext) {
 
 func removeComponent(menuID string, emojis []*discordgo.ComponentEmoji, correct *discordgo.ComponentEmoji) []discordgo.MessageComponent {
 	var c []discordgo.MessageComponent
-	for _, e := range emojis {
-		action := "notcorrect"
+	for i, e := range emojis {
+		action := fmt.Sprintf("notcorrect-%d", i)
 		if e.Name == correct.Name {
-			action = "correct"
+			action = fmt.Sprintf("correct-%d", i)
 		}
 		c = append(c, discordgo.Button{
 			Emoji:    *e,
