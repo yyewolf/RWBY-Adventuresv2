@@ -49,14 +49,14 @@ func GetPlayer(id string) *Player {
 		DiscordID: id,
 	}
 	e := config.Database.
-		Preload("Status").
-		Preload("Missions").
-		Preload("Shop").
-		Preload("LastBoxes").
-		Preload("Gamble").
+		Joins("Status").
+		Joins("Missions").
+		Joins("Shop").
+		Joins("LastBoxes").
+		Joins("Gamble").
+		Joins("Boxes").
 		Preload("LimitedBoxes").
 		Preload("SpecialBoxes").
-		Preload("Boxes").
 		Find(p, id)
 	if e.Error != nil || e.RowsAffected == 0 {
 		p = &Player{
@@ -69,23 +69,16 @@ func GetPlayer(id string) *Player {
 			Boxes: PlayerBoxes{
 				Boxes: 1,
 			},
-			Missions: PlayerMission{
-				DiscordID: id,
-			},
-			Status: PlayerStatus{
-				DiscordID: id,
-			},
-			Shop: PlayerShop{
-				DiscordID: id,
-			},
 		}
 	}
-	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.Characters, "user_id = ?", p.DiscordID)
-	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.Grimms, "user_id = ?", p.DiscordID)
-	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.CharInMission, "user_id = ? and in_mission", p.DiscordID)
-	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.GrimmInHunt, "user_id = ? and in_hunt", p.DiscordID)
-	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.SelectedChar, "user_id = ? and id = ?", p.DiscordID, p.SelectedID)
-	config.Database.Preload("Stats").Order(p.Status.OrderBy).Find(&p.SelectedGrimm, "user_id = ? and id = ?", p.DiscordID, p.SelectedID)
+	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.Characters, "user_id = ? and not in_mission", p.DiscordID)
+	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.Grimms, "user_id = ? and not in_hunt", p.DiscordID)
+	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.CharInMission, "user_id = ? and in_mission", p.DiscordID)
+	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.GrimmInHunt, "user_id = ? and in_hunt", p.DiscordID)
+	if p.SelectedID != "" {
+		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedChar, "user_id = ? and id = ?", p.DiscordID, p.SelectedID)
+		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedGrimm, "user_id = ? and id = ?", p.DiscordID, p.SelectedID)
+	}
 	return p
 }
 

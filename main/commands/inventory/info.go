@@ -14,7 +14,7 @@ import (
 
 var InfoCommand = &discord.Command{
 	Name:        "info",
-	Description: "Test.",
+	Description: "View informations about a certain persona.",
 	Menu:        discord.PersonasMenu,
 	Call:        Info,
 	Args: []discord.Arg{
@@ -265,9 +265,19 @@ func menuInfo(ctx *discord.CmdContext) {
 			FollowUp: true,
 		})
 	case "addfav":
-
+		AddFavorite(ctx, &AddFavoriteData{
+			Char:     d.Char,
+			Grimm:    d.Grimm,
+			isGrimm:  d.isGrimm,
+			FollowUp: true,
+		})
 	case "remfav":
-
+		RemoveFavorite(ctx, &RemFavoriteData{
+			Char:     d.Char,
+			Grimm:    d.Grimm,
+			isGrimm:  d.isGrimm,
+			FollowUp: true,
+		})
 	default:
 		return
 	}

@@ -14,7 +14,7 @@ import (
 
 var PlayerInfoCommand = &discord.Command{
 	Name:        "profile",
-	Description: "View your infos.",
+	Description: "View your RWBY Adventures profile.",
 	Aliases:     discord.CmdAlias{"me"},
 	Menu:        discord.GeneralMenu,
 	Call:        Me,
