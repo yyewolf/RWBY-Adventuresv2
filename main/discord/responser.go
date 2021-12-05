@@ -90,6 +90,13 @@ func (c *CmdContext) ReplyClassic(p ReplyParams) (st *discordgo.Message, err err
 		if p.Edit {
 			return c.Session.ChannelMessageEdit(p.ChannelID, p.ID, fmt.Sprint(p.Content))
 		}
+		if len(p.Components) > 0 {
+			v := &discordgo.MessageSend{
+				Content:    fmt.Sprint(p.Content),
+				Components: p.Components,
+			}
+			return c.Session.ChannelMessageSendComplex(p.ChannelID, v)
+		}
 		return c.Session.ChannelMessageSend(p.ChannelID, fmt.Sprint(p.Content))
 	case *discordgo.MessageEmbed:
 		if p.Edit {

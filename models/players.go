@@ -76,8 +76,8 @@ func GetPlayer(id string) *Player {
 	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.CharInMission, "user_id = ? and in_mission", p.DiscordID)
 	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.GrimmInHunt, "user_id = ? and in_hunt", p.DiscordID)
 	if p.SelectedID != "" {
-		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedChar, "user_id = ? and id = ?", p.DiscordID, p.SelectedID)
-		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedGrimm, "user_id = ? and id = ?", p.DiscordID, p.SelectedID)
+		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedChar, "user_id = ? and \"characters\".id = ?", p.DiscordID, p.SelectedID)
+		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedGrimm, "user_id = ? and \"grimms\".id = ?", p.DiscordID, p.SelectedID)
 	}
 	return p
 }

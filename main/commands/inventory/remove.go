@@ -178,11 +178,9 @@ func remove(ctx *discord.CmdContext, rem *removeData) {
 	}, 0)
 
 	ctx.Reply(discord.ReplyParams{
-		Content: &discordgo.MessageSend{
-			Content:    reply,
-			Components: removeComponent(ctx.ID, e, e[r]),
-		},
-		FollowUp: rem.FollowUp,
+		Content:    reply,
+		Components: removeComponent(ctx.ID, e, e[r]),
+		FollowUp:   rem.FollowUp,
 	})
 }
 
@@ -201,25 +199,61 @@ func removeMenu(ctx *discord.CmdContext) {
 		var reply string
 		var xpjar int64
 		if d.isGrimm {
+			if ctx.Player.GrimmAmount() <= 1 {
+				ctx.Reply(discord.ReplyParams{
+					Content:  "You do not have enough grimms to remove one right now.",
+					FollowUp: true,
+				})
+				return
+			}
 			reply = fmt.Sprintf("You removed :\n%s", d.Grimm.FullString())
 			xpjar = int64(float64(d.Grimm.Level) * float64(d.Grimm.XP) * float64(rand.Intn(4)+3) / 100.0)
-			config.Database.Delete(d.Grimm.Stats)
-			config.Database.Delete(d.Grimm)
+
+			config.Database.Select("Stats").Where("user_id=?", ctx.Author.ID).Delete(d.Grimm)
+
+			if ctx.Player.SelectedID == d.Grimm.GrimmID {
+				for _, g := range ctx.Player.Grimms {
+					if g.GrimmID != d.Grimm.GrimmID {
+						ctx.Player.SelectedID = g.GrimmID
+						config.Database.Save(ctx.Player)
+						break
+					}
+				}
+			}
 		} else {
+			if ctx.Player.CharAmount() <= 1 {
+				ctx.Reply(discord.ReplyParams{
+					Content:  "You do not have enough characters to remove one right now.",
+					FollowUp: true,
+				})
+				return
+			}
 			reply = fmt.Sprintf("You removed :\n%s", d.Char.FullString())
 			xpjar = int64(float64(d.Char.Level) * float64(d.Char.XP) * float64(rand.Intn(4)+3) / 100.0)
-			config.Database.Delete(d.Char.Stats)
-			config.Database.Delete(d.Char)
+
+			config.Database.Select("Stats").Where("user_id=?", ctx.Author.ID).Delete(d.Char)
+
+			if ctx.Player.SelectedID == d.Char.CharID {
+				for _, c := range ctx.Player.Characters {
+					if c.CharID != d.Char.CharID {
+						ctx.Player.SelectedID = c.CharID
+						config.Database.Save(ctx.Player)
+						break
+					}
+				}
+			}
 		}
 		reply += fmt.Sprintf("\nYou also earned **%dXP** that have been added to your **XP Jar** (`/jar`) !", xpjar)
 		ctx.Reply(discord.ReplyParams{
-			Content:  reply,
-			FollowUp: true,
+			Content:   reply,
+			FollowUp:  true,
+			Ephemeral: true,
 		})
 	case "notcorrect":
 		ctx.Reply(discord.ReplyParams{
-			Content:  "You did not click the correct emoji.",
-			FollowUp: true,
+			Content:   "You did not click the correct emoji.",
+			FollowUp:  true,
+			Ephemeral: true,
 		})
 	default:
 		return
