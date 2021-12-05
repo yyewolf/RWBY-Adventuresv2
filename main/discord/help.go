@@ -10,16 +10,16 @@ import (
 type menuName string
 
 const (
-	GeneralMenu menuName = "General"
-	GamesMenu   menuName = "Games"
+	GeneralMenu  menuName = "General"
+	PersonasMenu menuName = "Personas"
 )
 
 func menuEmoji(name string) string {
 	switch name {
 	case string(GeneralMenu):
 		return "🖥️"
-	case string(GamesMenu):
-		return "🎲"
+	case string(PersonasMenu):
+		return "🛍️"
 	}
 	return ""
 }
@@ -38,7 +38,7 @@ func MakeEmbed() {
 			if i != 0 {
 				embed.Description += "\n"
 			}
-			embed.Description += "`" + CommandRouter.Prefix + cmd.Name + " : " + cmd.Description + "`"
+			embed.Description += "`" + CommandRouter.Prefix + cmd.HelpName + " : " + cmd.Description + "`"
 		}
 		MenuEmbed[menuName] = embed
 	}
@@ -54,6 +54,9 @@ func HelpComponent(menuID string, defaultMenu string) []discordgo.MessageCompone
 	sort.Strings(keys)
 
 	for _, name := range keys {
+		if name == "" {
+			continue
+		}
 		opt := discordgo.SelectMenuOption{
 			Label: name,
 			Value: name,

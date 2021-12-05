@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"fmt"
 	"rwby-adventures/main/discord"
 
 	"github.com/bwmarrin/discordgo"
@@ -46,9 +47,10 @@ func Help(ctx *discord.CmdContext) {
 		}, 0)
 	}
 
-	ctx.Reply(discord.ReplyParams{
+	_, err := ctx.Reply(discord.ReplyParams{
 		Content: complex,
 		ID:      ctx.ID,
 		Edit:    ctx.IsComponent,
 	})
+	fmt.Println(err)
 }

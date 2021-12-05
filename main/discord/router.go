@@ -53,6 +53,10 @@ type Command struct {
 	Args        []Arg
 	SubCommands []*Command
 
+	// Not needed when registering a command
+	IsSub    bool
+	HelpName string
+
 	Call func(*CmdContext)
 }
 
@@ -238,6 +242,10 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 		HandleNewPlayer(ctx)
 		return
 	}
+
+	if deepestLink.Call == nil {
+		return
+	}
 	deepestLink.Call(ctx)
 }
 
@@ -285,7 +293,6 @@ func routeInteraction(s *discordgo.Session, interaction *discordgo.InteractionCr
 		return
 	}
 	deepestLink, _ := cmd.findDeepestLink(splt[1:])
-
 	var realArgs []*CommandArg
 	for _, arg := range parsedArgs {
 		for _, cmdArg := range deepestLink.Args {
@@ -297,7 +304,6 @@ func routeInteraction(s *discordgo.Session, interaction *discordgo.InteractionCr
 			}
 		}
 	}
-
 	ctx.Arguments = realArgs
 
 	/*
@@ -313,6 +319,9 @@ func routeInteraction(s *discordgo.Session, interaction *discordgo.InteractionCr
 
 	if ctx.Player.IsNew {
 		HandleNewPlayer(ctx)
+		return
+	}
+	if deepestLink.Call == nil {
 		return
 	}
 	deepestLink.Call(ctx)

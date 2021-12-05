@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"rwby-adventures/config"
 	"time"
 )
@@ -146,9 +147,9 @@ func (p *Player) GrimmAmount() int {
 	return len(p.Grimms)
 }
 
-func (p *Player) GetLatestPersona() (bool, *Character, *Grimm, int) {
+func (p *Player) GetLatestPersona() (bool, *Character, *Grimm, int, error) {
 	var indexc, indexg int
-	c := &Character{OwnedAt: time.Now()}
+	c := &Character{}
 	g := &Grimm{}
 	config.Database.
 		Preload("Stats").
@@ -170,8 +171,12 @@ func (p *Player) GetLatestPersona() (bool, *Character, *Grimm, int) {
 			break
 		}
 	}
-	if c.OwnedAt.After(g.OwnedAt) {
-		return false, c, g, indexc
+
+	if g.Name == "" && c.Name == "" {
+		return false, nil, nil, 0, errors.New("not found")
 	}
-	return true, c, g, indexg
+	if c.OwnedAt.After(g.OwnedAt) {
+		return false, c, g, indexc, nil
+	}
+	return true, c, g, indexg, nil
 }

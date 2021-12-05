@@ -14,7 +14,7 @@ import (
 var RemoveCommand = &discord.Command{
 	Name:        "remove",
 	Description: "Remove a persona from your bags.",
-	Menu:        discord.GeneralMenu,
+	Menu:        discord.PersonasMenu,
 	Call:        RemovePersona,
 	Args: []discord.Arg{
 		{
@@ -43,15 +43,23 @@ type removeData struct {
 
 func RemovePersona(ctx *discord.CmdContext) {
 	// We parse user input
+	var err error
 	var pickLatest bool
+	var isGrimm bool
+	var index int
+	var grimm *models.Grimm
+	var char *models.Character
+	var id *discord.CommandArg
+
 	latest, err := ctx.Arguments.GetArg("latest", 1)
 	if err == nil {
-		if v, ok := latest.Value.(bool); ok {
+		if v, ok := latest.Value.(bool); ok && v {
 			pickLatest = v
+			goto skip
 		}
 	}
 
-	id, err := ctx.Arguments.GetArg("id", 0)
+	id, err = ctx.Arguments.GetArg("id", 0)
 	if err != nil && !pickLatest {
 		ctx.Reply(discord.ReplyParams{
 			Content:   "You need to input at least the ID of the persona you wish to remove.",
@@ -59,7 +67,7 @@ func RemovePersona(ctx *discord.CmdContext) {
 		})
 		return
 	}
-	isGrimm, index, err := id.CharGrimmParse()
+	isGrimm, index, err = id.CharGrimmParse()
 	if err != nil && !pickLatest {
 		ctx.Reply(discord.ReplyParams{
 			Content:   "I did not understand the ID that you sent.",
@@ -69,9 +77,6 @@ func RemovePersona(ctx *discord.CmdContext) {
 	}
 
 	// We search for the character they sent
-
-	var grimm *models.Grimm
-	var char *models.Character
 
 	if isGrimm {
 		if index > len(ctx.Player.Grimms) {
@@ -93,9 +98,16 @@ func RemovePersona(ctx *discord.CmdContext) {
 		char = &ctx.Player.Characters[index-1]
 	}
 
+skip:
 	if pickLatest {
-		isGrimm, char, grimm, index = ctx.Player.GetLatestPersona()
+		isGrimm, char, grimm, index, err = ctx.Player.GetLatestPersona()
 		index += 1
+		if err != nil {
+			ctx.Reply(discord.ReplyParams{
+				Content:   "You don't have any persona.",
+				Ephemeral: true,
+			})
+		}
 	}
 	// We proceed to remove the character
 	// We don't preload the confirmation because the fonction can also be called from other places

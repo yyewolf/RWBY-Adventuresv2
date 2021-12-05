@@ -4,6 +4,7 @@ import (
 	"rwby-adventures/config"
 	"rwby-adventures/main/discord"
 	"rwby-adventures/models"
+	"time"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -21,6 +22,7 @@ func Addchar(ctx *discord.CmdContext) {
 		Stats: models.CharacterStats{
 			Value: 52.32,
 		},
+		OwnedAt: time.Now(),
 	})
 	ctx.Reply(discord.ReplyParams{
 		Content: "Ok boomer.",

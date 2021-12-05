@@ -15,7 +15,7 @@ import (
 var InfoCommand = &discord.Command{
 	Name:        "info",
 	Description: "Test.",
-	Menu:        discord.GeneralMenu,
+	Menu:        discord.PersonasMenu,
 	Call:        Info,
 	Args: []discord.Arg{
 		{
@@ -45,62 +45,77 @@ type infoMenuData struct {
 func Info(ctx *discord.CmdContext) {
 	var char *models.Character
 	var grimm *models.Grimm
-	arg, _ := ctx.Arguments.GetArg("id", 0)
-	isGrimm, index, err := arg.CharGrimmParse()
-	if err != nil {
-		if ctx.Player.SelectedChar.Name == ctx.Player.SelectedGrimm.Name {
-			ctx.Reply(discord.ReplyParams{
-				Content:   "You have not selected any persona.",
-				Ephemeral: true,
-			})
-			return
-		}
-		char = &ctx.Player.SelectedChar
-		grimm = &ctx.Player.SelectedGrimm
-		isGrimm = ctx.Player.SelectedType == models.GrimmType
-		if isGrimm {
-			for i, g := range ctx.Player.Grimms {
-				if g.GrimmID == grimm.GrimmID {
-					index = i + 1
-					break
-				}
-			}
-		} else {
-			for i, c := range ctx.Player.Characters {
-				if c.CharID == char.CharID {
-					index = i + 1
-					break
-				}
-			}
-		}
-	} else {
-		if isGrimm {
-			if index > len(ctx.Player.Grimms) {
-				ctx.Reply(discord.ReplyParams{
-					Content:   "You don't have any grimm with this number.",
-					Ephemeral: true,
-				})
-				return
-			}
-			grimm = &ctx.Player.Grimms[index-1]
-		} else {
-			if index > len(ctx.Player.Characters) {
-				ctx.Reply(discord.ReplyParams{
-					Content:   "You don't have any character with this number.",
-					Ephemeral: true,
-				})
-				return
-			}
-			char = &ctx.Player.Characters[index-1]
-		}
-	}
+	var pickLatest bool
 	latest, err := ctx.Arguments.GetArg("latest", 1)
 	if err == nil {
 		if v, ok := latest.Value.(bool); ok && v {
-			isGrimm, char, grimm, index = ctx.Player.GetLatestPersona()
-			index += 1
+			pickLatest = true
 		}
 	}
+	arg, _ := ctx.Arguments.GetArg("id", 0)
+	isGrimm, index, err := arg.CharGrimmParse()
+	if !pickLatest {
+
+		if err != nil {
+			if ctx.Player.SelectedChar.Name == ctx.Player.SelectedGrimm.Name {
+				ctx.Reply(discord.ReplyParams{
+					Content:   "You have not selected any persona.",
+					Ephemeral: true,
+				})
+				return
+			}
+			char = &ctx.Player.SelectedChar
+			grimm = &ctx.Player.SelectedGrimm
+			isGrimm = ctx.Player.SelectedType == models.GrimmType
+			if isGrimm {
+				for i, g := range ctx.Player.Grimms {
+					if g.GrimmID == grimm.GrimmID {
+						index = i + 1
+						break
+					}
+				}
+			} else {
+				for i, c := range ctx.Player.Characters {
+					if c.CharID == char.CharID {
+						index = i + 1
+						break
+					}
+				}
+			}
+		} else {
+			if isGrimm {
+				if index > len(ctx.Player.Grimms) {
+					ctx.Reply(discord.ReplyParams{
+						Content:   "You don't have any grimm with this number.",
+						Ephemeral: true,
+					})
+					return
+				}
+				grimm = &ctx.Player.Grimms[index-1]
+			} else {
+				if index > len(ctx.Player.Characters) {
+					ctx.Reply(discord.ReplyParams{
+						Content:   "You don't have any character with this number.",
+						Ephemeral: true,
+					})
+					return
+				}
+				char = &ctx.Player.Characters[index-1]
+			}
+		}
+	}
+
+	if pickLatest {
+		isGrimm, char, grimm, index, err = ctx.Player.GetLatestPersona()
+		index += 1
+		if err != nil {
+			ctx.Reply(discord.ReplyParams{
+				Content:   "You don't have any persona.",
+				Ephemeral: true,
+			})
+		}
+	}
+
 	if isGrimm {
 		grimmInfo(ctx, grimm, index)
 		return

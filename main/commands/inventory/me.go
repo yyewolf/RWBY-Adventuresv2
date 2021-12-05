@@ -155,7 +155,7 @@ func Me(ctx *discord.CmdContext) {
 	infoReport := &discordgo.MessageEmbedField{
 		Name: "**Other :**",
 		Value: "Found a bug or need help ?\n" +
-			"`r!report I lost my character :c`",
+			"`/report I lost my character :c`",
 		Inline: true,
 	}
 

@@ -5,41 +5,16 @@ import (
 	"rwby-adventures/config"
 	"rwby-adventures/main/discord"
 	"rwby-adventures/models"
-
-	"github.com/bwmarrin/discordgo"
 )
 
-var SelectCommand = &discord.Command{
-	Name:        "select",
-	Description: "Select a persona.",
-	Menu:        discord.PersonasMenu,
-	Call:        SelectPersona,
-	Args: []discord.Arg{
-		{
-			Name:        "id",
-			Description: "Identification number of your persona.",
-			Size:        1,
-			Required:    true,
-			Type:        discordgo.ApplicationCommandOptionString,
-		},
-		{
-			Name:        "latest",
-			Description: "Whether or not you want to view the infos of your latest persona.",
-			Size:        1,
-			Required:    false,
-			Type:        discordgo.ApplicationCommandOptionBoolean,
-		},
-	},
-}
-
-type SelectData struct {
+type RemFavoriteData struct {
 	Char     *models.Character
 	Grimm    *models.Grimm
 	isGrimm  bool
 	FollowUp bool
 }
 
-func SelectPersona(ctx *discord.CmdContext) {
+func RemoveFavoritePersona(ctx *discord.CmdContext) {
 	// We parse user input
 	var err error
 	var pickLatest bool
@@ -60,7 +35,7 @@ func SelectPersona(ctx *discord.CmdContext) {
 	id, err = ctx.Arguments.GetArg("id", 0)
 	if err != nil && !pickLatest {
 		ctx.Reply(discord.ReplyParams{
-			Content:   "You need to input at least the ID of the persona you wish to select.",
+			Content:   "You need to input at least the ID of the persona you wish to add to your favorites.",
 			Ephemeral: true,
 		})
 		return
@@ -109,31 +84,28 @@ skip:
 	}
 	// We proceed to select the character
 
-	Select(ctx, &SelectData{
+	RemoveFavorite(ctx, &RemFavoriteData{
 		Grimm:   grimm,
 		Char:    char,
 		isGrimm: isGrimm,
 	})
 }
 
-func Select(ctx *discord.CmdContext, data *SelectData) {
+func RemoveFavorite(ctx *discord.CmdContext, data *RemFavoriteData) {
 	var reply string
 
 	if data.isGrimm {
-		ctx.Player.SelectedType = models.GrimmType
-		ctx.Player.SelectedID = data.Grimm.GrimmID
-		reply = fmt.Sprintf("You have selected :\n%s", data.Grimm.FullString())
+		data.Grimm.IsInFavorites = false
+		config.Database.Save(data.Grimm)
+		reply = fmt.Sprintf("You have removed the following Grimm from your favorites :\n%s", data.Grimm.FullString())
 	} else {
-		ctx.Player.SelectedType = models.CharType
-		ctx.Player.SelectedID = data.Char.CharID
-		reply = fmt.Sprintf("You have selected :\n%s", data.Char.FullString())
+		data.Char.IsInFavorites = false
+		config.Database.Save(data.Char)
+		reply = fmt.Sprintf("You have removed the following Character from your favorites :\n%s", data.Char.FullString())
 	}
-	config.Database.Save(ctx.Player)
 
 	ctx.Reply(discord.ReplyParams{
-		Content: &discordgo.MessageSend{
-			Content: reply,
-		},
+		Content:   reply,
 		FollowUp:  data.FollowUp,
 		Ephemeral: true,
 	})
