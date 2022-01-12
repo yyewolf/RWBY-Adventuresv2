@@ -8,10 +8,12 @@ import (
 //var dbhost = "admin.rwbyadventures.com"
 //var dbuser = "yewolf"
 //var dbpswd = "ftT6A4MrF6hPt"
+
 var dbhost = "127.0.0.1"
 var dbport = "5432"
 var dbuser = "postgres"
 var dbpswd = "admin"
+
 var SupportLink = "https://discord.gg/adJGyVxv7H"
 var Botcolor = 3859607
 

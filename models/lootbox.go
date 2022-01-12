@@ -3,10 +3,10 @@ package models
 type PlayerBoxes struct {
 	DiscordID string `gorm:"primary_key;column:discord_id"`
 
-	Boxes          int `json:"lootboxleft" db:"lootboxleft"`
-	RareBoxes      int `json:"rarelootboxleft" db:"rarelootboxleft"`
-	GrimmBoxes     int `json:"grimmboxleft" db:"grimmboxleft"`
-	RareGrimmBoxes int `json:"raregrimmboxleft" db:"raregrimmboxleft"`
+	Boxes          int `gorm:"column:classic_boxes;not null"`
+	RareBoxes      int `gorm:"column:rare_classic_boxes;not null"`
+	GrimmBoxes     int `gorm:"column:grimm_boxes;not null"`
+	RareGrimmBoxes int `gorm:"column:rare_grimm_boxes;not null"`
 }
 
 type PlayerLootTime struct {
