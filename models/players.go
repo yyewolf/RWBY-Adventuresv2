@@ -36,12 +36,13 @@ type Player struct {
 	SpecialBoxes []SpecialBoxes `gorm:"foreignkey:DiscordID"`
 
 	// Loaded later
-	Characters    []Character `gorm:"foreignkey:UserID"`
-	Grimms        []Grimm     `gorm:"foreignkey:UserID"`
-	SelectedChar  Character   `gorm:"-"`
-	SelectedGrimm Grimm       `gorm:"-"`
-	CharInMission Character   `gorm:"-"`
-	GrimmInHunt   Grimm       `gorm:"-"`
+	Characters    []Character   `gorm:"-"`
+	Grimms        []Grimm       `gorm:"-"`
+	SelectedChar  Character     `gorm:"-"`
+	SelectedGrimm Grimm         `gorm:"-"`
+	CharInMission Character     `gorm:"-"`
+	GrimmInHunt   Grimm         `gorm:"-"`
+	Market        *PlayerMarket `gorm:"-"`
 }
 
 func GetPlayer(id string) *Player {

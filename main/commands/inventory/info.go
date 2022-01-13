@@ -46,16 +46,13 @@ func Info(ctx *discord.CmdContext) {
 	var char *models.Character
 	var grimm *models.Grimm
 	var pickLatest bool
-	latest, err := ctx.Arguments.GetArg("latest", 1)
-	if err == nil {
-		if v, ok := latest.Value.(bool); ok && v {
-			pickLatest = true
-		}
+	latest := ctx.Arguments.GetArg("latest", 1, false)
+	if v, ok := latest.Value.(bool); ok && v {
+		pickLatest = true
 	}
-	arg, _ := ctx.Arguments.GetArg("id", 0)
+	arg := ctx.Arguments.GetArg("id", 0, "")
 	isGrimm, index, err := arg.CharGrimmParse()
 	if !pickLatest {
-
 		if err != nil {
 			if ctx.Player.SelectedChar.Name == ctx.Player.SelectedGrimm.Name {
 				ctx.Reply(discord.ReplyParams{

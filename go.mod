@@ -3,7 +3,7 @@ module rwby-adventures
 go 1.17
 
 require (
-	github.com/bwmarrin/discordgo v0.23.3-0.20211202200738-55f4934ba775
+	github.com/bwmarrin/discordgo v0.23.3-0.20211228023845-29269347e820
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/pmylund/go-cache v2.1.0+incompatible

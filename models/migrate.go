@@ -28,5 +28,10 @@ func init() {
 	config.Database.AutoMigrate(
 		&Guild{},
 	)
+	config.Database.AutoMigrate(
+		&Listing{},
+		&Auction{},
+		&AuctionBidders{},
+	)
 	fmt.Println("[DATABASE] Automigrated models.")
 }

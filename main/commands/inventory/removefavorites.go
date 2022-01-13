@@ -24,16 +24,14 @@ func RemoveFavoritePersona(ctx *discord.CmdContext) {
 	var char *models.Character
 	var id *discord.CommandArg
 
-	latest, err := ctx.Arguments.GetArg("latest", 1)
-	if err == nil {
-		if v, ok := latest.Value.(bool); ok && v {
-			pickLatest = v
-			goto skip
-		}
+	latest := ctx.Arguments.GetArg("latest", 1, false)
+	if v, ok := latest.Value.(bool); ok && v {
+		pickLatest = v
+		goto skip
 	}
 
-	id, err = ctx.Arguments.GetArg("id", 0)
-	if err != nil && !pickLatest {
+	id = ctx.Arguments.GetArg("id", 0, "")
+	if !id.Found && !pickLatest {
 		ctx.Reply(discord.ReplyParams{
 			Content:   "You need to input at least the ID of the persona you wish to add to your favorites.",
 			Ephemeral: true,

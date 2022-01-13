@@ -4,6 +4,7 @@ import (
 	"fmt"
 	chars "rwby-adventures/characters"
 	"rwby-adventures/config"
+	"strings"
 	"time"
 )
 
@@ -119,5 +120,27 @@ func (c *Character) RarityString() (x string) {
 }
 
 func (c *Character) FullString() string {
-	return fmt.Sprintf("`%s level %d (%d/%dXP) %s (%.2f%%)`", c.RarityString(), c.Level, c.XP, c.XPCap, c.Name, c.Stats.Value)
+	return fmt.Sprintf("%s level %d (%d/%dXP) %s (%.2f%%)", c.RarityString(), c.Level, c.XP, c.XPCap, c.Name, c.Stats.Value)
+}
+
+func (c *Character) CheckConditions(charname string, level int, valueabove float64, valuebelow float64, rarity int, buffs int) bool {
+	if charname != "" && !(strings.Contains(strings.ToLower(c.Name), strings.ToLower(charname))) {
+		return false
+	}
+	if level != 1000 && c.Level != level {
+		return false
+	}
+	if c.Stats.Value < valueabove {
+		return false
+	}
+	if c.Stats.Value > valuebelow {
+		return false
+	}
+	if rarity != -1 && c.Rarity != rarity {
+		return false
+	}
+	if buffs != 0 && c.Buffs != buffs {
+		return false
+	}
+	return true
 }

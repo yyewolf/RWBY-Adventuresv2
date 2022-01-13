@@ -30,7 +30,7 @@ type CmdContext struct {
 
 type Choice struct {
 	Name  string
-	Value string
+	Value interface{}
 }
 type CmdAlias []string
 

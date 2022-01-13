@@ -11,6 +11,7 @@ import (
 type CommandArg struct {
 	Name  string
 	Value interface{}
+	Found bool
 }
 
 type Args []*CommandArg
@@ -24,25 +25,24 @@ type Arg struct {
 	Type        discordgo.ApplicationCommandOptionType
 }
 
-func (a *Args) GetArg(name string, index int) (*CommandArg, error) {
+func (a *Args) GetArg(name string, index int, def interface{}) (argument *CommandArg) {
 	s := *a
-	var temp *CommandArg
-	var fallback = true
+	argument = &CommandArg{
+		Name:  name,
+		Value: def,
+		Found: false,
+	}
 	for i, arg := range s {
-		if arg.Name != "" {
-			fallback = false
-		}
 		if arg.Name == name {
-			return arg, nil
+			arg.Found = true
+			return arg
 		}
 		if i == index {
-			temp = arg
+			arg.Found = true
+			argument = arg
 		}
 	}
-	if temp == nil || !fallback {
-		return nil, errors.New("nil pointer")
-	}
-	return temp, nil
+	return
 }
 
 func (a *CommandArg) CharGrimmParse() (grimm bool, index int, err error) {

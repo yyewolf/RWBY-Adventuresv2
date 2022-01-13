@@ -14,13 +14,11 @@ type Guild struct {
 func GetGuild(id string) *Guild {
 	g := &Guild{
 		GuildID: id,
+		Prefix:  "r!",
 	}
 	e := config.Database.
 		Find(g, id)
 	if e.Error != nil {
-		g = &Guild{
-			Prefix: "r!",
-		}
 		config.Database.Create(g)
 	}
 	return g
