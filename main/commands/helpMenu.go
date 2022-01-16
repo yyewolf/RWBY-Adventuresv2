@@ -38,7 +38,6 @@ func Help(ctx *discord.CmdContext) {
 		// Keep old context if a button is pressed
 		ctx.Menu.SourceContext.ID = ctx.Message.ID
 		ctx = ctx.Menu.SourceContext
-		ctx.IsComponent = true
 	} else {
 		discord.ActiveMenus.Set(ctx.ID, &discord.Menus{
 			MenuID:        ctx.ID,

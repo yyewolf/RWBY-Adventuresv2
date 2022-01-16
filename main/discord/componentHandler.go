@@ -37,6 +37,7 @@ func routeComponents(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 
 	ctx.Player = models.GetPlayer(ctx.Author.ID)
+	ctx.Guild = models.GetGuild(ctx.GuildID)
 
 	m.MenuID = split[0]
 

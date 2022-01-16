@@ -13,6 +13,15 @@ const (
 	GrimmType
 )
 
+type CharacterFilters struct {
+	Name     string
+	Level    int
+	ValAbove float64
+	ValBelow float64
+	Buffs    int
+	Rarity   int
+}
+
 type CharacterStats struct {
 	CharID      string  `gorm:"primary_key;column:id"`
 	Value       float64 `gorm:"column:value;not null"`
@@ -123,23 +132,23 @@ func (c *Character) FullString() string {
 	return fmt.Sprintf("%s level %d (%d/%dXP) %s (%.2f%%)", c.RarityString(), c.Level, c.XP, c.XPCap, c.Name, c.Stats.Value)
 }
 
-func (c *Character) CheckConditions(charname string, level int, valueabove float64, valuebelow float64, rarity int, buffs int) bool {
-	if charname != "" && !(strings.Contains(strings.ToLower(c.Name), strings.ToLower(charname))) {
+func (c *Character) CheckConditions(f *CharacterFilters) bool {
+	if f.Name != "" && !(strings.Contains(strings.ToLower(c.Name), strings.ToLower(f.Name))) {
 		return false
 	}
-	if level != 1000 && c.Level != level {
+	if f.Level != 1000 && c.Level != f.Level {
 		return false
 	}
-	if c.Stats.Value < valueabove {
+	if c.Stats.Value < f.ValAbove {
 		return false
 	}
-	if c.Stats.Value > valuebelow {
+	if c.Stats.Value > f.ValBelow {
 		return false
 	}
-	if rarity != -1 && c.Rarity != rarity {
+	if f.Rarity != -1 && c.Rarity != f.Rarity {
 		return false
 	}
-	if buffs != 0 && c.Buffs != buffs {
+	if f.Buffs != 0 && c.Buffs != f.Buffs {
 		return false
 	}
 	return true

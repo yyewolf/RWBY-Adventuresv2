@@ -5,7 +5,9 @@ import (
 	"math"
 	"rwby-adventures/config"
 	"rwby-adventures/main/discord"
+	"rwby-adventures/models"
 	"strconv"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -91,8 +93,9 @@ var InventoryCommand = &discord.Command{
 }
 
 type inventoryMenuData struct {
-	UserID string
-	Page   int
+	UserID  string
+	Page    int
+	Filters *models.CharacterFilters
 }
 
 var charPerPage = 10
@@ -124,12 +127,38 @@ func Inventory(ctx *discord.CmdContext) {
 	buffs, _ = strconv.Atoi(fmt.Sprint(buffsA.Value))
 	rarity, _ = strconv.Atoi(fmt.Sprint(rarityA.Value))
 
+	filters := &models.CharacterFilters{
+		Name:     charName,
+		Level:    level,
+		ValAbove: valueAbove,
+		ValBelow: valueBelow,
+		Buffs:    buffs,
+		Rarity:   rarity,
+	}
+	pageMax := int(math.Ceil(float64(len(ctx.Player.Characters)) / 10))
+
+	if ctx.IsComponent {
+		d := ctx.Menu.Data.(*inventoryMenuData)
+
+		if d.Page <= 0 {
+			d.Page = pageMax
+		}
+		if d.Page > pageMax {
+			d.Page = 1
+		}
+
+		filters = d.Filters
+		page = d.Page
+	}
+
 	filtering := charNameA.Found || levelA.Found || valueAboveA.Found || valueBelowA.Found || buffsA.Found || rarityA.Found
 
 	// Useful stuff
-	pageMax := int(math.Ceil(float64(len(ctx.Player.Characters)) / 10))
-	if page > pageMax {
+	if page <= 0 {
 		page = pageMax
+	}
+	if page > pageMax {
+		page = 1
 	}
 
 	// Character field
@@ -140,7 +169,7 @@ func Inventory(ctx *discord.CmdContext) {
 		n := 0
 		if filtering {
 			for _, char := range ctx.Player.Characters {
-				if char.CheckConditions(charName, level, valueAbove, valueBelow, rarity, buffs) {
+				if char.CheckConditions(filters) {
 					n++
 				}
 			}
@@ -152,7 +181,7 @@ func Inventory(ctx *discord.CmdContext) {
 		n = 0
 		// Filtering
 		for i, char := range ctx.Player.Characters {
-			if filtering && char.CheckConditions(charName, level, valueAbove, valueBelow, rarity, buffs) {
+			if filtering && char.CheckConditions(filters) {
 				continue
 			}
 			if n%charPerPage != 0 {
@@ -207,18 +236,100 @@ func Inventory(ctx *discord.CmdContext) {
 		})
 	}
 
-	reply := &discordgo.MessageEmbed{
-		Title:       fmt.Sprintf("%s's characters", ctx.Author.Username),
-		Description: fmt.Sprintf("To select a character, please type `%sselect <PersonaID>`.", ctx.Guild.Prefix),
-		Color:       config.Botcolor,
-		Fields:      fields,
-		Footer:      discord.DefaultFooter,
-		Thumbnail: &discordgo.MessageEmbedThumbnail{
-			URL: ctx.Author.AvatarURL("512"),
+	menuID := ctx.ID
+	editID := ""
+	if ctx.IsComponent {
+		// Keep old context if a button is pressed
+		menuID = ctx.Menu.MenuID
+		editID = ctx.Message.ID
+		//ctx.Menu.SourceContext.ID = ctx.Message.ID
+		//ctx = ctx.Menu.SourceContext
+	}
+
+	discord.ActiveMenus.Set(ctx.ID, &discord.Menus{
+		MenuID:        menuID,
+		SourceContext: ctx,
+		Call:          InventoryPages,
+		Data: &inventoryMenuData{
+			UserID:  ctx.Author.ID,
+			Page:    page,
+			Filters: filters,
 		},
+	}, 0)
+
+	reply := &discordgo.MessageSend{
+		Embed: &discordgo.MessageEmbed{
+			Title:       fmt.Sprintf("%s's characters", ctx.Author.Username),
+			Description: fmt.Sprintf("To select a character, please type `%sselect <PersonaID>`.", ctx.Guild.Prefix),
+			Color:       config.Botcolor,
+			Fields:      fields,
+			Footer:      discord.DefaultFooter,
+			Thumbnail: &discordgo.MessageEmbedThumbnail{
+				URL: ctx.Author.AvatarURL("512"),
+			},
+		},
+		Components: inventoryComponent(menuID),
 	}
 
 	ctx.Reply(discord.ReplyParams{
 		Content: reply,
+		ID:      editID,
+		Edit:    ctx.IsComponent,
 	})
+}
+
+func InventoryPages(ctx *discord.CmdContext) {
+	d := ctx.Menu.Data.(*inventoryMenuData)
+
+	switch strings.Split(ctx.ComponentData.CustomID, "-")[1] {
+	case "prev":
+		d.Page++
+		break
+	case "refresh":
+		break
+	case "next":
+		d.Page--
+		break
+	default:
+		return
+	}
+
+	ctx.Session.InteractionRespond(ctx.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseDeferredMessageUpdate,
+	})
+
+	Inventory(ctx)
+}
+
+func inventoryComponent(menuID string) []discordgo.MessageComponent {
+	return []discordgo.MessageComponent{
+		&discordgo.ActionsRow{
+			Components: []discordgo.MessageComponent{
+				&discordgo.Button{
+					Label: "Prev",
+					Emoji: discordgo.ComponentEmoji{
+						Name: "⬅️",
+					},
+					Style:    discordgo.SecondaryButton,
+					CustomID: menuID + "-prev",
+				},
+				&discordgo.Button{
+					Label: "Refresh",
+					Emoji: discordgo.ComponentEmoji{
+						Name: "🔄",
+					},
+					Style:    discordgo.SecondaryButton,
+					CustomID: menuID + "-refresh",
+				},
+				&discordgo.Button{
+					Label: "Next",
+					Emoji: discordgo.ComponentEmoji{
+						Name: "➡️",
+					},
+					Style:    discordgo.SecondaryButton,
+					CustomID: menuID + "-next",
+				},
+			},
+		},
+	}
 }
