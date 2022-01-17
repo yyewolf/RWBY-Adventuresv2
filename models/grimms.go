@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"rwby-adventures/config"
 	"rwby-adventures/grimms"
+	"strings"
 	"time"
 )
 
@@ -84,4 +85,31 @@ func (c *Grimm) RarityString() (x string) {
 
 func (g *Grimm) FullString() string {
 	return fmt.Sprintf("`%s level %d (%d/%dXP) %s (%.2f%%)`", g.RarityString(), g.Level, g.XP, g.XPCap, g.Name, g.Stats.Value)
+}
+
+func (g *Grimm) CheckConditions(f *InvFilters) bool {
+	if f.Filtering {
+		if f.Name != "" && !(strings.Contains(strings.ToLower(g.Name), strings.ToLower(f.Name))) {
+			return false
+		}
+		if f.Level != 1000 && g.Level != f.Level {
+			return false
+		}
+		if g.Stats.Value < f.ValAbove {
+			return false
+		}
+		if g.Stats.Value > f.ValBelow {
+			return false
+		}
+		if f.Rarity != -1 && g.Rarity != f.Rarity {
+			return false
+		}
+		if f.Buffs != 0 && g.Buffs != f.Buffs {
+			return false
+		}
+	}
+	if f.Favorites && !g.IsInFavorites {
+		return false
+	}
+	return true
 }

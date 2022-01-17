@@ -13,7 +13,7 @@ const (
 	GrimmType
 )
 
-type CharacterFilters struct {
+type InvFilters struct {
 	Name      string
 	Level     int
 	ValAbove  float64
@@ -135,7 +135,7 @@ func (c *Character) FullString() string {
 	return fmt.Sprintf("%s level %d (%d/%dXP) %s (%.2f%%)", c.RarityString(), c.Level, c.XP, c.XPCap, c.Name, c.Stats.Value)
 }
 
-func (c *Character) CheckConditions(f *CharacterFilters) bool {
+func (c *Character) CheckConditions(f *InvFilters) bool {
 	if f.Filtering {
 		if f.Name != "" && !(strings.Contains(strings.ToLower(c.Name), strings.ToLower(f.Name))) {
 			return false

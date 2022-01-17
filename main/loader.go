@@ -35,6 +35,7 @@ func StartDiscord() {
 	discord.AddCmd(commands_inventory.SelectCommand)
 	discord.AddCmd(commands_inventory.FavoritesCommand)
 	discord.AddCmd(commands_inventory.InventoryCommand)
+	discord.AddCmd(commands_inventory.PackCommand)
 
 	discord.MakeEmbed()
 

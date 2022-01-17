@@ -12,36 +12,33 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-var InventoryCommand = &discord.Command{
-	Name:        "inventory",
-	Description: "Check out your inventory.",
+var PackCommand = &discord.Command{
+	Name:        "pack",
+	Description: "Check out your pack (grimm inventory).",
 	Menu:        discord.PersonasMenu,
-	Call:        Inventory,
-	Aliases: discord.CmdAlias{
-		"inv",
-	},
+	Call:        Pack,
 	Args: []discord.Arg{
 		{
 			Name:        "page",
-			Description: "The page of your inventory you want to check.",
+			Description: "The page of your pack you want to check.",
 			Size:        1,
 			Type:        discordgo.ApplicationCommandOptionInteger,
 		},
 		{
 			Name:        "name",
-			Description: "Filter your inventory by name.",
+			Description: "Filter your pack by name.",
 			Size:        1,
 			Type:        discordgo.ApplicationCommandOptionString,
 		},
 		{
 			Name:        "level",
-			Description: "Filter your inventory by level.",
+			Description: "Filter your pack by level.",
 			Size:        1,
 			Type:        discordgo.ApplicationCommandOptionInteger,
 		},
 		{
 			Name:        "rarity",
-			Description: "Filter your inventory by rarity.",
+			Description: "Filter your pack by rarity.",
 			Size:        1,
 			Choices: []*discord.Choice{
 				{
@@ -73,44 +70,36 @@ var InventoryCommand = &discord.Command{
 		},
 		{
 			Name:        "arms",
-			Description: "Filter your inventory by amount of arm.",
+			Description: "Filter your pack by amount of arm.",
 			Size:        1,
 			Type:        discordgo.ApplicationCommandOptionInteger,
 		},
 		{
 			Name:        "value_above",
-			Description: "Filter your inventory by value.",
+			Description: "Filter your pack by value.",
 			Size:        1,
 			Type:        discordgo.ApplicationCommandOptionString,
 		},
 		{
 			Name:        "value_below",
-			Description: "Filter your inventory by value.",
+			Description: "Filter your pack by value.",
 			Size:        1,
 			Type:        discordgo.ApplicationCommandOptionString,
 		},
 		{
 			Name:        "favorites",
-			Description: "Filter your inventory by favorites.",
+			Description: "Filter your pack by favorites.",
 			Size:        1,
 			Type:        discordgo.ApplicationCommandOptionBoolean,
 		},
 	},
 }
 
-type inventoryMenuData struct {
-	UserID  string
-	Page    int
-	Filters *models.InvFilters
-}
-
-var charPerPage = 10
-
-func Inventory(ctx *discord.CmdContext) {
+func Pack(ctx *discord.CmdContext) {
 	var fields []*discordgo.MessageEmbedField
 	var page int
 	// Filters
-	var charName string
+	var grimmName string
 	var level int
 	var valueAbove float64
 	var valueBelow float64
@@ -128,7 +117,7 @@ func Inventory(ctx *discord.CmdContext) {
 	rarityA := ctx.Arguments.GetArg("rarity", 6, 0)
 	favoritesA := ctx.Arguments.GetArg("favorites", 7, false)
 	page, _ = strconv.Atoi(fmt.Sprint(pageA.Value))
-	charName = fmt.Sprint(charNameA.Value)
+	grimmName = fmt.Sprint(charNameA.Value)
 	level, _ = strconv.Atoi(fmt.Sprint(levelA.Value))
 	valueAbove, _ = strconv.ParseFloat(fmt.Sprint(valueAboveA.Value), 64)
 	valueBelow, _ = strconv.ParseFloat(fmt.Sprint(valueBelowA.Value), 64)
@@ -139,7 +128,7 @@ func Inventory(ctx *discord.CmdContext) {
 	filtering := charNameA.Found || levelA.Found || valueAboveA.Found || valueBelowA.Found || buffsA.Found || rarityA.Found
 
 	filters := &models.InvFilters{
-		Name:      charName,
+		Name:      grimmName,
 		Level:     level,
 		ValAbove:  valueAbove,
 		ValBelow:  valueBelow,
@@ -149,7 +138,7 @@ func Inventory(ctx *discord.CmdContext) {
 		Filtering: filtering,
 	}
 
-	pageMax := int(math.Ceil(float64(len(ctx.Player.Characters)) / 10))
+	pageMax := int(math.Ceil(float64(len(ctx.Player.Grimms)) / 10))
 
 	if ctx.IsComponent {
 		d := ctx.Menu.Data.(*inventoryMenuData)
@@ -174,10 +163,10 @@ func Inventory(ctx *discord.CmdContext) {
 	}
 
 	// Character field
-	if len(ctx.Player.Characters) != 0 {
+	if len(ctx.Player.Grimms) != 0 {
 		n := 0
-		for _, char := range ctx.Player.Characters {
-			if char.CheckConditions(filters) {
+		for _, grimm := range ctx.Player.Grimms {
+			if grimm.CheckConditions(filters) {
 				n++
 			}
 		}
@@ -186,16 +175,16 @@ func Inventory(ctx *discord.CmdContext) {
 			page = pageMax
 		}
 		n = 0
-		charsField := &discordgo.MessageEmbedField{
-			Name: fmt.Sprintf("Characters (page %d/%d) :", page, pageMax),
+		grimmsField := &discordgo.MessageEmbedField{
+			Name: fmt.Sprintf("Grimms (page %d/%d) :", page, pageMax),
 		}
 		// Filtering
-		for i, char := range ctx.Player.Characters {
-			if !char.CheckConditions(filters) {
+		for i, grimm := range ctx.Player.Grimms {
+			if !grimm.CheckConditions(filters) {
 				continue
 			}
 			if n%charPerPage != 0 {
-				charsField.Value += "\n"
+				grimmsField.Value += "\n"
 			}
 			//Correct interval : [(p-1)*10, p*10]
 			if n < (page-1)*10 || n >= page*10 {
@@ -203,21 +192,21 @@ func Inventory(ctx *discord.CmdContext) {
 				continue
 			}
 			n++
-			charsField.Value += fmt.Sprintf("`C%d | %s`", i+1, char.FullString())
+			grimmsField.Value += fmt.Sprintf("`C%d | %s`", i+1, grimm.FullString())
 		}
 
 		if n > 0 {
-			fields = append(fields, charsField)
+			fields = append(fields, grimmsField)
 		} else {
 			fields = append(fields, &discordgo.MessageEmbedField{
-				Name:  "Characters :",
-				Value: "You have no characters to be shown (maybe change your filters?)",
+				Name:  "Grimms :",
+				Value: "You have no grimms to be shown (maybe change your filters?)",
 			})
 		}
 	} else {
 		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:  "Characters :",
-			Value: "You have no characters to be shown.",
+			Name:  "Grimms :",
+			Value: "You have no grimms to be shown.",
 		})
 	}
 
@@ -281,7 +270,7 @@ func Inventory(ctx *discord.CmdContext) {
 
 	reply := &discordgo.MessageSend{
 		Embed: &discordgo.MessageEmbed{
-			Title:       fmt.Sprintf("%s's characters", ctx.Author.Username),
+			Title:       fmt.Sprintf("%s's Grimms", ctx.Author.Username),
 			Description: fmt.Sprintf("To select a character, please type `%sselect <PersonaID>`.", ctx.Guild.Prefix),
 			Color:       config.Botcolor,
 			Fields:      fields,
@@ -300,7 +289,7 @@ func Inventory(ctx *discord.CmdContext) {
 	})
 }
 
-func InventoryPages(ctx *discord.CmdContext) {
+func PackPages(ctx *discord.CmdContext) {
 	d := ctx.Menu.Data.(*inventoryMenuData)
 
 	switch strings.Split(ctx.ComponentData.CustomID, "-")[1] {
@@ -320,38 +309,5 @@ func InventoryPages(ctx *discord.CmdContext) {
 		Type: discordgo.InteractionResponseDeferredMessageUpdate,
 	})
 
-	Inventory(ctx)
-}
-
-func inventoryComponent(menuID string) []discordgo.MessageComponent {
-	return []discordgo.MessageComponent{
-		&discordgo.ActionsRow{
-			Components: []discordgo.MessageComponent{
-				&discordgo.Button{
-					Label: "Prev",
-					Emoji: discordgo.ComponentEmoji{
-						Name: "⬅️",
-					},
-					Style:    discordgo.SecondaryButton,
-					CustomID: menuID + "-prev",
-				},
-				&discordgo.Button{
-					Label: "Refresh",
-					Emoji: discordgo.ComponentEmoji{
-						Name: "🔄",
-					},
-					Style:    discordgo.SecondaryButton,
-					CustomID: menuID + "-refresh",
-				},
-				&discordgo.Button{
-					Label: "Next",
-					Emoji: discordgo.ComponentEmoji{
-						Name: "➡️",
-					},
-					Style:    discordgo.SecondaryButton,
-					CustomID: menuID + "-next",
-				},
-			},
-		},
-	}
+	Pack(ctx)
 }
