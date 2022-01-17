@@ -14,12 +14,15 @@ const (
 )
 
 type CharacterFilters struct {
-	Name     string
-	Level    int
-	ValAbove float64
-	ValBelow float64
-	Buffs    int
-	Rarity   int
+	Name      string
+	Level     int
+	ValAbove  float64
+	ValBelow  float64
+	Buffs     int
+	Rarity    int
+	Favorites bool
+
+	Filtering bool
 }
 
 type CharacterStats struct {
@@ -133,22 +136,27 @@ func (c *Character) FullString() string {
 }
 
 func (c *Character) CheckConditions(f *CharacterFilters) bool {
-	if f.Name != "" && !(strings.Contains(strings.ToLower(c.Name), strings.ToLower(f.Name))) {
-		return false
+	if f.Filtering {
+		if f.Name != "" && !(strings.Contains(strings.ToLower(c.Name), strings.ToLower(f.Name))) {
+			return false
+		}
+		if f.Level != 1000 && c.Level != f.Level {
+			return false
+		}
+		if c.Stats.Value < f.ValAbove {
+			return false
+		}
+		if c.Stats.Value > f.ValBelow {
+			return false
+		}
+		if f.Rarity != -1 && c.Rarity != f.Rarity {
+			return false
+		}
+		if f.Buffs != 0 && c.Buffs != f.Buffs {
+			return false
+		}
 	}
-	if f.Level != 1000 && c.Level != f.Level {
-		return false
-	}
-	if c.Stats.Value < f.ValAbove {
-		return false
-	}
-	if c.Stats.Value > f.ValBelow {
-		return false
-	}
-	if f.Rarity != -1 && c.Rarity != f.Rarity {
-		return false
-	}
-	if f.Buffs != 0 && c.Buffs != f.Buffs {
+	if f.Favorites && !c.IsInFavorites {
 		return false
 	}
 	return true

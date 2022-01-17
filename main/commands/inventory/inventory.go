@@ -89,6 +89,12 @@ var InventoryCommand = &discord.Command{
 			Size:        1,
 			Type:        discordgo.ApplicationCommandOptionString,
 		},
+		{
+			Name:        "favorites",
+			Description: "Filter your inventory by favorites.",
+			Size:        1,
+			Type:        discordgo.ApplicationCommandOptionBoolean,
+		},
 	},
 }
 
@@ -110,6 +116,7 @@ func Inventory(ctx *discord.CmdContext) {
 	var valueBelow float64
 	var buffs int
 	var rarity int
+	var favorites bool
 
 	// Arguments
 	pageA := ctx.Arguments.GetArg("page", 0, 1)
@@ -119,6 +126,7 @@ func Inventory(ctx *discord.CmdContext) {
 	valueBelowA := ctx.Arguments.GetArg("value_below", 4, 0)
 	buffsA := ctx.Arguments.GetArg("buffs", 5, 0)
 	rarityA := ctx.Arguments.GetArg("rarity", 6, 0)
+	favoritesA := ctx.Arguments.GetArg("favorites", 7, false)
 	page, _ = strconv.Atoi(fmt.Sprint(pageA.Value))
 	charName = fmt.Sprint(charNameA.Value)
 	level, _ = strconv.Atoi(fmt.Sprint(levelA.Value))
@@ -126,15 +134,21 @@ func Inventory(ctx *discord.CmdContext) {
 	valueBelow, _ = strconv.ParseFloat(fmt.Sprint(valueBelowA.Value), 64)
 	buffs, _ = strconv.Atoi(fmt.Sprint(buffsA.Value))
 	rarity, _ = strconv.Atoi(fmt.Sprint(rarityA.Value))
+	favorites, _ = favoritesA.Value.(bool)
+
+	filtering := charNameA.Found || levelA.Found || valueAboveA.Found || valueBelowA.Found || buffsA.Found || rarityA.Found
 
 	filters := &models.CharacterFilters{
-		Name:     charName,
-		Level:    level,
-		ValAbove: valueAbove,
-		ValBelow: valueBelow,
-		Buffs:    buffs,
-		Rarity:   rarity,
+		Name:      charName,
+		Level:     level,
+		ValAbove:  valueAbove,
+		ValBelow:  valueBelow,
+		Buffs:     buffs,
+		Rarity:    rarity,
+		Favorites: favorites,
+		Filtering: filtering,
 	}
+
 	pageMax := int(math.Ceil(float64(len(ctx.Player.Characters)) / 10))
 
 	if ctx.IsComponent {
@@ -151,8 +165,6 @@ func Inventory(ctx *discord.CmdContext) {
 		page = d.Page
 	}
 
-	filtering := charNameA.Found || levelA.Found || valueAboveA.Found || valueBelowA.Found || buffsA.Found || rarityA.Found
-
 	// Useful stuff
 	if page <= 0 {
 		page = pageMax
@@ -163,25 +175,23 @@ func Inventory(ctx *discord.CmdContext) {
 
 	// Character field
 	if len(ctx.Player.Characters) != 0 {
+		n := 0
+		for _, char := range ctx.Player.Characters {
+			if char.CheckConditions(filters) {
+				n++
+			}
+		}
+		pageMax = int(math.Ceil(float64(n) / 10))
+		if page > pageMax {
+			page = pageMax
+		}
+		n = 0
 		charsField := &discordgo.MessageEmbedField{
 			Name: fmt.Sprintf("Characters (page %d/%d) :", page, pageMax),
 		}
-		n := 0
-		if filtering {
-			for _, char := range ctx.Player.Characters {
-				if char.CheckConditions(filters) {
-					n++
-				}
-			}
-			pageMax = int(math.Ceil(float64(n) / 10))
-			if page > pageMax {
-				page = pageMax
-			}
-		}
-		n = 0
 		// Filtering
 		for i, char := range ctx.Player.Characters {
-			if filtering && char.CheckConditions(filters) {
+			if !char.CheckConditions(filters) {
 				continue
 			}
 			if n%charPerPage != 0 {

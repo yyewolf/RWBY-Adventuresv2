@@ -57,6 +57,83 @@ var FavoritesCommand = &discord.Command{
 				},
 			},
 		},
+		{
+
+			Name:        "view",
+			Description: "View informations about your favorites persona.",
+			Menu:        discord.PersonasMenu,
+			Call:        Favorites,
+			Args: []discord.Arg{
+				{
+					Name:        "page",
+					Description: "The page of your inventory you want to check.",
+					Size:        1,
+					Type:        discordgo.ApplicationCommandOptionInteger,
+				},
+				{
+					Name:        "name",
+					Description: "Filter your inventory by name.",
+					Size:        1,
+					Type:        discordgo.ApplicationCommandOptionString,
+				},
+				{
+					Name:        "level",
+					Description: "Filter your inventory by level.",
+					Size:        1,
+					Type:        discordgo.ApplicationCommandOptionInteger,
+				},
+				{
+					Name:        "rarity",
+					Description: "Filter your inventory by rarity.",
+					Size:        1,
+					Choices: []*discord.Choice{
+						{
+							Name:  "Common",
+							Value: 0,
+						},
+						{
+							Name:  "Uncommon",
+							Value: 1,
+						},
+						{
+							Name:  "Rare",
+							Value: 2,
+						},
+						{
+							Name:  "Very_Rare",
+							Value: 3,
+						},
+						{
+							Name:  "Legendary",
+							Value: 4,
+						},
+						{
+							Name:  "Collector",
+							Value: 5,
+						},
+					},
+					Type: discordgo.ApplicationCommandOptionInteger,
+				},
+				{
+					Name:        "arms",
+					Description: "Filter your inventory by amount of arm.",
+					Size:        1,
+					Type:        discordgo.ApplicationCommandOptionInteger,
+				},
+				{
+					Name:        "value_above",
+					Description: "Filter your inventory by value.",
+					Size:        1,
+					Type:        discordgo.ApplicationCommandOptionString,
+				},
+				{
+					Name:        "value_below",
+					Description: "Filter your inventory by value.",
+					Size:        1,
+					Type:        discordgo.ApplicationCommandOptionString,
+				},
+			},
+		},
 	},
 }
 
