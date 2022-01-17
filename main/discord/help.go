@@ -10,15 +10,15 @@ import (
 type menuName string
 
 const (
-	GeneralMenu  menuName = "General"
-	PersonasMenu menuName = "Personas"
+	GeneralMenu   menuName = "General"
+	InventoryMenu menuName = "Inventory"
 )
 
 func menuEmoji(name string) string {
 	switch name {
 	case string(GeneralMenu):
 		return "🖥️"
-	case string(PersonasMenu):
+	case string(InventoryMenu):
 		return "🛍️"
 	}
 	return ""

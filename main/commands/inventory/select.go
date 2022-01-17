@@ -12,7 +12,7 @@ import (
 var SelectCommand = &discord.Command{
 	Name:        "select",
 	Description: "Select a persona.",
-	Menu:        discord.PersonasMenu,
+	Menu:        discord.InventoryMenu,
 	Call:        SelectPersona,
 	Args: []discord.Arg{
 		{

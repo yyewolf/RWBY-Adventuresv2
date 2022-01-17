@@ -14,7 +14,7 @@ import (
 var RemoveCommand = &discord.Command{
 	Name:        "remove",
 	Description: "Remove a persona from your bags.",
-	Menu:        discord.PersonasMenu,
+	Menu:        discord.InventoryMenu,
 	Call:        RemovePersona,
 	Args: []discord.Arg{
 		{

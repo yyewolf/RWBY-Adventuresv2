@@ -15,7 +15,7 @@ import (
 var InfoCommand = &discord.Command{
 	Name:        "info",
 	Description: "View informations about a certain persona.",
-	Menu:        discord.PersonasMenu,
+	Menu:        discord.InventoryMenu,
 	Call:        Info,
 	Args: []discord.Arg{
 		{

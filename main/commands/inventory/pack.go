@@ -15,7 +15,7 @@ import (
 var PackCommand = &discord.Command{
 	Name:        "pack",
 	Description: "Check out your pack (grimm inventory).",
-	Menu:        discord.PersonasMenu,
+	Menu:        discord.InventoryMenu,
 	Call:        Pack,
 	Args: []discord.Arg{
 		{

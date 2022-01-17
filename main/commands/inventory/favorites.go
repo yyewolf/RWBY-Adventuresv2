@@ -13,7 +13,7 @@ var FavoritesCommand = &discord.Command{
 		{
 			Name:        "add",
 			Description: "Adds a persona to your favorites.",
-			Menu:        discord.PersonasMenu,
+			Menu:        discord.InventoryMenu,
 			Call:        AddFavoritePersona,
 			Args: []discord.Arg{
 				{
@@ -35,7 +35,7 @@ var FavoritesCommand = &discord.Command{
 		{
 			Name:        "remove",
 			Description: "Removes a persona from your favorites.",
-			Menu:        discord.PersonasMenu,
+			Menu:        discord.InventoryMenu,
 			Call:        RemoveFavoritePersona,
 			Args: []discord.Arg{
 				{
@@ -58,7 +58,7 @@ var FavoritesCommand = &discord.Command{
 
 			Name:        "chars",
 			Description: "View informations about your favorites characters.",
-			Menu:        discord.PersonasMenu,
+			Menu:        discord.InventoryMenu,
 			Call:        FavoriteChars,
 			Args: []discord.Arg{
 				{
@@ -135,7 +135,7 @@ var FavoritesCommand = &discord.Command{
 
 			Name:        "grimms",
 			Description: "View informations about your favorites grimms.",
-			Menu:        discord.PersonasMenu,
+			Menu:        discord.InventoryMenu,
 			Call:        FavoriteGrimms,
 			Args: []discord.Arg{
 				{

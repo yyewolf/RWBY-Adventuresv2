@@ -15,7 +15,7 @@ import (
 var InventoryCommand = &discord.Command{
 	Name:        "inventory",
 	Description: "Check out your inventory.",
-	Menu:        discord.PersonasMenu,
+	Menu:        discord.InventoryMenu,
 	Call:        Inventory,
 	Aliases: discord.CmdAlias{
 		"inv",
