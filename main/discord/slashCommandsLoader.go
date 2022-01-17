@@ -66,7 +66,7 @@ func (r *router) LoadSlashCommands(sessions []*discordgo.Session) {
 		for _, dcmd := range dcmds {
 			remove := true
 			for _, botcmd := range cmds {
-				if botcmd.Name == dcmd.Name && botcmd.Type == dcmd.Type && len(botcmd.Options) == len(dcmd.Options) {
+				if IsCommandEqual(dcmd, botcmd) {
 					remove = false
 					break
 				}
@@ -80,7 +80,7 @@ func (r *router) LoadSlashCommands(sessions []*discordgo.Session) {
 		for _, botcmd := range cmds {
 			add := true
 			for _, dcmd := range dcmds {
-				if botcmd.Name == dcmd.Name && botcmd.Type == dcmd.Type && len(botcmd.Options) == len(dcmd.Options) {
+				if IsCommandEqual(dcmd, botcmd) {
 					add = false
 					break
 				}
@@ -96,4 +96,66 @@ func (r *router) LoadSlashCommands(sessions []*discordgo.Session) {
 		}
 		break
 	}
+}
+
+func isOptionEqual(c1, c2 *discordgo.ApplicationCommandOption) (b bool) {
+	if c1.Name != c2.Name {
+		return
+	}
+	if c1.Description != c2.Description {
+		return
+	}
+	if c1.Type != c2.Type {
+		return
+	}
+	if len(c1.Options) != len(c2.Options) {
+		return
+	}
+	if len(c1.Choices) != len(c2.Choices) {
+		return
+	}
+	if c1.Autocomplete != c2.Autocomplete {
+		return
+	}
+	if c1.Required != c2.Required {
+		return
+	}
+	if len(c1.ChannelTypes) != len(c2.ChannelTypes) {
+		return
+	}
+	for i, chan1 := range c1.ChannelTypes {
+		chan2 := c2.ChannelTypes[i]
+		if chan1 != chan2 {
+			return
+		}
+	}
+	for i, opt1 := range c1.Options {
+		opt2 := c2.Options[i]
+		if !isOptionEqual(opt1, opt2) {
+			return
+		}
+	}
+	return true
+}
+
+func IsCommandEqual(c1, c2 *discordgo.ApplicationCommand) (b bool) {
+	if c1.Name != c2.Name {
+		return
+	}
+	if c1.Description != c2.Description {
+		return
+	}
+	if c1.Type != c2.Type {
+		return
+	}
+	if len(c1.Options) != len(c2.Options) {
+		return
+	}
+	for i, opt1 := range c1.Options {
+		opt2 := c2.Options[i]
+		if !isOptionEqual(opt1, opt2) {
+			return
+		}
+	}
+	return true
 }
