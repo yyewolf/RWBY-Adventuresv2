@@ -6,14 +6,13 @@ import (
 	"rwby-adventures/config"
 	"rwby-adventures/main/discord"
 	"rwby-adventures/models"
-	"strconv"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var PlayerInfoCommand = &discord.Command{
-	Name:        "profile",
+	Name:        "my",
 	Description: "View your RWBY Adventures profile.",
 	Aliases:     discord.CmdAlias{"me"},
 	Menu:        discord.GeneralMenu,
@@ -41,8 +40,8 @@ func Me(ctx *discord.CmdContext) {
 	p := ctx.Player
 
 	// Strings
-	var resetStringBox = "✅ - `Loots` (**" + strconv.Itoa(p.LastBoxes.Amount) + "/" + strconv.Itoa(p.Maxlootbox) + "**)"
-	var resetStringGamble = "✅ - `Gamble` (**" + strconv.Itoa(p.Gamble.Amount) + "/3**)"
+	var resetStringBox = fmt.Sprintf("✅ - `Loots` (**%d/%d**)", p.LastBoxes.Amount, p.Maxlootbox)
+	var resetStringGamble = fmt.Sprintf("✅ - `Gamble` (**%d/3**)", p.Gamble.Amount)
 	var resetStringDungeon = "✅ - `Dungeon`"
 	var missionTime = ""
 	var huntTime = ""
@@ -60,37 +59,39 @@ func Me(ctx *discord.CmdContext) {
 
 	canLootBox, _ := p.CanDropLootBox()
 	if !canLootBox {
-		resetStringBox = "🕓 - `Loots` (" + TimeLeftString(p.LastBoxes.Time, 86400) + ")"
+		resetStringBox = fmt.Sprintf("🕓 - `Loots` (%s)", TimeLeftString(p.LastBoxes.Time, 86400))
 	}
 	canGamble, _ := p.CanGamble()
 	if !canGamble {
-		resetStringGamble = "🕓 - `Gamble` (" + TimeLeftString(p.Gamble.Time, 86400) + ")"
+		resetStringGamble = fmt.Sprintf("🕓 - `Gamble` (%s)", TimeLeftString(p.Gamble.Time, 86400))
 	}
 	canDungeon := p.CanDungeon()
 	if !canDungeon {
-		resetStringDungeon = "🕓 - `Dungeon` (" + TimeLeftString(p.Status.LastDungeon, 18000) + ")" //5*60*60
+		resetStringDungeon = fmt.Sprintf("🕓 - `Dungeon` (%s)", TimeLeftString(p.Status.LastDungeon, 18000)) //5*60*60
 	}
 	if p.Missions.IsInMission {
-		days := strconv.Itoa(int(math.Ceil(float64(p.Missions.MissionMsgLeft) / 24)))
-		missionTime = "`Time left : " + days + " days.`\n"
+		days := int(math.Ceil(float64(p.Missions.MissionMsgLeft) / 24))
+		missionTime = fmt.Sprintf("`Time left : %d days.`\n", days)
 	}
 	if p.Missions.IsInHunt {
-		days := strconv.Itoa(int(math.Ceil(float64(p.Missions.HuntMsgLeft) / 24)))
-		huntTime = "\n`Time left : " + days + " days.`"
+		days := int(math.Ceil(float64(p.Missions.HuntMsgLeft) / 24))
+		huntTime = fmt.Sprintf("\n`Time left : %d days.`", days)
 	}
 	if p.Shop.LuckBoost {
-		luckBoostString = " (" + strconv.Itoa(p.Shop.LuckBoostTime) + "/20)"
+		luckBoostString = fmt.Sprintf(" (%d/20)", p.Shop.LuckBoostTime)
 	}
 
 	// Embed Profile
 
 	infoProfile := &discordgo.MessageEmbedField{
 		Name: "**Player :**",
-		Value: "Level **" + strconv.FormatInt(p.Level, 10) + "**.\n" +
-			"CP : **" + strconv.FormatInt(p.CP, 10) + "**/**" + strconv.FormatInt(p.MaxCP, 10) + "**.\n" +
-			"Slots : **" + strconv.Itoa(p.MaxChar()) + "**.\n" +
-			"Boxes : **" + strconv.Itoa(p.Lootbox()) + "/" + strconv.Itoa(p.MaxChar()) + "**." + "\n" +
-			"Liens : **" + strconv.FormatInt(p.Balance, 10) + "Ⱡ**.",
+		Value: fmt.Sprintf(`Level **%d**.
+			CP : **%d**/**%d**.
+			Slots : **%d**.
+			Boxes : **%d**/**%d**.
+			Liens : **%dⱠ**.`,
+			p.Level, p.CP, p.MaxCP, p.MaxChar(), p.Lootbox(), p.MaxChar(), p.Balance,
+		),
 		Inline: true,
 	}
 
@@ -98,9 +99,11 @@ func Me(ctx *discord.CmdContext) {
 
 	infoCoolDown := &discordgo.MessageEmbedField{
 		Name: "**Cooldowns :**",
-		Value: resetStringBox + "\n" +
-			resetStringGamble + "\n" +
-			resetStringDungeon,
+		Value: fmt.Sprintf(`%s
+		%s
+		%s`,
+			resetStringBox, resetStringGamble, resetStringDungeon,
+		),
 		Inline: true,
 	}
 
@@ -122,11 +125,13 @@ func Me(ctx *discord.CmdContext) {
 
 	infoInventory := &discordgo.MessageEmbedField{
 		Name: "**Inventory :**",
-		Value: "Characters : **" + strconv.Itoa(p.CharAmount()) + "/" + strconv.Itoa(p.MaxChar()) + "**.\n" +
-			"Classic boxes : **" + strconv.Itoa(p.Boxes.Boxes) + "**.\n" +
-			"Rare boxes : **" + strconv.Itoa(p.Boxes.RareBoxes) + "**.\n" +
-			"Limited boxes : **" + strconv.Itoa(charLimited) + "**.\n" +
-			"Special boxes : **" + strconv.Itoa(len(p.SpecialBoxes)) + "**.",
+		Value: fmt.Sprintf(`Characters : **%d/%d**.
+			Classic boxes : **%d**.
+			Rare boxes : **%d**.
+			Limited boxes : **%d**.
+			Special boxes : **%d**.`,
+			p.CharAmount(), p.MaxChar(), p.Boxes.Boxes, p.Boxes.RareBoxes, charLimited, len(p.SpecialBoxes),
+		),
 		Inline: true,
 	}
 
@@ -134,10 +139,12 @@ func Me(ctx *discord.CmdContext) {
 
 	infoPack := &discordgo.MessageEmbedField{
 		Name: "**Pack :**",
-		Value: "Grimms : **" + strconv.Itoa(p.GrimmAmount()) + "/" + strconv.Itoa(p.MaxChar()) + "**.\n" +
-			"Classic **G**boxes : **" + strconv.Itoa(p.Boxes.GrimmBoxes) + "**.\n" +
-			"Rare **G**boxes : **" + strconv.Itoa(p.Boxes.GrimmBoxes) + "**.\n" +
-			"Limited **G**boxes : **" + strconv.Itoa(grimmLimited) + "**.",
+		Value: fmt.Sprintf(`Grimms : **%d/%d**.
+			Classic **G**boxes : **%d**.
+			Rare **G**boxes : **%d**.
+			Limited **G**boxes : **%d**.`,
+			p.GrimmAmount(), p.MaxChar(), p.Boxes.GrimmBoxes, p.Boxes.RareGrimmBoxes, grimmLimited,
+		),
 		Inline: true,
 	}
 	infoBoosts := &discordgo.MessageEmbedField{
@@ -148,8 +155,10 @@ func Me(ctx *discord.CmdContext) {
 	}
 	infoMore := &discordgo.MessageEmbedField{
 		Name: "**More :**",
-		Value: "More infos [here](https://me.rwbyadventures.com/" + ctx.Author.ID + ").\n" +
-			"More settings [here](https://settings.rwbyadventures.com/).",
+		Value: fmt.Sprintf(`More infos [here](https://me.rwbyadventures.com/%s).
+			More settings [here](https://settings.rwbyadventures.com/).`,
+			ctx.Author.ID,
+		),
 		Inline: true,
 	}
 	infoReport := &discordgo.MessageEmbedField{
