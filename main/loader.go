@@ -29,6 +29,7 @@ func StartDiscord() {
 	discord.AddCmd(addchar)
 	discord.AddCmd(del)
 	discord.AddCmd(commands.HelpCommand)
+	
 	discord.AddCmd(commands_inventory.PlayerInfoCommand)
 	discord.AddCmd(commands_inventory.InfoCommand)
 	discord.AddCmd(commands_inventory.RemoveCommand)

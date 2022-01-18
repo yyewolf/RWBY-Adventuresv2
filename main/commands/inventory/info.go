@@ -123,7 +123,7 @@ func Info(ctx *discord.CmdContext) {
 func charInfo(ctx *discord.CmdContext, char *models.Character, number int) {
 	// Useful data
 	original := char.ToRealChar()
-	imgData, _ := static.CharBox.ReadFile(original.ImageFile)
+	imgData, _ := static.DatabaseFS.ReadFile(original.ImageFile)
 	imgDecoded := bytes.NewBuffer(imgData)
 
 	// DiscordGo Stuff
@@ -181,7 +181,7 @@ func charInfo(ctx *discord.CmdContext, char *models.Character, number int) {
 func grimmInfo(ctx *discord.CmdContext, grimm *models.Grimm, number int) {
 	// Useful data
 	original := grimm.ToRealGrimm()
-	imgData, _ := static.CharBox.ReadFile(original.ImageFile)
+	imgData, _ := static.DatabaseFS.ReadFile(original.ImageFile)
 	imgDecoded := bytes.NewBuffer(imgData)
 
 	// DiscordGo Stuff
