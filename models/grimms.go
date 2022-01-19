@@ -87,6 +87,10 @@ func (g *Grimm) FullString() string {
 	return fmt.Sprintf("`%s level %d (%d/%dXP) %s (%.2f%%)`", g.RarityString(), g.Level, g.XP, g.XPCap, g.Name, g.Stats.Value)
 }
 
+func (g *Grimm) MiniString() string {
+	return fmt.Sprintf("%s level %d %s (%.2f%%)", g.RarityString(), g.Level, g.Name, g.Stats.Value)
+}
+
 func (g *Grimm) CheckConditions(f *InvFilters) bool {
 	if f.Filtering {
 		if f.Name != "" && !(strings.Contains(strings.ToLower(g.Name), strings.ToLower(f.Name))) {

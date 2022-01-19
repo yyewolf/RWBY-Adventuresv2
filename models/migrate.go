@@ -33,5 +33,9 @@ func init() {
 		&Auction{},
 		&AuctionBidders{},
 	)
+	config.Database.AutoMigrate(
+		&Trade{},
+		&TradeContent{},
+	)
 	fmt.Println("[DATABASE] Automigrated models.")
 }

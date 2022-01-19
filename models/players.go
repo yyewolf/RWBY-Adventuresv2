@@ -43,6 +43,8 @@ type Player struct {
 	CharInMission Character     `gorm:"-"`
 	GrimmInHunt   Grimm         `gorm:"-"`
 	Market        *PlayerMarket `gorm:"-"`
+	TradeSent     int           `gorm:"-"`
+	TradeReceived int           `gorm:"-"`
 }
 
 func GetPlayer(id string) *Player {
@@ -72,6 +74,11 @@ func GetPlayer(id string) *Player {
 			},
 		}
 	}
+	e = config.Database.Find(&Trade{}, "sender_id = ?", p.DiscordID)
+	p.TradeSent = int(e.RowsAffected)
+	e = config.Database.Find(&Trade{}, "receiver_id = ?", p.DiscordID)
+	p.TradeReceived = int(e.RowsAffected)
+
 	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.Characters, "user_id = ? and not in_mission", p.DiscordID)
 	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.Grimms, "user_id = ? and not in_hunt", p.DiscordID)
 	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.CharInMission, "user_id = ? and in_mission", p.DiscordID)
@@ -173,4 +180,35 @@ func (p *Player) GetLatestPersona() (bool, *Character, *Grimm, int, error) {
 		return false, c, g, indexc, nil
 	}
 	return true, c, g, indexg, nil
+}
+
+func (p *Player) VerifyChars(s []string) bool {
+	for _, checkID := range s {
+		found := false
+		for _, char := range p.Characters {
+			if char.CharID == checkID {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+	return true
+}
+func (p *Player) VerifyGrimms(s []string) bool {
+	for _, checkID := range s {
+		found := false
+		for _, char := range p.Grimms {
+			if char.GrimmID == checkID {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+	return true
 }

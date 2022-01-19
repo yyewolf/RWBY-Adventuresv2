@@ -39,7 +39,7 @@
 <body class="stylish-color-dark">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-6 col-md-6 mt-5">
+            <div class="col-lg-6 col-12 mt-5">
                 <div class="navbar container-fluid stylish-color">
                     <h4 class="text-light">Your inventory :</h4>
                     <div class="navbar rounded-lg container-fluid dark-color">
@@ -89,18 +89,13 @@
                                          </span>
                                     </div>
                                 </li>
-
-                                <li class="d-flex list-group-item col-xs-4 bg-dark text-light m-2 align-items-center rounded-lg">
-                                    <img height="50px" class="float-left rounded-circle mr-2" src="https://img.rwbyadventures.com/Penny_Polendina/Default_Icon.webp" />
-                                    <span class="align-middle">Penny Polendina (Rare 50%)</span>
-                                </li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-6 col-md-6 mt-5">
+            <div class="col-lg-6 col-12 mt-5">
                 <div class="navbar container-fluid stylish-color">
                     <h4 class="text-light">Their inventory :</h4>
                     <div class="navbar rounded-lg container-fluid dark-color">
@@ -150,11 +145,6 @@
                                          </span>
                                     </div>
                                 </li>
-
-                                <li class="d-flex list-group-item col-xs-4 bg-dark text-light m-2 align-items-center rounded-lg">
-                                    <img height="50px" class="float-left rounded-circle mr-2" src="https://img.rwbyadventures.com/Penny_Polendina/Default_Icon.webp" />
-                                    <span class="align-middle">Penny Polendina (Rare 50%)</span>
-                                </li>
                             </ul>
                         </div>
                     </div>
@@ -162,9 +152,19 @@
             </div>
         </div>
     </div>
+    <div class="container-fluid">
+        <div class="d-flex justify-content-center">
+            <input type="button" class="btn btn-primary" onclick="submit()" name="submit" value="Send your trade offer">
+        </div>
+    </div>
 </body>
 
 <footer>
+    <script>
+        var token = "{{.Token}}"
+        var ownID = "{{.User.ID}}"
+        var otherID = "{{.OtherID}}"
+    </script>
     <script src="assets/js/trade.js"></script>
 </footer>
 
