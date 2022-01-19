@@ -156,11 +156,11 @@ func TradeInfos(client *gosf.Client, request *gosf.Request) *gosf.Message {
 type TradeValidateContent struct {
 	Characters     []string `json:"chars"`
 	Grimms         []string `json:"grimms"`
-	Money          uint64   `json:"money"`
-	Boxes          uint64   `json:"classicboxes"`
-	RareBoxes      uint64   `json:"rareboxes"`
-	GrimmBoxes     uint64   `json:"classicgrimmboxes"`
-	RareGrimmBoxes uint64   `json:"raregrimmboxes"`
+	Money          int64    `json:"money"`
+	Boxes          int64    `json:"classicboxes"`
+	RareBoxes      int64    `json:"rareboxes"`
+	GrimmBoxes     int64    `json:"classicgrimmboxes"`
+	RareGrimmBoxes int64    `json:"raregrimmboxes"`
 }
 
 type TradeClientValidate struct {
@@ -191,6 +191,13 @@ func TradeValidate(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	player := models.GetPlayer(d.User.ID)
 	target := models.GetPlayer(d.OtherID)
 
+	if content.UserSends.Money < 0 || content.UserSends.Boxes < 0 || content.UserSends.RareBoxes < 0 || content.UserSends.GrimmBoxes < 0 || content.UserSends.RareGrimmBoxes < 0 {
+		return gosf.NewFailureMessage("There is an issue with your boxes.")
+	}
+	if content.TargetSends.Money < 0 || content.TargetSends.Boxes < 0 || content.TargetSends.RareBoxes < 0 || content.TargetSends.GrimmBoxes < 0 || content.TargetSends.RareGrimmBoxes < 0 {
+		return gosf.NewFailureMessage("There is an issue with their boxes.")
+	}
+
 	// We check that the player has what he claims to
 	if !player.VerifyChars(content.UserSends.Characters) || !player.VerifyGrimms(content.UserSends.Grimms) {
 		return gosf.NewFailureMessage("There is an issue with your personas.")
@@ -208,11 +215,90 @@ func TradeValidate(client *gosf.Client, request *gosf.Request) *gosf.Message {
 		return gosf.NewFailureMessage("This person already has too much trades on hold.")
 	}
 
-	if player.TotalBalance() < int64(content.UserSends.Money) {
+	PlayerResult := &TradeValidateContent{
+		Money:          int64(player.TotalBalance()) + content.TargetSends.Money - content.UserSends.Money,
+		Boxes:          int64(player.Boxes.Boxes) + content.TargetSends.Boxes - content.UserSends.Boxes,
+		RareBoxes:      int64(player.Boxes.RareBoxes) + content.TargetSends.RareBoxes - content.UserSends.RareBoxes,
+		GrimmBoxes:     int64(player.Boxes.GrimmBoxes) + content.TargetSends.GrimmBoxes - content.UserSends.GrimmBoxes,
+		RareGrimmBoxes: int64(player.Boxes.RareGrimmBoxes) + content.TargetSends.RareGrimmBoxes - content.UserSends.RareGrimmBoxes,
+	}
+
+	TargetResult := &TradeValidateContent{
+		Money:          int64(target.TotalBalance()) - content.TargetSends.Money + content.UserSends.Money,
+		Boxes:          int64(target.Boxes.Boxes) - content.TargetSends.Boxes + content.UserSends.Boxes,
+		RareBoxes:      int64(target.Boxes.RareBoxes) - content.TargetSends.RareBoxes + content.UserSends.RareBoxes,
+		GrimmBoxes:     int64(target.Boxes.GrimmBoxes) - content.TargetSends.GrimmBoxes + content.UserSends.GrimmBoxes,
+		RareGrimmBoxes: int64(target.Boxes.RareGrimmBoxes) - content.TargetSends.RareGrimmBoxes + content.UserSends.RareGrimmBoxes,
+	}
+
+	if PlayerResult.Money < 0 {
 		return gosf.NewFailureMessage("You don't have enough balance.")
 	}
-	if target.TotalBalance() < int64(content.TargetSends.Money) {
-		return gosf.NewFailureMessage("This person doesn't have enough balance.")
+	if PlayerResult.Boxes < 0 {
+		return gosf.NewFailureMessage("You don't have enough boxes.")
+	}
+	if PlayerResult.RareBoxes < 0 {
+		return gosf.NewFailureMessage("You don't have enough rare boxes.")
+	}
+	if PlayerResult.GrimmBoxes < 0 {
+		return gosf.NewFailureMessage("You don't have enough grimm boxes.")
+	}
+	if PlayerResult.RareGrimmBoxes < 0 {
+		return gosf.NewFailureMessage("You don't have enough rare grimm boxes.")
+	}
+	if PlayerResult.Boxes+PlayerResult.RareBoxes > int64(player.MaxChar()) {
+		return gosf.NewFailureMessage("You would receive too much boxes.")
+	}
+	if PlayerResult.RareGrimmBoxes+PlayerResult.GrimmBoxes > int64(player.MaxChar()) {
+		return gosf.NewFailureMessage("You would receive too much grimm boxes.")
+	}
+
+	if TargetResult.Money < 0 {
+		return gosf.NewFailureMessage("They don't have enough balance.")
+	}
+	if TargetResult.Boxes < 0 {
+		return gosf.NewFailureMessage("They don't have enough boxes.")
+	}
+	if TargetResult.RareBoxes < 0 {
+		return gosf.NewFailureMessage("They don't have enough rare boxes.")
+	}
+	if TargetResult.GrimmBoxes < 0 {
+		return gosf.NewFailureMessage("They don't have enough grimm boxes.")
+	}
+	if TargetResult.RareGrimmBoxes < 0 {
+		return gosf.NewFailureMessage("They don't have enough rare grimm boxes.")
+	}
+	if TargetResult.Boxes+TargetResult.RareBoxes > int64(player.MaxChar()) {
+		return gosf.NewFailureMessage("They would receive too much boxes.")
+	}
+	if TargetResult.RareGrimmBoxes+TargetResult.GrimmBoxes > int64(player.MaxChar()) {
+		return gosf.NewFailureMessage("They would receive too much grimm boxes.")
+	}
+
+	if len(player.Characters)+len(content.TargetSends.Characters)-len(content.UserSends.Characters) > player.CharLimit {
+		return gosf.NewFailureMessage("You would receive too much characters.")
+	}
+	if len(player.Grimms)+len(content.TargetSends.Grimms)-len(content.UserSends.Grimms) > player.CharLimit {
+		return gosf.NewFailureMessage("You would receive too much grimms.")
+	}
+	if len(player.Characters)+len(content.TargetSends.Characters)-len(content.UserSends.Characters) < 0 {
+		return gosf.NewFailureMessage("You would be left without any characters.")
+	}
+	if len(player.Grimms)+len(content.TargetSends.Grimms)-len(content.UserSends.Grimms) < 0 {
+		return gosf.NewFailureMessage("You would be left without any grimms.")
+	}
+
+	if len(target.Characters)-len(content.TargetSends.Characters)+len(content.UserSends.Characters) > target.CharLimit {
+		return gosf.NewFailureMessage("They would receive too much characters.")
+	}
+	if len(target.Grimms)-len(content.TargetSends.Grimms)+len(content.UserSends.Grimms) > target.CharLimit {
+		return gosf.NewFailureMessage("They would receive too much grimms.")
+	}
+	if len(target.Characters)-len(content.TargetSends.Characters)+len(content.UserSends.Characters) < 0 {
+		return gosf.NewFailureMessage("They would be left without any characters.")
+	}
+	if len(target.Grimms)-len(content.TargetSends.Grimms)+len(content.UserSends.Grimms) < 0 {
+		return gosf.NewFailureMessage("They would be left without any grimms.")
 	}
 
 	s := discord.Session

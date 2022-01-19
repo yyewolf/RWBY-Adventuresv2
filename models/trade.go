@@ -14,11 +14,11 @@ type TradeContent struct {
 	UserID         string         `gorm:"column:user_id"`
 	Characters     pq.StringArray `gorm:"column:characters;not null;type:text[]"`
 	Grimms         pq.StringArray `gorm:"column:grimms;not null;type:text[]"`
-	Money          uint64         `gorm:"column:money;not null"`
-	Boxes          uint64         `gorm:"column:boxes;not null"`
-	RareBoxes      uint64         `gorm:"column:rare_boxes;not null"`
-	GrimmBoxes     uint64         `gorm:"column:grimm_boxes;not null"`
-	RareGrimmBoxes uint64         `gorm:"column:rare_grimm_boxes;not null"`
+	Money          int64          `gorm:"column:money;not null"`
+	Boxes          int64          `gorm:"column:boxes;not null"`
+	RareBoxes      int64          `gorm:"column:rare_boxes;not null"`
+	GrimmBoxes     int64          `gorm:"column:grimm_boxes;not null"`
+	RareGrimmBoxes int64          `gorm:"column:rare_grimm_boxes;not null"`
 }
 
 type Trade struct {
