@@ -315,7 +315,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		for _, char := range player.Characters {
 			if CharID == char.CharID {
 				char.UserID = target.DiscordID
-				config.Database.Save(char)
+				config.Database.Save(&char)
 				break
 			}
 		}
@@ -340,7 +340,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		for _, grimm := range player.Grimms {
 			if GrimmID == grimm.GrimmID {
 				grimm.UserID = target.DiscordID
-				config.Database.Save(grimm)
+				config.Database.Save(&grimm)
 				break
 			}
 		}
@@ -365,7 +365,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		for _, char := range target.Characters {
 			if CharID == char.CharID {
 				char.UserID = player.DiscordID
-				config.Database.Save(char)
+				config.Database.Save(&char)
 				break
 			}
 		}
@@ -390,7 +390,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		for _, grimm := range target.Grimms {
 			if GrimmID == grimm.GrimmID {
 				grimm.UserID = player.DiscordID
-				config.Database.Save(grimm)
+				config.Database.Save(&grimm)
 				break
 			}
 		}
