@@ -53,3 +53,8 @@ func GetTrade(id string) (t *Trade, err error) {
 	}
 	return
 }
+
+func (t *Trade) Delete() {
+	config.Database.Delete(&TradeContent{}, t.ID)
+	config.Database.Delete(t)
+}

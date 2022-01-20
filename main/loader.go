@@ -4,6 +4,7 @@ import (
 	"rwby-adventures/main/commands"
 	commands_inventory "rwby-adventures/main/commands/inventory"
 	commands_temporary "rwby-adventures/main/commands/temporary"
+	commands_trade "rwby-adventures/main/commands/trade"
 	"rwby-adventures/main/discord"
 
 	"github.com/bwmarrin/discordgo"
@@ -29,7 +30,7 @@ func StartDiscord() {
 	discord.AddCmd(addchar)
 	discord.AddCmd(del)
 	discord.AddCmd(commands.HelpCommand)
-	
+
 	discord.AddCmd(commands_inventory.PlayerInfoCommand)
 	discord.AddCmd(commands_inventory.InfoCommand)
 	discord.AddCmd(commands_inventory.RemoveCommand)
@@ -38,6 +39,8 @@ func StartDiscord() {
 	discord.AddCmd(commands_inventory.InventoryCommand)
 	discord.AddCmd(commands_inventory.PackCommand)
 	discord.AddCmd(commands_inventory.BalanceCommand)
+
+	discord.AddCmd(commands_trade.TradesCommand)
 
 	discord.MakeEmbed()
 

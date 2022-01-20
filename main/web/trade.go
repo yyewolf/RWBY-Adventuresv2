@@ -8,6 +8,7 @@ import (
 	"rwby-adventures/config"
 	"rwby-adventures/main/static"
 	"rwby-adventures/main/websocket"
+	"rwby-adventures/models"
 	"strings"
 
 	"github.com/gorilla/pat"
@@ -76,7 +77,7 @@ func startTradeService() {
 
 	mux.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", DirectoryListing(http.FileServer(http.FS(static.Assets)))))
 	mux.Get("/success", http.HandlerFunc(TradeSuccess))
-	mux.HandleFunc("/{id}", http.HandlerFunc(TradeIndex))
+	mux.HandleFunc("/t/{id}", http.HandlerFunc(TradeIndex))
 	go srv.ListenAndServe()
 }
 
@@ -102,13 +103,23 @@ func TradeIndex(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		goth.UseProviders(tradeProvider)
 		state := gothic.SetState(r)
-		tradeRedirections[state] = fmt.Sprintf("/%s", OtherID)
+		tradeRedirections[state] = fmt.Sprintf("/t/%s", OtherID)
 		r.URL.RawQuery += fmt.Sprintf("&state=%s", state)
 		state = gothic.SetState(r)
 		r = r.WithContext(context.WithValue(r.Context(), "provider", "discord"))
 		gothic.BeginAuthHandler(w, r)
 		return
 	}
+	target := models.GetPlayer(OtherID)
+	if target.IsNew {
+		templates.ExecuteTemplate(w, "tradeMessage.html", struct {
+			Message string
+		}{
+			Message: "You cannot trade with that person.",
+		})
+		return
+	}
+
 	token := uuid.NewV5(uuid.NewV4(), "trade").String()
 	data := &websocket.TradeTemplateData{
 		User: websocket.WebUser{
@@ -123,7 +134,7 @@ func TradeIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func TradeSuccess(w http.ResponseWriter, r *http.Request) {
-	templates.ExecuteTemplate(w, "tradeSuccess.html", struct {
+	templates.ExecuteTemplate(w, "tradeMessage.html", struct {
 		Message string
 	}{
 		Message: "Your trade has been sent, you can close this window.",
