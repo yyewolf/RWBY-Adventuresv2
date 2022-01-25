@@ -21,6 +21,7 @@ type TradeTemplateData struct {
 	User    WebUser
 	Token   string
 	OtherID string
+	Host    string
 }
 
 type TradeClientRequest struct {

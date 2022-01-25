@@ -2,6 +2,7 @@ package commands_trade
 
 import (
 	"fmt"
+	"rwby-adventures/config"
 	"rwby-adventures/main/discord"
 	"rwby-adventures/models"
 
@@ -100,7 +101,7 @@ func StartTrade(ctx *discord.CmdContext) {
 					discordgo.Button{
 						Label: "Here.",
 						Style: discordgo.LinkButton,
-						URL:   fmt.Sprintf("http://127.0.0.1:50/t/%s", TargetID),
+						URL:   fmt.Sprintf("http://%s%s/t/%s", config.TradeHost, config.TradePort, TargetID),
 					},
 				},
 			},

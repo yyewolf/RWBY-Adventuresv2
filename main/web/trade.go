@@ -19,7 +19,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-var tradeProvider = discord.New("375700234120200194", "P6KOz6Uvl8PWhY-hfx5IXo_posPDBu7D", "http://localhost:50/auth/discord/callback", discord.ScopeIdentify)
+var tradeProvider = discord.New("375700234120200194", "P6KOz6Uvl8PWhY-hfx5IXo_posPDBu7D", fmt.Sprintf("http://%s%s/auth/discord/callback", config.TradeHost, config.TradePort), discord.ScopeIdentify)
 var tradeRedirections = make(map[string]string)
 
 func startTradeService() {
@@ -29,7 +29,7 @@ func startTradeService() {
 
 	store := sessions.NewCookieStore(key)
 	store.MaxAge(maxAge)
-	store.Options.Domain = "localhost"
+	store.Options.Domain = config.TradeHost
 	store.Options.Path = "/"
 
 	gothic.Store = store
@@ -128,6 +128,7 @@ func TradeIndex(w http.ResponseWriter, r *http.Request) {
 		},
 		Token:   token,
 		OtherID: OtherID,
+		Host:    config.TradeHost,
 	}
 	websocket.Tokens.Add(token, data, 0)
 	templates.ExecuteTemplate(w, "trade.html", data)
