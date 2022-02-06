@@ -19,7 +19,7 @@ func OpenRareChar(ctx *discord.CmdContext) {
 		Box:        "Rare Character Box",
 		ValStd:     15,
 		ValMean:    55,
-		RarityRate: 0.55,
+		RarityRate: 1.125,
 	}
 	if OpenChar(ctx, b) {
 		config.Database.Model(ctx.Player.Boxes).Update("rare_char_boxes", gorm.Expr("rare_char_boxes - ?", 1))

@@ -94,7 +94,7 @@ type openMenuData struct {
 	Type      int
 }
 
-func (b *BoxFilter) FilterChars() (List []*chars.CharacterStruct) {
+func (b *BoxFilter) FilterChars() (List []chars.CharacterStruct) {
 	for _, char := range chars.BaseCharacters {
 		if !strings.Contains(char.Category, b.Category) {
 			continue
@@ -102,18 +102,17 @@ func (b *BoxFilter) FilterChars() (List []*chars.CharacterStruct) {
 		if b.OnlyLimited && !char.Limited {
 			continue
 		}
-		if b.IncludeLimited {
-			List = append(List, &char)
-			continue
+		if b.IncludeLimited && char.Limited {
+			List = append(List, char)
 		}
 		if !char.Limited {
-			List = append(List, &char)
+			List = append(List, char)
 		}
 	}
 	return
 }
 
-func (b *BoxFilter) FilterGrimms() (List []*grimms.GrimmStruct) {
+func (b *BoxFilter) FilterGrimms() (List []grimms.GrimmStruct) {
 	for _, grimm := range grimms.BaseGrimms {
 		if !strings.Contains(grimm.Category, b.Category) {
 			continue
@@ -121,12 +120,11 @@ func (b *BoxFilter) FilterGrimms() (List []*grimms.GrimmStruct) {
 		if b.OnlyLimited && !grimm.Limited {
 			continue
 		}
-		if b.IncludeLimited {
-			List = append(List, &grimm)
-			continue
+		if b.IncludeLimited && grimm.Limited {
+			List = append(List, grimm)
 		}
 		if !grimm.Limited {
-			List = append(List, &grimm)
+			List = append(List, grimm)
 		}
 	}
 	return
@@ -147,9 +145,9 @@ func OpenChar(ctx *discord.CmdContext, b *BoxFilter) (success bool) {
 	}
 
 	// Value finder
-	Value := rand.NormFloat64()*b.ValStd + b.ValStd
+	Value := rand.NormFloat64()*b.ValStd + b.ValMean
 	for Value < 0 || Value > 100 {
-		Value = rand.NormFloat64()*b.ValStd + b.ValStd
+		Value = rand.NormFloat64()*b.ValStd + b.ValMean
 	}
 	if isLucky {
 		Value += 2.5
@@ -188,9 +186,10 @@ func OpenChar(ctx *discord.CmdContext, b *BoxFilter) (success bool) {
 		Rarity: Rarity,
 	}
 	Char.XPCap = Char.CalcXPCap()
+	Char.CalcStats()
 	config.Database.Create(Char)
 
-	Cplx := Char.ToLootedEmbed(ctx.Author.Mention(), ctx.ID, b.Box, Loot)
+	Cplx := Char.ToLootedEmbed(ctx.Author.Mention(), ctx.ID, b.Box, &Loot)
 	Cplx.Embed.Footer = discord.DefaultFooter
 
 	discord.ActiveMenus.Set(ctx.ID, &discord.Menus{
@@ -225,13 +224,15 @@ func OpenGrimm(ctx *discord.CmdContext, b *BoxFilter) (success bool) {
 	}
 
 	// Value finder
-	Value := rand.NormFloat64()*b.ValStd + b.ValStd
+	Value := rand.NormFloat64()*b.ValStd + b.ValMean
 	for Value < 0 || Value > 100 {
-		Value = rand.NormFloat64()*b.ValStd + b.ValStd
+		Value = rand.NormFloat64()*b.ValStd + b.ValMean
 	}
 	if isLucky {
 		Value += 2.5
 	}
+
+	Loot.Stats.Value = Value
 
 	// Rarity finder
 	var Rarity int
@@ -264,9 +265,10 @@ func OpenGrimm(ctx *discord.CmdContext, b *BoxFilter) (success bool) {
 		Rarity:  Rarity,
 	}
 	Grimm.XPCap = Grimm.CalcXPCap()
+	Grimm.CalcStats()
 	config.Database.Create(Grimm)
 
-	Cplx := Grimm.ToLootedEmbed(ctx.Author.Mention(), ctx.ID, b.Box, Loot)
+	Cplx := Grimm.ToLootedEmbed(ctx.Author.Mention(), ctx.ID, b.Box, &Loot)
 	Cplx.Embed.Footer = discord.DefaultFooter
 
 	discord.ActiveMenus.Set(ctx.ID, &discord.Menus{
@@ -405,6 +407,7 @@ func openMenu(ctx *discord.CmdContext) {
 				},
 				Components: commands_inventory.InfoComponent(ctx.ID),
 			},
+			Edit: true,
 		})
 	}
 }

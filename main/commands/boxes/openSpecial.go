@@ -34,9 +34,9 @@ func GiveChar(ctx *discord.CmdContext, b *BoxFilter, Loot *chars.CharacterStruct
 	}
 
 	// Value finder
-	Value := rand.NormFloat64()*b.ValStd + b.ValStd
+	Value := rand.NormFloat64()*b.ValStd + b.ValMean
 	for Value < 0 || Value > 100 {
-		Value = rand.NormFloat64()*b.ValStd + b.ValStd
+		Value = rand.NormFloat64()*b.ValStd + b.ValMean
 	}
 	if isLucky {
 		Value += 2.5
@@ -95,9 +95,9 @@ func GiveGrimm(ctx *discord.CmdContext, b *BoxFilter, Loot *grimms.GrimmStruct) 
 	}
 
 	// Value finder
-	Value := rand.NormFloat64()*b.ValStd + b.ValStd
+	Value := rand.NormFloat64()*b.ValStd + b.ValMean
 	for Value < 0 || Value > 100 {
-		Value = rand.NormFloat64()*b.ValStd + b.ValStd
+		Value = rand.NormFloat64()*b.ValStd + b.ValMean
 	}
 	if isLucky {
 		Value += 2.5
@@ -158,7 +158,7 @@ func OpenSpecial(ctx *discord.CmdContext, index int) {
 		Box:            "Special Box",
 		ValStd:         15,
 		ValMean:        58,
-		RarityRate:     0.5,
+		RarityRate:     1.125,
 	}
 
 	Box := ctx.Player.SpecialBoxes[index]
@@ -177,21 +177,21 @@ reroll:
 	}
 
 	if Char.Name == Box.For {
-		if GiveChar(ctx, b, Char) {
+		if GiveChar(ctx, b, &Char) {
 			config.Database.Delete(ctx.Player.SpecialBoxes, "for=?", Box.For)
 		}
 	} else if Grimm.Name == Box.For {
-		if GiveGrimm(ctx, b, Grimm) {
+		if GiveGrimm(ctx, b, &Grimm) {
 			config.Database.Delete(ctx.Player.SpecialBoxes, "for=?", Box.For)
 		}
 	} else {
 		rdm := rand.Intn(2)
 		if rdm >= 1 {
-			if GiveChar(ctx, b, Char) {
+			if GiveChar(ctx, b, &Char) {
 				config.Database.Delete(ctx.Player.SpecialBoxes, "for=?", Box.For)
 			}
 		} else {
-			if GiveGrimm(ctx, b, Grimm) {
+			if GiveGrimm(ctx, b, &Grimm) {
 				config.Database.Delete(ctx.Player.SpecialBoxes, "for=?", Box.For)
 			}
 		}
