@@ -47,6 +47,7 @@ func StartDiscord() {
 	discord.AddCmd(commands_trade.TradesCommand)
 
 	discord.AddCmd(commands_roleplay.RPCommand)
+	discord.AddCmd(commands_roleplay.RollCommand)
 
 	discord.MakeEmbed()
 
