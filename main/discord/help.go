@@ -12,6 +12,7 @@ type menuName string
 const (
 	GeneralMenu   menuName = "General"
 	InventoryMenu menuName = "Inventory"
+	BoxMenu       menuName = "Boxes"
 )
 
 func menuEmoji(name string) string {
@@ -20,6 +21,8 @@ func menuEmoji(name string) string {
 		return "🖥️"
 	case string(InventoryMenu):
 		return "🛍️"
+	case string(BoxMenu):
+		return "📦"
 	}
 	return ""
 }

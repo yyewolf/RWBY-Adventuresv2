@@ -1,11 +1,15 @@
 package models
 
 import (
+	"bytes"
 	"fmt"
 	chars "rwby-adventures/characters"
 	"rwby-adventures/config"
+	"rwby-adventures/main/static"
 	"strings"
 	"time"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 const (
@@ -78,9 +82,9 @@ func (c Character) ToRealChar() chars.CharacterStruct {
 	return returnChar
 }
 
-func CharRarityToColor(Rarity int) int {
+func (c *Character) RarityToColor() int {
 	EmbedColor := 0
-	switch Rarity {
+	switch c.Rarity {
 	case 0: // Common
 		EmbedColor = 0x808080
 		break
@@ -164,4 +168,45 @@ func (c *Character) CheckConditions(f *InvFilters) bool {
 		return false
 	}
 	return true
+}
+
+func (c *Character) ToLootedEmbed(mention, menuID, box string, original *chars.CharacterStruct) *discordgo.MessageSend {
+
+	imgData, _ := static.DatabaseFS.ReadFile(original.ImageFile)
+	imgDecoded := bytes.NewBuffer(imgData)
+
+	return &discordgo.MessageSend{
+		Files: []*discordgo.File{
+			{
+				Reader: imgDecoded,
+				Name:   "ch.png",
+			},
+		},
+		Embed: &discordgo.MessageEmbed{
+			Title:       fmt.Sprintf("You looted a %s %s !", c.RarityString(), c.Name),
+			Color:       c.RarityToColor(),
+			Description: fmt.Sprintf("Congratulations %s, you found %s in a **%s** !\n", mention, c.Name, box),
+			Image: &discordgo.MessageEmbedImage{
+				URL: "attachment://ch.png",
+			},
+		},
+		Components: []discordgo.MessageComponent{
+			&discordgo.ActionsRow{
+				Components: []discordgo.MessageComponent{
+					&discordgo.Button{
+						Label: "More info",
+						Emoji: discordgo.ComponentEmoji{
+							Name: "ℹ️",
+						},
+						Style:    discordgo.SecondaryButton,
+						CustomID: menuID + "-info",
+					},
+				},
+			},
+		},
+	}
+}
+
+func (c *Character) CalcXPCap() int64 {
+	return int64(50*c.Level*c.Level + 100)
 }

@@ -4,6 +4,8 @@ import (
 	"errors"
 	"rwby-adventures/config"
 	"time"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 type Player struct {
@@ -26,14 +28,14 @@ type Player struct {
 	Jar           int64  `gorm:"column:jar;not null"`
 
 	// Foreign keys
-	Missions     PlayerMission  `gorm:"foreignkey:DiscordID;references:DiscordID"`
-	Status       PlayerStatus   `gorm:"foreignkey:DiscordID;references:DiscordID"`
-	Shop         PlayerShop     `gorm:"foreignkey:DiscordID;references:DiscordID"`
-	LastBoxes    PlayerLootTime `gorm:"foreignkey:DiscordID;references:DiscordID"`
-	Gamble       PlayerGamble   `gorm:"foreignkey:DiscordID;references:DiscordID"`
-	Boxes        PlayerBoxes    `gorm:"foreignkey:DiscordID;references:DiscordID"`
-	LimitedBoxes []LimitedBoxes `gorm:"foreignkey:DiscordID"`
-	SpecialBoxes []SpecialBoxes `gorm:"foreignkey:DiscordID"`
+	Missions     *PlayerMission  `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	Status       *PlayerStatus   `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	Shop         *PlayerShop     `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	LastBoxes    *PlayerLootTime `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	Gamble       *PlayerGamble   `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	Boxes        *PlayerBoxes    `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	LimitedBoxes []LimitedBoxes  `gorm:"foreignkey:DiscordID"`
+	SpecialBoxes []SpecialBoxes  `gorm:"foreignkey:DiscordID"`
 
 	// Loaded later
 	Characters    []Character   `gorm:"-"`
@@ -69,10 +71,27 @@ func GetPlayer(id string) *Player {
 			CharLimit:  30,
 			Maxlootbox: 3,
 			Balance:    500,
-			Boxes: PlayerBoxes{
-				Boxes: 1,
+			Boxes: &PlayerBoxes{
+				DiscordID: id,
+				Boxes:     1,
+			},
+			Status: &PlayerStatus{
+				DiscordID: id,
+			},
+			Missions: &PlayerMission{
+				DiscordID: id,
+			},
+			Shop: &PlayerShop{
+				DiscordID: id,
+			},
+			LastBoxes: &PlayerLootTime{
+				DiscordID: id,
+			},
+			Gamble: &PlayerGamble{
+				DiscordID: id,
 			},
 		}
+		return p
 	}
 	e = config.Database.Find(&Trade{}, "sender_id = ?", p.DiscordID)
 	p.TradeSent = int(e.RowsAffected)
@@ -197,6 +216,7 @@ func (p *Player) VerifyChars(s []string) bool {
 	}
 	return true
 }
+
 func (p *Player) VerifyGrimms(s []string) bool {
 	for _, checkID := range s {
 		found := false
@@ -211,4 +231,22 @@ func (p *Player) VerifyGrimms(s []string) bool {
 		}
 	}
 	return true
+}
+
+func (p *Player) SendLuckNotice(s *discordgo.Session) {
+	if p.Shop.LuckBoostTime != 1 {
+		return
+	}
+	channel, err := s.UserChannelCreate(p.DiscordID)
+	if err != nil {
+		return
+	}
+	embed := &discordgo.MessageEmbed{
+		Title: "Your Luck Boost is running out !",
+		Thumbnail: &discordgo.MessageEmbedThumbnail{
+			URL: "https://pm1.narvii.com/6719/01c7db349c4c882b866c06aeb1e3784c6e0c30fc_hq.jpg",
+		},
+		Color: config.Botcolor,
+	}
+	s.ChannelMessageSendEmbed(channel.ID, embed)
 }

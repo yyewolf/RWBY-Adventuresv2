@@ -54,7 +54,7 @@ type GrimmAttacksStruct struct {
 
 //GrimmStatsStruct represents the stats of a character
 type GrimmStatsStruct struct {
-	CharID      string  `json:"grimm_id" db:"grimm_id"`
+	GrimmID     string  `json:"grimm_id" db:"grimm_id"`
 	Value       float64 `json:"value" db:"value"`
 	Health      int     `json:"health"  db:"health"`
 	Armor       int     `json:"armor" db:"armor"`

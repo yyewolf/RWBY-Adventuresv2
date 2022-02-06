@@ -35,11 +35,11 @@ var InfoCommand = &discord.Command{
 	},
 }
 
-type infoMenuData struct {
+type InfoMenuData struct {
 	UserID  string
 	Char    *models.Character
 	Grimm   *models.Grimm
-	isGrimm bool
+	IsGrimm bool
 }
 
 func Info(ctx *discord.CmdContext) {
@@ -137,7 +137,7 @@ func charInfo(ctx *discord.CmdContext, char *models.Character, number int) {
 		},
 		Embed: &discordgo.MessageEmbed{
 			Title: "Level " + strconv.Itoa(char.Level) + " " + char.Name + ". (n°" + strconv.Itoa(number) + ")",
-			Color: models.CharRarityToColor(char.Rarity),
+			Color: char.RarityToColor(),
 			Fields: []*discordgo.MessageEmbedField{
 				{
 					Name: "**Statistics :**",
@@ -159,17 +159,17 @@ func charInfo(ctx *discord.CmdContext, char *models.Character, number int) {
 			},
 			Footer: discord.DefaultFooter,
 		},
-		Components: infoComponent(ctx.ID),
+		Components: InfoComponent(ctx.ID),
 	}
 
 	discord.ActiveMenus.Set(ctx.ID, &discord.Menus{
 		MenuID:        ctx.ID,
 		SourceContext: ctx,
-		Call:          menuInfo,
-		Data: &infoMenuData{
+		Call:          MenuInfo,
+		Data: &InfoMenuData{
 			UserID:  ctx.Author.ID,
 			Char:    char,
-			isGrimm: false,
+			IsGrimm: false,
 		},
 	}, 0)
 
@@ -195,7 +195,7 @@ func grimmInfo(ctx *discord.CmdContext, grimm *models.Grimm, number int) {
 		},
 		Embed: &discordgo.MessageEmbed{
 			Title: "Level " + strconv.Itoa(grimm.Level) + " " + grimm.Name + ". (n°" + strconv.Itoa(number) + ")",
-			Color: models.CharRarityToColor(grimm.Rarity),
+			Color: grimm.RarityToColor(),
 			Fields: []*discordgo.MessageEmbedField{
 				{
 					Name: "**Statistics :**",
@@ -217,17 +217,17 @@ func grimmInfo(ctx *discord.CmdContext, grimm *models.Grimm, number int) {
 			},
 			Footer: discord.DefaultFooter,
 		},
-		Components: infoComponent(ctx.ID),
+		Components: InfoComponent(ctx.ID),
 	}
 
 	discord.ActiveMenus.Set(ctx.ID, &discord.Menus{
 		MenuID:        ctx.ID,
 		SourceContext: ctx,
-		Call:          menuInfo,
-		Data: &infoMenuData{
+		Call:          MenuInfo,
+		Data: &InfoMenuData{
 			UserID:  ctx.Author.ID,
 			Grimm:   grimm,
-			isGrimm: true,
+			IsGrimm: true,
 		},
 	}, 0)
 
@@ -236,7 +236,7 @@ func grimmInfo(ctx *discord.CmdContext, grimm *models.Grimm, number int) {
 	})
 }
 
-func menuInfo(ctx *discord.CmdContext) {
+func MenuInfo(ctx *discord.CmdContext) {
 	// Reply to the interaction so it is seamless for the player
 	ctx.Session.InteractionRespond(ctx.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseDeferredMessageUpdate,
@@ -244,35 +244,35 @@ func menuInfo(ctx *discord.CmdContext) {
 	if ctx.Author.ID != ctx.Menu.SourceContext.Author.ID {
 		return
 	}
-	d := ctx.Menu.Data.(*infoMenuData)
+	d := ctx.Menu.Data.(*InfoMenuData)
 	split := strings.Split(ctx.ComponentData.CustomID, "-")
 	switch split[1] {
 	case "remove":
 		remove(ctx, &removeData{
 			Char:     d.Char,
 			Grimm:    d.Grimm,
-			isGrimm:  d.isGrimm,
+			isGrimm:  d.IsGrimm,
 			FollowUp: true,
 		})
 	case "pick":
 		Select(ctx, &SelectData{
 			Char:     d.Char,
 			Grimm:    d.Grimm,
-			isGrimm:  d.isGrimm,
+			isGrimm:  d.IsGrimm,
 			FollowUp: true,
 		})
 	case "addfav":
 		AddFavorite(ctx, &AddFavoriteData{
 			Char:     d.Char,
 			Grimm:    d.Grimm,
-			isGrimm:  d.isGrimm,
+			isGrimm:  d.IsGrimm,
 			FollowUp: true,
 		})
 	case "remfav":
 		RemoveFavorite(ctx, &RemFavoriteData{
 			Char:     d.Char,
 			Grimm:    d.Grimm,
-			isGrimm:  d.isGrimm,
+			isGrimm:  d.IsGrimm,
 			FollowUp: true,
 		})
 	default:
@@ -280,7 +280,7 @@ func menuInfo(ctx *discord.CmdContext) {
 	}
 }
 
-func infoComponent(menuID string) []discordgo.MessageComponent {
+func InfoComponent(menuID string) []discordgo.MessageComponent {
 	return []discordgo.MessageComponent{
 		&discordgo.ActionsRow{
 			Components: []discordgo.MessageComponent{

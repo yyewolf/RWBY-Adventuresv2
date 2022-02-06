@@ -2,6 +2,7 @@ package main
 
 import (
 	"rwby-adventures/main/commands"
+	commands_boxes "rwby-adventures/main/commands/boxes"
 	commands_inventory "rwby-adventures/main/commands/inventory"
 	commands_temporary "rwby-adventures/main/commands/temporary"
 	commands_trade "rwby-adventures/main/commands/trade"
@@ -39,6 +40,8 @@ func StartDiscord() {
 	discord.AddCmd(commands_inventory.InventoryCommand)
 	discord.AddCmd(commands_inventory.PackCommand)
 	discord.AddCmd(commands_inventory.BalanceCommand)
+
+	discord.AddCmd(commands_boxes.BoxesCommand)
 
 	discord.AddCmd(commands_trade.TradesCommand)
 

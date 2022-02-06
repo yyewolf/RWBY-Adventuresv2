@@ -1,11 +1,15 @@
 package models
 
 import (
+	"bytes"
 	"fmt"
 	"rwby-adventures/config"
 	"rwby-adventures/grimms"
+	"rwby-adventures/main/static"
 	"strings"
 	"time"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 type GrimmStat struct {
@@ -59,6 +63,31 @@ func (c *Grimm) ToRealGrimm() grimms.GrimmStruct {
 	returnGrimm.Special.CustomData["lastTime"] = 0
 
 	return returnGrimm
+}
+
+func (c *Grimm) RarityToColor() int {
+	EmbedColor := 0
+	switch c.Rarity {
+	case 0: // Common
+		EmbedColor = 0x808080
+		break
+	case 1: // Uncommon
+		EmbedColor = 0x7CFC00
+		break
+	case 2: // Rare
+		EmbedColor = 0x87CEEB
+		break
+	case 3: // Very Rare
+		EmbedColor = 0xBA55D3
+		break
+	case 4: // Legendary
+		EmbedColor = 0xFFD700
+		break
+	case 5: // Collector
+		EmbedColor = 0xFF0000
+		break
+	}
+	return EmbedColor
 }
 
 func (c *Grimm) RarityString() (x string) {
@@ -116,4 +145,45 @@ func (g *Grimm) CheckConditions(f *InvFilters) bool {
 		return false
 	}
 	return true
+}
+
+func (c *Grimm) ToLootedEmbed(mention, menuID, box string, original *grimms.GrimmStruct) *discordgo.MessageSend {
+
+	imgData, _ := static.DatabaseFS.ReadFile(original.ImageFile)
+	imgDecoded := bytes.NewBuffer(imgData)
+
+	return &discordgo.MessageSend{
+		Files: []*discordgo.File{
+			{
+				Reader: imgDecoded,
+				Name:   "ch.png",
+			},
+		},
+		Embed: &discordgo.MessageEmbed{
+			Title:       fmt.Sprintf("You looted a %s %s !", c.RarityString(), c.Name),
+			Color:       c.RarityToColor(),
+			Description: fmt.Sprintf("Congratulations %s, you found %s in a **%s** !\n", mention, c.Name, box),
+			Image: &discordgo.MessageEmbedImage{
+				URL: "attachment://ch.png",
+			},
+		},
+		Components: []discordgo.MessageComponent{
+			&discordgo.ActionsRow{
+				Components: []discordgo.MessageComponent{
+					&discordgo.Button{
+						Label: "More info",
+						Emoji: discordgo.ComponentEmoji{
+							Name: "ℹ️",
+						},
+						Style:    discordgo.SecondaryButton,
+						CustomID: menuID + "-info",
+					},
+				},
+			},
+		},
+	}
+}
+
+func (c *Grimm) CalcXPCap() int64 {
+	return int64(50*c.Level*c.Level + 100)
 }
