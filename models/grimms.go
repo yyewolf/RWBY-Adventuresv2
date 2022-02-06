@@ -3,6 +3,7 @@ package models
 import (
 	"bytes"
 	"fmt"
+	"math"
 	"rwby-adventures/config"
 	"rwby-adventures/grimms"
 	"rwby-adventures/main/static"
@@ -38,23 +39,23 @@ type Grimm struct {
 	Stats GrimmStat `gorm:"foreignkey:GrimmID"`
 }
 
-func (c *Grimm) ToRealGrimm() grimms.GrimmStruct {
+func (g *Grimm) ToRealGrimm() grimms.GrimmStruct {
 	i := 0
 	for i = range config.BaseGrimms {
-		if config.BaseGrimms[i].Name == c.Name {
+		if config.BaseGrimms[i].Name == g.Name {
 			break
 		}
 	}
 
 	returnGrimm := config.BaseGrimms[i]
-	returnGrimm.CustomID = c.GrimmID
-	returnGrimm.Stats.Armor = c.Stats.Armor
-	returnGrimm.Stats.Damage = c.Stats.Damage
-	returnGrimm.Stats.Healing = c.Stats.Healing
-	returnGrimm.Stats.Health = c.Stats.Health
-	returnGrimm.Stats.Value = c.Stats.Value
-	returnGrimm.Rarity = c.Rarity
-	returnGrimm.Level = c.Level
+	returnGrimm.CustomID = g.GrimmID
+	returnGrimm.Stats.Armor = g.Stats.Armor
+	returnGrimm.Stats.Damage = g.Stats.Damage
+	returnGrimm.Stats.Healing = g.Stats.Healing
+	returnGrimm.Stats.Health = g.Stats.Health
+	returnGrimm.Stats.Value = g.Stats.Value
+	returnGrimm.Rarity = g.Rarity
+	returnGrimm.Level = g.Level
 
 	for i := range returnGrimm.Attacks {
 		returnGrimm.Attacks[i].LastUsed = -5
@@ -65,9 +66,9 @@ func (c *Grimm) ToRealGrimm() grimms.GrimmStruct {
 	return returnGrimm
 }
 
-func (c *Grimm) RarityToColor() int {
+func (g *Grimm) RarityToColor() int {
 	EmbedColor := 0
-	switch c.Rarity {
+	switch g.Rarity {
 	case 0: // Common
 		EmbedColor = 0x808080
 		break
@@ -90,8 +91,8 @@ func (c *Grimm) RarityToColor() int {
 	return EmbedColor
 }
 
-func (c *Grimm) RarityString() (x string) {
-	switch c.Rarity {
+func (g *Grimm) RarityString() (x string) {
+	switch g.Rarity {
 	case 0: // Normal
 		x = "□ Normal"
 	case 1: // Abnormal
@@ -106,7 +107,7 @@ func (c *Grimm) RarityString() (x string) {
 		x = "☆ Bloody"
 	}
 
-	for i := 0; i < c.Buffs; i++ {
+	for i := 0; i < g.Buffs; i++ {
 		x += "+"
 	}
 	return x
@@ -147,7 +148,7 @@ func (g *Grimm) CheckConditions(f *InvFilters) bool {
 	return true
 }
 
-func (c *Grimm) ToLootedEmbed(mention, menuID, box string, original *grimms.GrimmStruct) *discordgo.MessageSend {
+func (g *Grimm) ToLootedEmbed(mention, menuID, box string, original *grimms.GrimmStruct) *discordgo.MessageSend {
 
 	imgData, _ := static.DatabaseFS.ReadFile(original.ImageFile)
 	imgDecoded := bytes.NewBuffer(imgData)
@@ -160,9 +161,9 @@ func (c *Grimm) ToLootedEmbed(mention, menuID, box string, original *grimms.Grim
 			},
 		},
 		Embed: &discordgo.MessageEmbed{
-			Title:       fmt.Sprintf("You looted a %s %s !", c.RarityString(), c.Name),
-			Color:       c.RarityToColor(),
-			Description: fmt.Sprintf("Congratulations %s, you found %s in a **%s** !\n", mention, c.Name, box),
+			Title:       fmt.Sprintf("You looted a %s %s !", g.RarityString(), g.Name),
+			Color:       g.RarityToColor(),
+			Description: fmt.Sprintf("Congratulations %s, you found %s in a **%s** !\n", mention, g.Name, box),
 			Image: &discordgo.MessageEmbedImage{
 				URL: "attachment://ch.png",
 			},
@@ -184,6 +185,14 @@ func (c *Grimm) ToLootedEmbed(mention, menuID, box string, original *grimms.Grim
 	}
 }
 
-func (c *Grimm) CalcXPCap() int64 {
-	return int64(50*c.Level*c.Level + 100)
+func (g *Grimm) CalcXPCap() int64 {
+	return int64(50*g.Level*g.Level + 100)
+}
+
+func (g *Grimm) CalcStats() {
+	def := g.ToRealGrimm()
+	g.Stats.Damage = int(float64(def.Stats.Damage) + float64(9*g.Level)*float64(g.Stats.Value/100.0)*math.Pow(2, float64(g.Rarity)/4.6)*math.Pow(3, float64(g.Buffs)/7.0))
+	g.Stats.Healing = int(float64(def.Stats.Healing) + float64(11*g.Level)*float64(g.Stats.Value/100.0)*math.Pow(2, float64(g.Rarity)/9.0)*math.Pow(3, float64(g.Buffs)/10.0))
+	g.Stats.Armor = int(float64(def.Stats.Armor) + float64(8*g.Level)*float64(g.Stats.Value/100.0)*math.Pow(2, float64(g.Rarity)/11.8)*math.Pow(3, float64(g.Buffs)/14.0))
+	g.Stats.Health = int(float64(def.Stats.Health) + float64(18*g.Level)*float64(g.Stats.Value/100.0)*math.Pow(2, float64(g.Rarity)/4.6)*math.Pow(3, float64(g.Buffs)/7.0))
 }

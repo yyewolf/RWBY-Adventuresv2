@@ -3,6 +3,7 @@ package models
 import (
 	"bytes"
 	"fmt"
+	"math"
 	chars "rwby-adventures/characters"
 	"rwby-adventures/config"
 	"rwby-adventures/main/static"
@@ -209,4 +210,12 @@ func (c *Character) ToLootedEmbed(mention, menuID, box string, original *chars.C
 
 func (c *Character) CalcXPCap() int64 {
 	return int64(50*c.Level*c.Level + 100)
+}
+
+func (c *Character) CalcStats() {
+	def := c.ToRealChar()
+	c.Stats.Damage = int(float64(def.Stats.Damage) + float64(9*c.Level)*float64(c.Stats.Value/100.0)*math.Pow(2, float64(c.Rarity)/4.6)*math.Pow(3, float64(c.Buffs)/7.0))
+	c.Stats.Healing = int(float64(def.Stats.Healing) + float64(11*c.Level)*float64(c.Stats.Value/100.0)*math.Pow(2, float64(c.Rarity)/9.0)*math.Pow(3, float64(c.Buffs)/10.0))
+	c.Stats.Armor = int(float64(def.Stats.Armor) + float64(8*c.Level)*float64(c.Stats.Value/100.0)*math.Pow(2, float64(c.Rarity)/11.8)*math.Pow(3, float64(c.Buffs)/14.0))
+	c.Stats.Health = int(float64(def.Stats.Health) + float64(18*c.Level)*float64(c.Stats.Value/100.0)*math.Pow(2, float64(c.Rarity)/4.6)*math.Pow(3, float64(c.Buffs)/7.0))
 }
