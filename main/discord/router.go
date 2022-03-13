@@ -139,10 +139,24 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 	/*
+		Create context :
+	*/
+	ctx := &CmdContext{
+		Session:   s,
+		ID:        m.ID,
+		GuildID:   m.GuildID,
+		ChannelID: m.ChannelID,
+		Author:    m.Author,
+		Message:   m.Message,
+	}
+	/*
 		Is Command or for Listener :
 	*/
 	if !strings.HasPrefix(m.Content, CommandRouter.Prefix) {
 		if !strings.HasPrefix(m.Content, CommandRouter.ListenerPrefix) {
+			for _, callPassive := range RegisteredPassives {
+				callPassive(ctx)
+			}
 			return
 		}
 		/*
@@ -168,17 +182,6 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 		ctx.Guild = models.GetGuild(ctx.GuildID)
 		callback(ctx)
 		return
-	}
-	/*
-		Create context :
-	*/
-	ctx := &CmdContext{
-		Session:   s,
-		ID:        m.ID,
-		GuildID:   m.GuildID,
-		ChannelID: m.ChannelID,
-		Author:    m.Author,
-		Message:   m.Message,
 	}
 
 	ctx.Player = models.GetPlayer(ctx.Author.ID)

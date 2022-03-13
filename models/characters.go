@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"math"
+	"math/rand"
 	chars "rwby-adventures/characters"
 	"rwby-adventures/config"
 	"rwby-adventures/main/static"
@@ -210,6 +211,20 @@ func (c *Character) ToLootedEmbed(mention, menuID, box string, original *chars.C
 
 func (c *Character) CalcXPCap() int64 {
 	return int64(50*c.Level*c.Level + 100)
+}
+
+func (c *Character) AddXP(multiplier int, boost bool) int64 {
+	if c.Level >= 500 {
+		return 0
+	}
+	rand.Seed(time.Now().UTC().UnixNano())
+	rint := multiplier * (c.Level)
+	add := int64(float64((rand.Intn(26+rint))+15) * (math.Pow(float64(c.Level), 0.72) + 1))
+	if boost {
+		rint = ((3 / 2) * multiplier) * (c.Level)
+		add = int64(float64((rand.Intn(33+rint))+25) * (math.Pow(float64(c.Level), 0.84) + 1))
+	}
+	return add
 }
 
 func (c *Character) CalcStats() {

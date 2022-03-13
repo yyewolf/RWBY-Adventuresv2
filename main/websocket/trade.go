@@ -372,7 +372,7 @@ func (c *TradeValidateContent) PrepareMessage(p *models.Player) string {
 		Message += fmt.Sprintf("Rare Grimm Boxes : %dⱠ.\n", c.RareGrimmBoxes)
 	}
 	for i, CharID := range c.Characters {
-		current := models.Character{}
+		current := &models.Character{}
 		for _, char := range p.Characters {
 			if char.CharID == CharID {
 				current = char
@@ -388,7 +388,7 @@ func (c *TradeValidateContent) PrepareMessage(p *models.Player) string {
 		Message += current.MiniString()
 	}
 	for i, GrimmID := range c.Grimms {
-		current := models.Grimm{}
+		current := &models.Grimm{}
 		for _, grimm := range p.Grimms {
 			if grimm.GrimmID == GrimmID {
 				current = grimm

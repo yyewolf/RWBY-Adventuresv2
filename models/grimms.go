@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"math"
+	"math/rand"
 	"rwby-adventures/config"
 	"rwby-adventures/grimms"
 	"rwby-adventures/main/static"
@@ -195,4 +196,18 @@ func (g *Grimm) CalcStats() {
 	g.Stats.Healing = int(float64(def.Stats.Healing) + float64(11*g.Level)*float64(g.Stats.Value/100.0)*math.Pow(2, float64(g.Rarity)/9.0)*math.Pow(3, float64(g.Buffs)/10.0))
 	g.Stats.Armor = int(float64(def.Stats.Armor) + float64(8*g.Level)*float64(g.Stats.Value/100.0)*math.Pow(2, float64(g.Rarity)/11.8)*math.Pow(3, float64(g.Buffs)/14.0))
 	g.Stats.Health = int(float64(def.Stats.Health) + float64(18*g.Level)*float64(g.Stats.Value/100.0)*math.Pow(2, float64(g.Rarity)/4.6)*math.Pow(3, float64(g.Buffs)/7.0))
+}
+
+func (g *Grimm) AddXP(multiplier int, boost bool) int64 {
+	if g.Level >= 500 {
+		return 0
+	}
+	rand.Seed(time.Now().UTC().UnixNano())
+	rint := multiplier * (g.Level)
+	add := int64(float64((rand.Intn(26+rint))+15) * (math.Pow(float64(g.Level), 0.72) + 1))
+	if boost {
+		rint = ((3 / 2) * multiplier) * (g.Level)
+		add = int64(float64((rand.Intn(33+rint))+25) * (math.Pow(float64(g.Level), 0.84) + 1))
+	}
+	return add
 }

@@ -84,7 +84,7 @@ func RemovePersona(ctx *discord.CmdContext) {
 			})
 			return
 		}
-		grimm = &ctx.Player.Grimms[index-1]
+		grimm = ctx.Player.Grimms[index-1]
 	} else {
 		if index > len(ctx.Player.Characters) {
 			ctx.Reply(discord.ReplyParams{
@@ -93,7 +93,7 @@ func RemovePersona(ctx *discord.CmdContext) {
 			})
 			return
 		}
-		char = &ctx.Player.Characters[index-1]
+		char = ctx.Player.Characters[index-1]
 	}
 
 skip:

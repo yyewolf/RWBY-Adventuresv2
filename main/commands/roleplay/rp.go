@@ -40,22 +40,22 @@ func rp(ctx *discord.CmdContext) {
 	var t = -1
 	for _, c := range ctx.Player.Characters {
 		if c.CharID == fmt.Sprint(persona.Value) {
-			char = &c
+			char = c
 			t = models.CharType
 			break
 		}
 	}
 	for _, g := range ctx.Player.Grimms {
 		if g.GrimmID == fmt.Sprint(persona.Value) {
-			grimm = &g
+			grimm = g
 			t = models.GrimmType
 			break
 		}
 	}
 
 	if t == -1 {
-		char = &ctx.Player.SelectedChar
-		grimm = &ctx.Player.SelectedGrimm
+		char = ctx.Player.SelectedChar
+		grimm = ctx.Player.SelectedGrimm
 		t = ctx.Player.SelectedType
 	}
 

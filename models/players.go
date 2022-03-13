@@ -34,16 +34,16 @@ type Player struct {
 	LastBoxes    *PlayerLootTime `gorm:"foreignkey:DiscordID;references:DiscordID"`
 	Gamble       *PlayerGamble   `gorm:"foreignkey:DiscordID;references:DiscordID"`
 	Boxes        *PlayerBoxes    `gorm:"foreignkey:DiscordID;references:DiscordID"`
-	LimitedBoxes []LimitedBoxes  `gorm:"foreignkey:DiscordID"`
-	SpecialBoxes []SpecialBoxes  `gorm:"foreignkey:DiscordID"`
+	LimitedBoxes []*LimitedBoxes `gorm:"foreignkey:DiscordID"`
+	SpecialBoxes []*SpecialBoxes `gorm:"foreignkey:DiscordID"`
 
 	// Loaded later
-	Characters    []Character   `gorm:"-"`
-	Grimms        []Grimm       `gorm:"-"`
-	SelectedChar  Character     `gorm:"-"`
-	SelectedGrimm Grimm         `gorm:"-"`
-	CharInMission Character     `gorm:"-"`
-	GrimmInHunt   Grimm         `gorm:"-"`
+	Characters    []*Character  `gorm:"-"`
+	Grimms        []*Grimm      `gorm:"-"`
+	SelectedChar  *Character    `gorm:"-"`
+	SelectedGrimm *Grimm        `gorm:"-"`
+	CharInMission *Character    `gorm:"-"`
+	GrimmInHunt   *Grimm        `gorm:"-"`
 	Market        *PlayerMarket `gorm:"-"`
 	TradeSent     int           `gorm:"-"`
 	TradeReceived int           `gorm:"-"`
