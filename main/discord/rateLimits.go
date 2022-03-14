@@ -17,7 +17,7 @@ func checkUser(id string) bool {
 		RateLimitCache.Set(id, rl, 0)
 		return false
 	}
-	if time.Now().Sub(val.(*rateLimit).lastMessage) <= time.Duration(CommandRouter.RateLimit)*time.Millisecond {
+	if time.Since(val.(*rateLimit).lastMessage) <= time.Duration(CommandRouter.RateLimit)*time.Millisecond {
 		return true
 	}
 	rl := &rateLimit{

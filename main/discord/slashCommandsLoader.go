@@ -94,7 +94,6 @@ func (r *router) LoadSlashCommands(sessions []*discordgo.Session) {
 				}
 			}
 		}
-		break
 	}
 }
 

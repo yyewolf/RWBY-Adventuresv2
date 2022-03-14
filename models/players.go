@@ -106,6 +106,18 @@ func GetPlayer(id string) *Player {
 		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedChar, "user_id = ? and \"characters\".id = ?", p.DiscordID, p.SelectedID)
 		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedGrimm, "user_id = ? and \"grimms\".id = ?", p.DiscordID, p.SelectedID)
 	}
+	if p.SelectedChar.Name == "" {
+		p.SelectedChar = nil
+	}
+	if p.SelectedGrimm.Name == "" {
+		p.SelectedGrimm = nil
+	}
+	if p.CharInMission.Name == "" {
+		p.CharInMission = nil
+	}
+	if p.GrimmInHunt.Name == "" {
+		p.GrimmInHunt = nil
+	}
 	return p
 }
 
@@ -249,4 +261,14 @@ func (p *Player) SendLuckNotice(s *discordgo.Session) {
 		Color: config.Botcolor,
 	}
 	s.ChannelMessageSendEmbed(channel.ID, embed)
+}
+
+func (p *Player) AddSelectedXP(multiplier int, boost bool) int64 {
+	if p.SelectedChar != nil {
+		return p.SelectedChar.AddXP(multiplier, boost)
+	}
+	if p.SelectedGrimm != nil {
+		return p.SelectedGrimm.AddXP(multiplier, boost)
+	}
+	return 0
 }

@@ -149,6 +149,8 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 		Author:    m.Author,
 		Message:   m.Message,
 	}
+	ctx.Player = models.GetPlayer(ctx.Author.ID)
+	ctx.Guild = models.GetGuild(ctx.GuildID)
 	/*
 		Is Command or for Listener :
 	*/
@@ -184,8 +186,6 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	ctx.Player = models.GetPlayer(ctx.Author.ID)
-	ctx.Guild = models.GetGuild(ctx.GuildID)
 	/*
 		Rate limits :
 	*/

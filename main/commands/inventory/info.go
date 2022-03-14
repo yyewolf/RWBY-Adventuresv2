@@ -54,7 +54,7 @@ func Info(ctx *discord.CmdContext) {
 	isGrimm, index, err := arg.CharGrimmParse()
 	if !pickLatest {
 		if err != nil {
-			if ctx.Player.SelectedChar.Name == ctx.Player.SelectedGrimm.Name {
+			if ctx.Player.SelectedChar == nil && ctx.Player.SelectedGrimm == nil {
 				ctx.Reply(discord.ReplyParams{
 					Content:   "You have not selected any persona.",
 					Ephemeral: true,

@@ -54,7 +54,6 @@ func (c *CmdContext) Reply(p ReplyParams) (st *discordgo.Message, err error) {
 				val.Embed,
 			}
 		}
-		break
 	case *discordgo.MessageSend:
 		val := p.Content.(*discordgo.MessageSend)
 		files := val.Files
@@ -71,7 +70,6 @@ func (c *CmdContext) Reply(p ReplyParams) (st *discordgo.Message, err error) {
 				val.Embed,
 			}
 		}
-		break
 	}
 
 	if c.IsInteraction {

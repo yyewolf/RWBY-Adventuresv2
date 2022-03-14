@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/signal"
 	"rwby-adventures/config"
+	commands_missions "rwby-adventures/main/commands/missions"
 	"rwby-adventures/main/discord"
 	"rwby-adventures/main/web"
 	"rwby-adventures/main/websocket"
@@ -13,6 +14,7 @@ import (
 func main() {
 	websocket.StartWebsocket()
 	web.StartWeb()
+	loadPassives()
 	StartDiscord()
 	config.LoadCharacters()
 	// Wait here until CTRL-C or other term signal is received.
@@ -21,4 +23,8 @@ func main() {
 	<-sc
 
 	discord.Session.Close()
+}
+
+func loadPassives() {
+	commands_missions.LoadPassives()
 }
