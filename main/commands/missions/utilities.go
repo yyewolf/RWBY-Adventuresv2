@@ -1,6 +1,11 @@
 package commands_missions
 
-import namegenerator "github.com/yyewolf/Name-Generator"
+import (
+	"math/rand"
+	"rwby-adventures/config"
+
+	namegenerator "github.com/yyewolf/Name-Generator"
+)
 
 const (
 	missionSearchRescue = iota
@@ -13,6 +18,15 @@ const (
 	missionTai
 	missionRaven
 	missionQrow
+)
+
+const (
+	huntFindBaby = iota
+	huntDestroyCity
+	huntKillHero
+	huntSalemTask
+	huntTakeRest
+	huntDestroyBeacon
 )
 
 var generator namegenerator.Session
@@ -46,7 +60,25 @@ func missionToString(i int) string {
 	return ""
 }
 
-func winMessages(i int) string {
+func huntToString(i int) string {
+	switch i {
+	case huntFindBaby:
+		return "Find a Baby Grimm"
+	case huntDestroyCity:
+		return "Destroy a Town"
+	case huntKillHero:
+		return "Kill Hero"
+	case huntSalemTask:
+		return "Salem Task"
+	case huntTakeRest:
+		return "Restore and Sleep"
+	case huntDestroyBeacon:
+		return "Destroy Beacon"
+	}
+	return ""
+}
+
+func missionWinMessages(i int) string {
 	switch i {
 	case missionSearchRescue:
 		name, _ := generator.GetName()
@@ -75,6 +107,32 @@ func winMessages(i int) string {
 			case missionQrow:
 				return "Qrow accepted to join you on your journey."
 		*/
+	}
+	return ""
+}
+
+func huntWinMessages(i int) string {
+	switch i {
+	case huntFindBaby:
+		name, _ := generator.GetName()
+		return "You successfully found **" + name + "** Grimm !\nYou earned : {hunt.Earned}"
+	case huntDestroyCity:
+		name, _ := generator.GetCityName()
+		return "You successfully destroyed **" + name + "** !\nYou earned : {hunt.Earned}"
+	case huntKillHero:
+	pick:
+		i := rand.Intn(len(config.BaseCharacters))
+		if config.BaseCharacters[i].Limited {
+			goto pick
+		}
+		name := config.BaseCharacters[i].Name
+		return "You successfully killed **" + name + "** !\nYou earned : {hunt.Earned}"
+	case huntSalemTask:
+		return "You successfully achieved what Salem told you to do !\nYou earned : {hunt.Earned}"
+	case huntTakeRest:
+		return "You successfully **took a rest** !\nYou earned : {hunt.Earned}"
+	case huntDestroyBeacon:
+		return "You successfully destroyed **Beacon** !\nYou earned : {hunt.Earned}"
 	}
 	return ""
 }
