@@ -2,6 +2,7 @@ package models
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"math"
 	"math/rand"
@@ -38,6 +39,15 @@ type Grimm struct {
 	OwnedAt       time.Time `gorm:"column:owned_at;not null"`
 	// Foreign keys
 	Stats GrimmStat `gorm:"foreignkey:GrimmID"`
+}
+
+func GetGrimm(id string) (*Grimm, error) {
+	g := &Grimm{}
+	e := config.Database.Joins("Stats").Find(g, id)
+	if e.Error != nil || e.RowsAffected == 0 {
+		return nil, errors.New("oof")
+	}
+	return g, nil
 }
 
 func (g *Grimm) ToRealGrimm() grimms.GrimmStruct {

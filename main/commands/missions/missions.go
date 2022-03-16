@@ -5,6 +5,7 @@ import (
 	"math"
 	"rwby-adventures/config"
 	"rwby-adventures/main/discord"
+	"rwby-adventures/models"
 )
 
 var MissionCommand = &discord.Command{
@@ -72,9 +73,11 @@ func joinMission(ctx *discord.CmdContext) {
 
 	ctx.Player.CharInMission = ctx.Player.SelectedChar
 	for _, char := range ctx.Player.Characters {
-		if char.CharID != ctx.Player.SelectedID {
+		if char.CharID != ctx.Player.SelectedChar.CharID {
 			ctx.Player.SelectedID = char.CharID
 			ctx.Player.SelectedChar = char
+			ctx.Player.SelectedType = models.CharType
+			break
 		}
 	}
 
@@ -82,16 +85,17 @@ func joinMission(ctx *discord.CmdContext) {
 		Content:   "Your character went on a mission (it's now **out** of your inventory for a while !).",
 		Ephemeral: true,
 	})
-	config.Database.Save(ctx.Player.SelectedChar)
+	config.Database.Save(ctx.Player.CharInMission)
 	ctx.Player.Missions.CanGoToMission = false
 	ctx.Player.Missions.IsInMission = true
 	config.Database.Save(ctx.Player.Missions)
+	config.Database.Save(ctx.Player)
 }
 
 func endMission(ctx *discord.CmdContext) {
 	if !ctx.Player.Missions.IsInMission {
 		ctx.Reply(discord.ReplyParams{
-			Content:   "Your have no current mission.",
+			Content:   "Your are not currently on a mission.",
 			Ephemeral: true,
 		})
 		return
@@ -106,6 +110,8 @@ func endMission(ctx *discord.CmdContext) {
 	ctx.Player.CharInMission.InMission = false
 	config.Database.Save(ctx.Player.CharInMission)
 	ctx.Player.SelectedChar = ctx.Player.CharInMission
+	ctx.Player.SelectedID = ctx.Player.CharInMission.CharID
+	ctx.Player.SelectedType = models.CharType
 	config.Database.Save(ctx.Player)
 }
 

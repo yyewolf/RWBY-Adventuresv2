@@ -31,21 +31,21 @@ func newMission(ctx *discord.CmdContext) {
 	//Rolls the dice now to save computing power
 	randfloat := rand.Float64()
 	//0.20% chance
-	willSpawn := randfloat < 0.0020
+	willSpawn := randfloat < 1
 	if !willSpawn {
 		return
 	}
 
-	if !ctx.Player.Missions.IsInHunt && !ctx.Player.Missions.IsInMission {
+	if !ctx.Player.Missions.IsInHunt && !ctx.Player.Missions.IsInMission && !ctx.Player.Missions.CanGoHunt && !ctx.Player.Missions.CanGoToMission {
 		choice := rand.Float64()
 		if choice < 0.5 {
 			spawnHunt(ctx)
 			return
 		}
 		spawnMission(ctx)
-	} else if !ctx.Player.Missions.IsInMission {
+	} else if !ctx.Player.Missions.IsInMission && !ctx.Player.Missions.CanGoToMission {
 		spawnMission(ctx)
-	} else if !ctx.Player.Missions.IsInHunt {
+	} else if !ctx.Player.Missions.IsInHunt && !ctx.Player.Missions.CanGoHunt {
 		spawnHunt(ctx)
 	}
 }

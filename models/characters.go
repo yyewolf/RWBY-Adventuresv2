@@ -2,6 +2,7 @@ package models
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"math"
 	"math/rand"
@@ -55,6 +56,15 @@ type Character struct {
 	OwnedAt       time.Time `gorm:"column:owned_at;not null"`
 	// Foreign keys
 	Stats CharacterStats `gorm:"foreignkey:CharID"`
+}
+
+func GetChar(id string) (*Character, error) {
+	c := &Character{}
+	e := config.Database.Joins("Stats").Find(c, id)
+	if e.Error != nil || e.RowsAffected == 0 {
+		return nil, errors.New("oof")
+	}
+	return c, nil
 }
 
 func (c Character) ToRealChar() chars.CharacterStruct {

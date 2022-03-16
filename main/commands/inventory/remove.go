@@ -196,10 +196,26 @@ func removeMenu(ctx *discord.CmdContext) {
 	case "correct":
 		var reply string
 		var xpjar int64
+		var err error
 		if d.isGrimm {
 			if ctx.Player.GrimmAmount() <= 1 {
 				ctx.Reply(discord.ReplyParams{
 					Content:  "You do not have enough grimms to remove one right now.",
+					FollowUp: true,
+				})
+				return
+			}
+			d.Grimm, err = models.GetGrimm(d.Grimm.GrimmID)
+			if err != nil {
+				ctx.Reply(discord.ReplyParams{
+					Content:  "There has been an error retrieving the grimm.",
+					FollowUp: true,
+				})
+				return
+			}
+			if d.Grimm.InHunt || d.Grimm.UserID != ctx.Player.DiscordID {
+				ctx.Reply(discord.ReplyParams{
+					Content:  "You cannot delete that grimm.",
 					FollowUp: true,
 				})
 				return
@@ -222,6 +238,21 @@ func removeMenu(ctx *discord.CmdContext) {
 			if ctx.Player.CharAmount() <= 1 {
 				ctx.Reply(discord.ReplyParams{
 					Content:  "You do not have enough characters to remove one right now.",
+					FollowUp: true,
+				})
+				return
+			}
+			d.Char, err = models.GetChar(d.Char.CharID)
+			if err != nil {
+				ctx.Reply(discord.ReplyParams{
+					Content:  "There has been an error retrieving the character.",
+					FollowUp: true,
+				})
+				return
+			}
+			if d.Grimm.InHunt || d.Grimm.UserID != ctx.Player.DiscordID {
+				ctx.Reply(discord.ReplyParams{
+					Content:  "You cannot delete that character.",
 					FollowUp: true,
 				})
 				return

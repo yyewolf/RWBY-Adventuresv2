@@ -172,11 +172,19 @@ func (p *Player) Lootbox() (s int) {
 }
 
 func (p *Player) CharAmount() int {
-	return len(p.Characters)
+	r := len(p.Characters)
+	if p.Missions.IsInMission {
+		r += 1
+	}
+	return r
 }
 
 func (p *Player) GrimmAmount() int {
-	return len(p.Grimms)
+	r := len(p.Grimms)
+	if p.Missions.IsInHunt {
+		r += 1
+	}
+	return r
 }
 
 func (p *Player) GetLatestPersona() (bool, *Character, *Grimm, int, error) {
