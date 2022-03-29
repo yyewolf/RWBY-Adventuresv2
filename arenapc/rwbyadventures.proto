@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option go_package = "/arenapc";
+option java_multiple_files = true;
+option java_package = "rwby.adventures.arenapc";
+option java_outer_classname = "ArenaProto";
+
+package arenapc;
+
+service Arena {
+  rpc CreateArena (CreateArenaReq) returns (CreateArenaRep) {}
+  rpc JoinArena (JoinArenaReq) returns (JoinArenaRep) {}
+}
+
+message CreateArenaReq {
+    string id = 1;
+}
+
+message CreateArenaRep {
+    message Loots {
+        string id = 1;
+        string loot = 2;
+    }
+    int32 status = 1;
+    repeated Loots loots = 2;
+
+}
+
+message JoinArenaReq {
+    string id = 1;
+}
+
+message JoinArenaRep {
+    int32 ok = 1;
+}
