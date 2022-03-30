@@ -12,10 +12,9 @@ var Tokens *cache.Cache
 
 func StartWebsocket() {
 	// Start the server using a basic configuration
-	gosf.Listen("tradeConnect", TradeConnect)
-	gosf.Listen("tradeInfos", TradeInfos)
-	gosf.Listen("tradeValidate", TradeValidate)
-	go gosf.Startup(map[string]interface{}{"port": config.TradeWebsocket})
+	gosf.Listen("arenaConnect", ArenaConnect)
+	gosf.Listen("arenaHit", ArenaHit)
+	go gosf.Startup(map[string]interface{}{"port": config.ArenaWebsocket})
 	fmt.Println("[WS] Started.")
 }
 

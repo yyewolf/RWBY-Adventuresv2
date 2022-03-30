@@ -271,12 +271,22 @@ func (p *Player) SendLuckNotice(s *discordgo.Session) {
 	s.ChannelMessageSendEmbed(channel.ID, embed)
 }
 
-func (p *Player) AddSelectedXP(multiplier int, boost bool) int64 {
+func (p *Player) CalcSelectedXP(multiplier int, boost bool) int64 {
 	if p.SelectedChar != nil {
-		return p.SelectedChar.AddXP(multiplier, boost)
+		return p.SelectedChar.CalcXP(multiplier, boost)
 	}
 	if p.SelectedGrimm != nil {
-		return p.SelectedGrimm.AddXP(multiplier, boost)
+		return p.SelectedGrimm.CalcXP(multiplier, boost)
 	}
 	return 0
+}
+
+func (p *Player) GiveSelectedXP(add int64) (levelUp bool) {
+	if p.SelectedChar != nil {
+		return p.SelectedChar.GiveXP(add)
+	}
+	if p.SelectedGrimm != nil {
+		return p.SelectedGrimm.GiveXP(add)
+	}
+	return false
 }

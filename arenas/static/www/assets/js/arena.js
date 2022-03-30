@@ -1,4 +1,4 @@
-var socket = io.connect(`ws://${host}:9999`, { transports: ['websocket'] });
+var socket = io.connect(`ws://${host}:${port}`, { transports: ['websocket'] });
 
 function SetEverything() {
     var tag = document.createElement('script');
@@ -17,32 +17,19 @@ function SetEverything() {
         if (curHealth <= 0) {
             curHealth = 0
         }
-        $('.total').html(curHealth + "/" + maxHealth);
+        $('.total').html(curHealth + "/" + maxHealth +" HP");
     }
 
-    if ("WebSocket" in window) {
-        var ws = new WebSocket("wss://arena.rwbyadventures.com" + window.location.pathname + "ws" + document.location.search);
-        ws.onopen = function() {};
-        ws.onerror = function(err) {
-            console.log(err);
+
+    socket.on('arenaLoop', function (data) {
+        applyChange(data.body.h)
+        curHealth = data.body.h
+        document.getElementById("user-amount").innerHTML = data.body.n + " players with you."
+        if (curHealth <= 0) {
+            curHealth = 0
+            player.loadVideoById('-YCN-a0NsNk')
         }
-
-        ws.onmessage = function(evt) {
-            var message = evt.data;
-            var msg = JSON.parse(message);
-            switch (msg["a"]) {
-                case 'dmg':
-                    applyChange(msg["h"])
-                    curHealth = msg["h"]
-                    document.getElementById("user").innerHTML = msg["n"] + " players"
-                    if (curHealth <= 0) {
-                        curHealth = 0
-                        player.loadVideoById('-YCN-a0NsNk')
-                    }
-                    break;
-            };
-        };
-    }
+    });
 
     applyChange(curHealth);
 
@@ -51,7 +38,11 @@ function SetEverything() {
     });
     $(".add-damage").click(function() {
         if (curHealth > 0) {
-            ws.send('{"a":"dmg"}');
+            socket.emit('arenaHit', {
+                body: {
+                    token: token,
+                },
+            });
         }
     });
 }
@@ -80,3 +71,10 @@ function onPlayerStateChange(event) {
         event.target.playVideo();
     }
 }
+
+socket.emit('arenaConnect', {
+    body: {
+        id: ownID,
+        token: token,
+    },
+});

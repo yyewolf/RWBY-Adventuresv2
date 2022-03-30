@@ -16,7 +16,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js" integrity="sha512-zYXldzJsDrNKV+odAwFYiDXV2Cy37cwizT+NkuiPGsa9X1dOz04eHvUWVuxaJ299GvcJT31ug2zO4itXBjFx4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"></script>
-    <link rel="stylesheet" href="/assets/css/trade.css">
+    <link rel="stylesheet" href="/assets/css/arena.css">
 </head>
 
 <header>
@@ -39,27 +39,26 @@
 <body class="stylish-color-dark">
     <div class="container-fluid">
         <div class="d-flex justify-content-center">
-            <h2>{{.Boss.Name}}</h2>
+            <h2>You have to defeat {{.Arena.Name}}</h2>
         </div>
         <div class="d-flex justify-content-center">
-            <h4 id="user-amount">{{.PlayerAmount}} players with you</h4>
+            <h4 id="user-amount">{{len .Arena.Players}} players with you</h4>
         </div>
         <div class="d-flex justify-content-center">
             <div class="area" style="touch-action: manipulation">
-                <div class="total"></div>
-                <div class="health-bar" style="margin-top:35px;"></div>
-                <div class="health-bar-text"></div>
                 <div class="add-damage btn">
-                    <img height="300vh" src="{{.Boss.Image}}" />
+                    <img height="300vh" src="{{.Arena.Img}}" />
                 </div>
                 <div id="player"></div>
+                <div class="total"></div>
+                <div class="health-bar"></div>
+                <div class="health-bar-text"></div>
             </div>
         </div>
     </div>
     </div>
 </body>
 
-<script src="//arena.rwbyadventures.com/js/bar.js"></script>
 <script>
     var lastTouchEnd = 0;
     document.addEventListener('touchend', function(event) {
@@ -70,5 +69,18 @@
         lastTouchEnd = now;
     }, false);
 </script>
+
+
+<footer>
+    <script>
+        var token = "{{.Token}}"
+        var ownID = "{{.User.ID}}"
+        var host = "{{.Host}}"
+        var port = "{{.Port}}"
+        var curHealth = "{{.Arena.CurHealth}}"
+        var maxHealth = "{{.Arena.MaxHealth}}"
+    </script>
+    <script src="/assets/js/arena.js"></script>
+</footer>
 
 </html>

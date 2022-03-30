@@ -9,7 +9,6 @@ package arenapc;
 
 service Arena {
   rpc CreateArena (CreateArenaReq) returns (CreateArenaRep) {}
-  rpc JoinArena (JoinArenaReq) returns (JoinArenaRep) {}
 }
 
 message CreateArenaReq {
@@ -17,19 +16,6 @@ message CreateArenaReq {
 }
 
 message CreateArenaRep {
-    message Loots {
-        string id = 1;
-        string loot = 2;
-    }
     int32 status = 1;
-    repeated Loots loots = 2;
-
-}
-
-message JoinArenaReq {
-    string id = 1;
-}
-
-message JoinArenaRep {
-    int32 ok = 1;
+    string loots = 2;
 }

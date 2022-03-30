@@ -65,7 +65,7 @@ func TrainCharacter(ctx *CmdContext) {
 	ctx.Player.Status.LastXP = now
 	config.Database.Save(ctx.Player.Status)
 
-	XP := ctx.Player.AddSelectedXP(3, ctx.Player.Shop.XPBoost)
+	XP := ctx.Player.CalcSelectedXP(3, ctx.Player.Shop.XPBoost)
 	ctx.GiveSelectionXP(XP, true)
 }
 

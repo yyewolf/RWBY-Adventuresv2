@@ -1,6 +1,6 @@
 module rwby-adventures
 
-go 1.17
+go 1.18
 
 require (
 	github.com/ambelovsky/gosf v0.0.0-20201109201340-237aea4d6109

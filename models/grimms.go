@@ -208,7 +208,7 @@ func (g *Grimm) CalcStats() {
 	g.Stats.Health = int(float64(def.Stats.Health) + float64(18*g.Level)*float64(g.Stats.Value/100.0)*math.Pow(2, float64(g.Rarity)/4.6)*math.Pow(3, float64(g.Buffs)/7.0))
 }
 
-func (g *Grimm) AddXP(multiplier int, boost bool) int64 {
+func (g *Grimm) CalcXP(multiplier int, boost bool) int64 {
 	if g.Level >= 500 {
 		return 0
 	}
@@ -220,4 +220,19 @@ func (g *Grimm) AddXP(multiplier int, boost bool) int64 {
 		add = int64(float64((rand.Intn(33+rint))+25) * (math.Pow(float64(g.Level), 0.84) + 1))
 	}
 	return add
+}
+
+func (g *Grimm) GiveXP(XP int64) (levelUp bool) {
+	for g.XP+XP > g.XPCap {
+		levelUp = true
+		//if level up
+		XP -= g.XPCap - g.XP
+		g.Level++
+		g.XP = 0
+		g.XPCap = g.CalcXPCap()
+		g.CalcStats()
+	}
+	g.XP += XP
+	g.XPCap = g.CalcXPCap()
+	return levelUp
 }

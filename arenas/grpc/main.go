@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"net"
 	"rwby-adventures/arenapc"
+	"rwby-adventures/arenas/websocket"
 
 	"google.golang.org/grpc"
 )
 
 var (
 	// addr = "main"
-	port = "50001"
+	port = "50002"
 )
 
 type server struct {
@@ -19,12 +20,12 @@ type server struct {
 }
 
 func (s *server) CreateArena(ctx context.Context, in *arenapc.CreateArenaReq) (*arenapc.CreateArenaRep, error) {
-	return &arenapc.CreateArenaRep{Status: 1}, nil
-
-}
-
-func (s *server) JoinArena(ctx context.Context, in *arenapc.JoinArenaReq) (*arenapc.JoinArenaRep, error) {
-	return &arenapc.JoinArenaRep{Ok: 1}, nil
+	err, reward := websocket.CreateArena(in)
+	if err {
+		return &arenapc.CreateArenaRep{Status: 1}, nil
+	} else {
+		return &arenapc.CreateArenaRep{Status: 0, Loots: reward}, nil
+	}
 }
 
 func Serve() {

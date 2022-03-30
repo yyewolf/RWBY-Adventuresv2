@@ -2,13 +2,13 @@ package web
 
 import (
 	"context"
+	"crypto/sha256"
 	"fmt"
 	"html/template"
 	"net/http"
+	"rwby-adventures/arenas/static"
+	"rwby-adventures/arenas/websocket"
 	"rwby-adventures/config"
-	"rwby-adventures/main/static"
-	"rwby-adventures/main/websocket"
-	"rwby-adventures/models"
 	"strings"
 
 	"github.com/gorilla/pat"
@@ -35,10 +35,7 @@ func startArenaService() {
 	gothic.Store = store
 
 	mux := pat.New()
-	port := config.TradePort
-	if config.TestMode {
-		port = config.TradeTestPort
-	}
+	port := config.ArenaPort
 	srv := http.Server{
 		Addr:    port,
 		Handler: mux,
@@ -92,43 +89,43 @@ func DirectoryListing(next http.Handler) http.Handler {
 }
 
 func ArenaIndex(w http.ResponseWriter, r *http.Request) {
-	OtherID := ""
+	ArenaID := ""
 	// try to get it from the url param "provider"
 	if p := r.URL.Query().Get(":id"); p != "" {
-		OtherID = p
+		ArenaID = p
 	}
+
+	d, found := websocket.ArenaCache.Get(ArenaID)
+	if !found {
+		fmt.Fprint(w, "kestufai ?")
+		return
+	}
+	arena := d.(*websocket.ArenaStruct)
 
 	u, err := UserLogged(w, r)
 	if err != nil {
 		goth.UseProviders(provider)
 		state := gothic.SetState(r)
-		redirections[state] = fmt.Sprintf("/a/%s", OtherID)
+		redirections[state] = fmt.Sprintf("/a/%s", ArenaID)
 		r.URL.RawQuery += fmt.Sprintf("&state=%s", state)
 		state = gothic.SetState(r)
 		r = r.WithContext(context.WithValue(r.Context(), "provider", "discord"))
 		gothic.BeginAuthHandler(w, r)
 		return
 	}
-	target := models.GetPlayer(OtherID)
-	if target.IsNew {
-		templates.ExecuteTemplate(w, "arenaMessage.html", struct {
-			Message string
-		}{
-			Message: "You cannot trade with that person.",
-		})
-		return
-	}
 
-	token := uuid.NewV5(uuid.NewV4(), "trade").String()
-	data := &websocket.TradeTemplateData{
-		User: websocket.WebUser{
+	h := sha256.Sum256([]byte(arena.ID + u.UserID))
+	token := fmt.Sprintf("%x", h)
+	data := &websocket.ArenaUserData{
+		Arena: arena,
+		User: &websocket.WebUser{
 			Name: u.Name,
 			ID:   u.UserID,
 		},
-		Token:   token,
-		OtherID: OtherID,
-		Host:    config.TradeHost,
+		Token: token,
+		Host:  config.ArenaHost,
+		Port:  config.ArenaWebsocket,
 	}
 	websocket.Tokens.Add(token, data, 0)
-	templates.ExecuteTemplate(w, "trade.html", data)
+	templates.ExecuteTemplate(w, "arena.html", data)
 }

@@ -128,7 +128,7 @@ func continueMission(ctx *discord.CmdContext) {
 		config.Database.Save(ctx.Player.Boxes)
 		earningText += " and 1 lootbox"
 	}
-	add := ctx.Player.CharInMission.AddXP(10, ctx.Player.Shop.XPBoost)
+	add := ctx.Player.CharInMission.CalcXP(10, ctx.Player.Shop.XPBoost)
 	earningText += fmt.Sprintf("\nYour character also earned : %dXP.", add)
 	ctx.GiveXP(ctx.Player.CharInMission, nil, add, false)
 	//END XP
@@ -187,7 +187,7 @@ func continueHunt(ctx *discord.CmdContext) {
 		config.Database.Save(ctx.Player.Boxes)
 		earningText += " and 1 lootbox"
 	}
-	add := ctx.Player.GrimmInHunt.AddXP(10, ctx.Player.Shop.XPBoost)
+	add := ctx.Player.GrimmInHunt.CalcXP(10, ctx.Player.Shop.XPBoost)
 	earningText += fmt.Sprintf("\nYour grimm also earned : %dXP.", add)
 	ctx.GiveXP(nil, ctx.Player.GrimmInHunt, add, false)
 	//END XP

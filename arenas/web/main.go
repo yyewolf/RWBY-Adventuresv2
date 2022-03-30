@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"rwby-adventures/arenas/static"
 	"rwby-adventures/config"
-	"rwby-adventures/main/static"
 
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"

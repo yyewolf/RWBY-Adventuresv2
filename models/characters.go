@@ -223,7 +223,7 @@ func (c *Character) CalcXPCap() int64 {
 	return int64(50*c.Level*c.Level + 100)
 }
 
-func (c *Character) AddXP(multiplier int, boost bool) int64 {
+func (c *Character) CalcXP(multiplier int, boost bool) int64 {
 	if c.Level >= 500 {
 		return 0
 	}
@@ -235,6 +235,21 @@ func (c *Character) AddXP(multiplier int, boost bool) int64 {
 		add = int64(float64((rand.Intn(33+rint))+25) * (math.Pow(float64(c.Level), 0.84) + 1))
 	}
 	return add
+}
+
+func (c *Character) GiveXP(XP int64) (levelUp bool) {
+	for c.XP+XP > c.XPCap {
+		levelUp = true
+		//if level up
+		XP -= c.XPCap - c.XP
+		c.Level++
+		c.XP = 0
+		c.XPCap = c.CalcXPCap()
+		c.CalcStats()
+	}
+	c.XP += XP
+	c.XPCap = c.CalcXPCap()
+	return levelUp
 }
 
 func (c *Character) CalcStats() {

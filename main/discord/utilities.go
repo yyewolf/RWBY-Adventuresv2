@@ -52,23 +52,12 @@ func (ctx *CmdContext) GiveXP(char *models.Character, grimm *models.Grimm, add i
 }
 
 func (ctx *CmdContext) GiveCharXP(char *models.Character, add int64, notif bool) {
-	levelUp := false
 	if ctx.Player.Shop.XPBoost && ctx.Player.Shop.XPBoostTime > 0 {
 		// ctx.Player.sendXPNotice(s)
 		ctx.Player.Shop.XPBoostTime--
 		config.Database.Save(ctx.Player.Shop)
 	}
-	for char.XP+add > char.XPCap {
-		levelUp = true
-		//if level up
-		add -= char.XPCap - char.XP
-		char.Level++
-		char.XP = 0
-		char.XPCap = char.CalcXPCap()
-		char.CalcStats()
-	}
-	char.XP += add
-	char.XPCap = char.CalcXPCap()
+	levelUp := char.GiveXP(add)
 	if levelUp && notif {
 		content := &discordgo.MessageEmbed{
 			Title: "Congratulations !",
@@ -91,23 +80,13 @@ func (ctx *CmdContext) GiveCharXP(char *models.Character, add int64, notif bool)
 }
 
 func (ctx *CmdContext) GiveGrimmXP(grimm *models.Grimm, add int64, notif bool) {
-	levelUp := false
+
 	if ctx.Player.Shop.XPBoost && ctx.Player.Shop.XPBoostTime > 0 {
 		// ctx.Player.sendXPNotice(s)
 		ctx.Player.Shop.XPBoostTime--
 		config.Database.Save(ctx.Player.Shop)
 	}
-	for grimm.XP+add > grimm.XPCap {
-		levelUp = true
-		//if level up
-		add -= grimm.XPCap - grimm.XP
-		grimm.Level++
-		grimm.XP = 0
-		grimm.XPCap = grimm.CalcXPCap()
-		grimm.CalcStats()
-	}
-	grimm.XP += add
-	grimm.XPCap = grimm.CalcXPCap()
+	levelUp := grimm.GiveXP(add)
 	if levelUp && notif {
 		content := &discordgo.MessageEmbed{
 			Title: "Congratulations !",
