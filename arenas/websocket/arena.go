@@ -49,7 +49,22 @@ func ArenaHit(client *gosf.Client, request *gosf.Request) *gosf.Message {
 		return gosf.NewFailureMessage("f")
 	}
 	d := data.(*ArenaUserData)
-	d.Arena.CurHealth -= 50
+	if d.Arena.CurHealth > 0 {
+		d.Arena.CurHealth -= 50
+	}
+	if d.Arena.CurHealth <= 0 {
+		d.Arena.CurHealth = 0
+		// We stop the loop
+		d.Arena.Channel <- 1
+		time.Sleep(100 * time.Millisecond)
+
+		go gosf.Broadcast(d.Arena.ID, "arenaLoop", &gosf.Message{
+			Body: map[string]interface{}{
+				"h": d.Arena.CurHealth,
+				"n": len(d.Arena.Players),
+			},
+		})
+	}
 	//fmt.Println("[WS] Arena hit!")
 	return gosf.NewSuccessMessage()
 }

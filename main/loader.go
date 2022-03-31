@@ -32,6 +32,8 @@ func StartDiscord() {
 	}
 	discord.AddCmd(addchar)
 	discord.AddCmd(del)
+	discord.AddCmd(commands_temporary.ArenaCommand)
+
 	discord.AddCmd(commands.HelpCommand)
 
 	discord.AddCmd(commands_inventory.PlayerInfoCommand)

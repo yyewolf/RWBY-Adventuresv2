@@ -21,6 +21,7 @@ type server struct {
 
 func (s *server) CreateArena(ctx context.Context, in *arenapc.CreateArenaReq) (*arenapc.CreateArenaRep, error) {
 	err, reward := websocket.CreateArena(in)
+	fmt.Println(reward)
 	if err {
 		return &arenapc.CreateArenaRep{Status: 1}, nil
 	} else {

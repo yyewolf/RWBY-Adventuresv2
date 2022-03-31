@@ -10,10 +10,10 @@ import (
 )
 
 var (
-	addr = "localhost:50001"
+	addr = "127.0.0.1:50002"
 )
 
-var arena arenapc.ArenaClient
+var ArenaServer arenapc.ArenaClient
 
 func ConnectToRPC() {
 	flag.Parse()
@@ -22,6 +22,7 @@ func ConnectToRPC() {
 	if err != nil {
 		fmt.Println("[ARENA] Cannot connect to arena grpc")
 	}
-	defer conn.Close()
-	arena = arenapc.NewArenaClient(conn)
+	//defer conn.Close()
+	ArenaServer = arenapc.NewArenaClient(conn)
+	fmt.Println("[ARENA] Connected to arena grpc")
 }

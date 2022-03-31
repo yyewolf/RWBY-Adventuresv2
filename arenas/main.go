@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 	"os/signal"
-	"rwby-adventures/arenapc"
 	agrpc "rwby-adventures/arenas/grpc"
 	"rwby-adventures/arenas/web"
 	"rwby-adventures/arenas/websocket"
@@ -15,9 +14,9 @@ func main() {
 	web.StartWeb()
 	websocket.StartWebsocket()
 
-	websocket.CreateArena(&arenapc.CreateArenaReq{
-		Id: "main",
-	})
+	// websocket.CreateArena(&arenapc.CreateArenaReq{
+	// 	Id: "main",
+	// })
 
 	// Wait here until CTRL-C or other term signal is received.
 	sc := make(chan os.Signal, 1)

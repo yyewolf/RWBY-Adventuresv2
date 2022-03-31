@@ -8,16 +8,10 @@ import (
 )
 
 func EndClassicArena(arena *ArenaStruct) (b bool, loots string) {
-	// We stop the loop
-	arena.Channel <- 1
-
 	// We disconnect everyone from the websocket
 	for _, player := range arena.Players {
 		player.Client.Disconnect()
 	}
-
-	// We delete the arena from the cache
-	ArenaCache.Delete(arena.Name)
 
 	rewards := ""
 	// We give rewards to all players
@@ -33,7 +27,16 @@ func EndClassicArena(arena *ArenaStruct) (b bool, loots string) {
 		}
 		// We give the player the reward
 		config.Database.Save(p.Status)
+		if p.SelectedChar != nil {
+			config.Database.Save(p.SelectedChar)
+		}
+		if p.SelectedGrimm != nil {
+			config.Database.Save(p.SelectedGrimm)
+		}
 	}
+
+	// We delete the arena from the cache
+	ArenaCache.Delete(arena.Name)
 
 	return false, rewards
 }

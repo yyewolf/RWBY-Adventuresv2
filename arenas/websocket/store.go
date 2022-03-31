@@ -28,6 +28,7 @@ type ArenaStruct struct {
 	CurHealth int
 	Channel   chan int
 	End       func(*ArenaStruct) (bool, string)
+	Ticker    *time.Ticker
 }
 
 var ArenaCache = cache.New(5*time.Hour, 10*time.Minute)

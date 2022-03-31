@@ -18,9 +18,10 @@ func CreateArena(in *arenapc.CreateArenaReq) (b bool, loots string) {
 		ID:        in.GetId(),
 		Name:      "Wumpus",
 		Img:       "https://vultam.net/img/background/wumpus.png",
-		MaxHealth: 20000,
-		CurHealth: 20000,
+		MaxHealth: 100,
+		CurHealth: 100,
 		End:       EndClassicArena,
+		Channel:   make(chan int),
 	}
 	ArenaCache.Set(in.GetId(), arena, 0)
 	fmt.Println("[ARENA] Created arena:", in.GetId())
@@ -30,12 +31,12 @@ func CreateArena(in *arenapc.CreateArenaReq) (b bool, loots string) {
 func ArenaLoop(arena *ArenaStruct) (b bool, loots string) {
 	//Sends data to players
 	t := time.NewTicker(time.Millisecond * 100)
-
+	arena.Ticker = t
 	for {
 		select {
 		case <-arena.Channel:
 			return arena.End(arena)
-		case <-t.C:
+		case <-arena.Ticker.C:
 			break
 		}
 		//fmt.Println("[ARENA] Sending data to players")
