@@ -1,13 +1,17 @@
 package discord
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
+	"rwby-adventures/arenapc"
 	"rwby-adventures/config"
+	rwby_grpc "rwby-adventures/main/grpc"
 	"strings"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	uuid "github.com/satori/go.uuid"
 )
 
 type PassiveFunc func(*CmdContext)
@@ -21,6 +25,7 @@ func RegisterPassiveFunction(f PassiveFunc) {
 func init() {
 	RegisterPassiveFunction(TrainCharacter)
 	RegisterPassiveFunction(DropBoxes)
+	RegisterPassiveFunction(SpawnArena)
 }
 
 func xpLimiter(id string) bool {
@@ -131,5 +136,93 @@ func DropBoxes(ctx *CmdContext) {
 
 	ctx.Reply(ReplyParams{
 		Content: resp,
+	})
+}
+
+func SpawnArena(ctx *CmdContext) {
+	// Every 5 hours
+	if ctx.Guild.LastArena < 5*60*60 {
+		//return
+	}
+	ctx.Guild.LastArena = time.Now().Unix()
+	config.Database.Save(ctx.Guild)
+	//Rolls the dice now to save computing power
+	r := rand.Float64()
+	//0.12% chance
+	willSpawn := r < 0.0012
+	if !willSpawn && ctx.Author.ID != "144472011924570113" {
+		return
+	}
+
+	c, err := ctx.Session.Channel(ctx.ChannelID)
+	if err != nil {
+		return
+	}
+	if c.Type == discordgo.ChannelTypeDM {
+		//return
+	}
+
+	ID := uuid.NewV4().String()
+	in := &arenapc.CreateArenaReq{
+		Id: ID,
+	}
+
+	// Ping the arena service
+	_, err = rwby_grpc.ArenaServer.Ping(context.Background(), &arenapc.PingReq{})
+	if err != nil {
+		return
+	}
+
+	//Prepare the embed
+	msg := &discordgo.MessageSend{
+		Embed: &discordgo.MessageEmbed{
+			Title:       "**Grimm** has appeared !",
+			Description: "Click the button to join the fight !\nPrize : XP and Money !",
+			Color:       config.Botcolor,
+		},
+		Content: ctx.Guild.PingRoles,
+		Components: []discordgo.MessageComponent{
+			discordgo.ActionsRow{
+				Components: []discordgo.MessageComponent{
+					discordgo.Button{
+						Label: "Join!",
+						Style: discordgo.LinkButton,
+						URL:   fmt.Sprintf("http://%s%s/a/%s", config.ArenaHost, config.ArenaPort, ID),
+					},
+				},
+			},
+		},
+	}
+	// Send the message
+	if ctx.Guild.AutomatedMessagesEnabled {
+		_, err := ctx.Reply(ReplyParams{
+			Content:   msg,
+			ChannelID: ctx.Guild.AutomatedMessagesChannelID,
+		})
+		if err != nil {
+			ctx.Reply(ReplyParams{
+				Content: msg,
+			})
+		}
+	} else {
+		ctx.Reply(ReplyParams{
+			Content: msg,
+		})
+	}
+
+	rep, err := rwby_grpc.ArenaServer.CreateArena(context.Background(), in)
+	if err != nil {
+		return
+	}
+	if rep.Status == 1 {
+		return
+	}
+
+	ctx.Reply(ReplyParams{
+		Content: &discordgo.MessageEmbed{
+			Title:       "Congratulations you defeated the arena and all won XP !",
+			Description: rep.GetLoots(),
+			Color:       config.Botcolor,
+		},
 	})
 }

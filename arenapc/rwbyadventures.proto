@@ -9,6 +9,15 @@ package arenapc;
 
 service Arena {
   rpc CreateArena (CreateArenaReq) returns (CreateArenaRep) {}
+  rpc Ping (PingReq) returns (PingRep) {}
+}
+
+message PingReq {
+  string ping = 1;
+}
+
+message PingRep {
+  string pong = 1;
 }
 
 message CreateArenaReq {

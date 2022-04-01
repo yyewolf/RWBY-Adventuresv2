@@ -21,12 +21,15 @@ type server struct {
 
 func (s *server) CreateArena(ctx context.Context, in *arenapc.CreateArenaReq) (*arenapc.CreateArenaRep, error) {
 	err, reward := websocket.CreateArena(in)
-	fmt.Println(reward)
 	if err {
 		return &arenapc.CreateArenaRep{Status: 1}, nil
 	} else {
 		return &arenapc.CreateArenaRep{Status: 0, Loots: reward}, nil
 	}
+}
+
+func (s *server) Ping(ctx context.Context, in *arenapc.PingReq) (*arenapc.PingRep, error) {
+	return &arenapc.PingRep{}, nil
 }
 
 func Serve() {

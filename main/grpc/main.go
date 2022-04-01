@@ -1,9 +1,11 @@
 package rwby_grpc
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"rwby-adventures/arenapc"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -25,4 +27,18 @@ func ConnectToRPC() {
 	//defer conn.Close()
 	ArenaServer = arenapc.NewArenaClient(conn)
 	fmt.Println("[ARENA] Connected to arena grpc")
+
+	go RPCWatchdog()
+}
+
+func RPCWatchdog() {
+	for {
+		time.Sleep(time.Second * 5)
+		_, err := ArenaServer.Ping(context.Background(), &arenapc.PingReq{})
+		if err != nil {
+			fmt.Println("[ARENA] Reconnecting to RPC")
+			ConnectToRPC()
+			return
+		}
+	}
 }
