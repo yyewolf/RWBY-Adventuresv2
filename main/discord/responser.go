@@ -2,7 +2,6 @@ package discord
 
 import (
 	"fmt"
-	"rwby-adventures/config"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -15,6 +14,8 @@ type ReplyParams struct {
 	ID          string
 	ChannelID   string
 	GuildID     string
+
+	Automated bool
 
 	DM        bool
 	Edit      bool
@@ -33,6 +34,24 @@ func (c *CmdContext) Reply(p ReplyParams) (st *discordgo.Message, err error) {
 			p.Content = "Sorry <@" + p.ID + ">, but I cannot contact you through DMs, check your privacy settings!"
 		} else {
 			p.ChannelID = channel.ID
+		}
+	}
+
+	if p.Automated {
+		if c.Guild.AutomatedMessagesEnabled {
+			_, err := c.Reply(ReplyParams{
+				Content:   p.Content,
+				ChannelID: c.Guild.AutomatedMessagesChannelID,
+			})
+			if err != nil {
+				return c.Reply(ReplyParams{
+					Content: p.Content,
+				})
+			}
+		} else {
+			return c.Reply(ReplyParams{
+				Content: p.Content,
+			})
 		}
 	}
 
@@ -140,14 +159,14 @@ func (c *CmdContext) ReplyInteraction(p ReplyParams) (st *discordgo.Message, err
 		flags = 1 << 6
 	}
 	if p.Delete {
-		err = c.Session.InteractionResponseDelete(p.ChannelID, c.Interaction)
+		err = c.Session.InteractionResponseDelete(c.Interaction)
 		return
 	}
 	switch p.Content.(type) {
 	case string:
 		if !p.FollowUp {
 			if p.Edit {
-				return c.Session.InteractionResponseEdit(config.AppID, c.Interaction, &discordgo.WebhookEdit{
+				return c.Session.InteractionResponseEdit(c.Interaction, &discordgo.WebhookEdit{
 					Content:    p.Content.(string),
 					Components: p.Components,
 				})
@@ -163,12 +182,12 @@ func (c *CmdContext) ReplyInteraction(p ReplyParams) (st *discordgo.Message, err
 			return
 		} else {
 			if p.Edit {
-				return c.Session.FollowupMessageEdit(config.AppID, c.Interaction, p.ID, &discordgo.WebhookEdit{
+				return c.Session.FollowupMessageEdit(c.Interaction, p.ID, &discordgo.WebhookEdit{
 					Content:    p.Content.(string),
 					Components: p.Components,
 				})
 			}
-			return c.Session.FollowupMessageCreate(config.AppID, c.Interaction, true, &discordgo.WebhookParams{
+			return c.Session.FollowupMessageCreate(c.Interaction, true, &discordgo.WebhookParams{
 				Content:    p.Content.(string),
 				Components: p.Components,
 				Flags:      flags,
@@ -177,7 +196,7 @@ func (c *CmdContext) ReplyInteraction(p ReplyParams) (st *discordgo.Message, err
 	case *discordgo.MessageEmbed:
 		if !p.FollowUp {
 			if p.Edit {
-				return c.Session.InteractionResponseEdit(config.AppID, c.Interaction, &discordgo.WebhookEdit{
+				return c.Session.InteractionResponseEdit(c.Interaction, &discordgo.WebhookEdit{
 					Embeds: []*discordgo.MessageEmbed{
 						p.Content.(*discordgo.MessageEmbed),
 					},
@@ -197,14 +216,14 @@ func (c *CmdContext) ReplyInteraction(p ReplyParams) (st *discordgo.Message, err
 			return
 		} else {
 			if p.Edit {
-				return c.Session.FollowupMessageEdit(config.AppID, c.Interaction, p.ID, &discordgo.WebhookEdit{
+				return c.Session.FollowupMessageEdit(c.Interaction, p.ID, &discordgo.WebhookEdit{
 					Embeds: []*discordgo.MessageEmbed{
 						p.Content.(*discordgo.MessageEmbed),
 					},
 					Components: p.Components,
 				})
 			}
-			return c.Session.FollowupMessageCreate(config.AppID, c.Interaction, true, &discordgo.WebhookParams{
+			return c.Session.FollowupMessageCreate(c.Interaction, true, &discordgo.WebhookParams{
 				Embeds: []*discordgo.MessageEmbed{
 					p.Content.(*discordgo.MessageEmbed),
 				},
@@ -216,7 +235,7 @@ func (c *CmdContext) ReplyInteraction(p ReplyParams) (st *discordgo.Message, err
 		complex := p.Content.(*discordgo.MessageSend)
 		if !p.FollowUp {
 			if p.Edit {
-				return c.Session.InteractionResponseEdit(config.AppID, c.Interaction, &discordgo.WebhookEdit{
+				return c.Session.InteractionResponseEdit(c.Interaction, &discordgo.WebhookEdit{
 					Content:    complex.Content,
 					Embeds:     p.embeds,
 					Components: complex.Components,
@@ -238,14 +257,14 @@ func (c *CmdContext) ReplyInteraction(p ReplyParams) (st *discordgo.Message, err
 			return
 		} else {
 			if p.Edit {
-				return c.Session.FollowupMessageEdit(config.AppID, c.Interaction, p.ID, &discordgo.WebhookEdit{
+				return c.Session.FollowupMessageEdit(c.Interaction, p.ID, &discordgo.WebhookEdit{
 					Content:    complex.Content,
 					Embeds:     p.embeds,
 					Components: complex.Components,
 					Files:      complex.Files,
 				})
 			}
-			return c.Session.FollowupMessageCreate(config.AppID, c.Interaction, true, &discordgo.WebhookParams{
+			return c.Session.FollowupMessageCreate(c.Interaction, true, &discordgo.WebhookParams{
 				Content:    complex.Content,
 				Embeds:     p.embeds,
 				Components: complex.Components,
@@ -260,7 +279,7 @@ func (c *CmdContext) ReplyInteraction(p ReplyParams) (st *discordgo.Message, err
 				t := ""
 				complex.Content = &t
 			}
-			return c.Session.InteractionResponseEdit(config.AppID, c.Interaction, &discordgo.WebhookEdit{
+			return c.Session.InteractionResponseEdit(c.Interaction, &discordgo.WebhookEdit{
 				Content:    *complex.Content,
 				Embeds:     p.embeds,
 				Components: complex.Components,
@@ -271,7 +290,7 @@ func (c *CmdContext) ReplyInteraction(p ReplyParams) (st *discordgo.Message, err
 				t := ""
 				complex.Content = &t
 			}
-			return c.Session.FollowupMessageEdit(config.AppID, c.Interaction, complex.ID, &discordgo.WebhookEdit{
+			return c.Session.FollowupMessageEdit(c.Interaction, complex.ID, &discordgo.WebhookEdit{
 				Content:    *complex.Content,
 				Embeds:     p.embeds,
 				Components: complex.Components,

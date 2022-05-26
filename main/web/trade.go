@@ -13,10 +13,10 @@ import (
 
 	"github.com/gorilla/pat"
 	"github.com/gorilla/sessions"
-	"github.com/markbates/goth"
-	"github.com/markbates/goth/gothic"
-	"github.com/markbates/goth/providers/discord"
 	uuid "github.com/satori/go.uuid"
+	"github.com/yyewolf/goth"
+	"github.com/yyewolf/goth/gothic"
+	"github.com/yyewolf/goth/providers/discord"
 )
 
 var tradeProvider = discord.New("375700234120200194", "P6KOz6Uvl8PWhY-hfx5IXo_posPDBu7D", fmt.Sprintf("http://%s%s/auth/discord/callback", config.TradeHost, config.TradePort), discord.ScopeIdentify)

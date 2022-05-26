@@ -1,0 +1,10 @@
+{
+    "editor.inlineSuggest.enabled": true,
+    "terminal.integrated.profiles.linux": {
+        "zsh" : {
+            "path": "zsh",
+        },  
+    },
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "terminal.integrated.shellIntegration.enabled": true,
+}

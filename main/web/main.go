@@ -7,9 +7,9 @@ import (
 	"rwby-adventures/config"
 	"rwby-adventures/main/static"
 
-	"github.com/markbates/goth"
-	"github.com/markbates/goth/gothic"
-	"github.com/markbates/goth/providers/discord"
+	"github.com/yyewolf/goth"
+	"github.com/yyewolf/goth/gothic"
+	"github.com/yyewolf/goth/providers/discord"
 )
 
 var templates *template.Template

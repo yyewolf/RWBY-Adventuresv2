@@ -140,6 +140,9 @@ func DropBoxes(ctx *CmdContext) {
 }
 
 func SpawnArena(ctx *CmdContext) {
+	if ctx.GuildID == "" {
+		//return
+	}
 	// Every 5 hours
 	if ctx.Guild.LastArena < 5*60*60 {
 		//return
@@ -194,21 +197,10 @@ func SpawnArena(ctx *CmdContext) {
 		},
 	}
 	// Send the message
-	if ctx.Guild.AutomatedMessagesEnabled {
-		_, err := ctx.Reply(ReplyParams{
-			Content:   msg,
-			ChannelID: ctx.Guild.AutomatedMessagesChannelID,
-		})
-		if err != nil {
-			ctx.Reply(ReplyParams{
-				Content: msg,
-			})
-		}
-	} else {
-		ctx.Reply(ReplyParams{
-			Content: msg,
-		})
-	}
+	ctx.Reply(ReplyParams{
+		Content:   msg,
+		Automated: true,
+	})
 
 	rep, err := rwby_grpc.ArenaServer.CreateArena(context.Background(), in)
 	if err != nil {
