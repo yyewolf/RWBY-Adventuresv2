@@ -6,13 +6,9 @@ import (
 	"net"
 	"rwby-adventures/arenapc"
 	"rwby-adventures/arenas/websocket"
+	"rwby-adventures/config"
 
 	"google.golang.org/grpc"
-)
-
-var (
-	// addr = "main"
-	port = "50002"
 )
 
 type server struct {
@@ -33,7 +29,7 @@ func (s *server) Ping(ctx context.Context, in *arenapc.PingReq) (*arenapc.PingRe
 }
 
 func Serve() {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", port))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", config.ArenaRPC))
 	if err != nil {
 		fmt.Printf("[ARENA] Failed to listen: %v\n", err)
 	}

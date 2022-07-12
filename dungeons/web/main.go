@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"rwby-adventures/arenas/static"
 	"rwby-adventures/config"
+	"rwby-adventures/dungeons/static"
 
 	"github.com/yyewolf/goth"
 	"github.com/yyewolf/goth/gothic"
@@ -18,10 +18,10 @@ func StartWeb() {
 	templates, _ = template.ParseFS(static.WebFS, "*.html")
 
 	goth.UseProviders(
-		discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("http://%s%s/auth/discord/callback", config.ArenaHost, config.ArenaPort), discord.ScopeIdentify),
+		discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("http://%s%s/auth/discord/callback", config.DungeonHost, config.DungeonPort), discord.ScopeIdentify),
 	)
 
-	startArenaService()
+	startDungeonService()
 	fmt.Println("[WEB] Started.")
 }
 

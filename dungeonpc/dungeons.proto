@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "/dungeonpc";
+option java_multiple_files = true;
+option java_package = "rwby.adventures.dungeonpc";
+option java_outer_classname = "DungeonProto";
+
+package dungeonpc;
+
+service Dungeon {
+  rpc CreateDungeon (CreateDungeonReq) returns (CreateDungeonRep) {}
+  rpc Ping (PingReq) returns (PingRep) {}
+}
+
+message PingReq {
+  string ping = 1;
+}
+
+message PingRep {
+  string pong = 1;
+}
+
+message CreateDungeonReq {
+    string id = 1;
+}
+
+message CreateDungeonRep {
+    int32 status = 1;
+    string loots = 2;
+}

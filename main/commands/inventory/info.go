@@ -136,7 +136,7 @@ func charInfo(ctx *discord.CmdContext, char *models.Character, number int) {
 			},
 		},
 		Embed: &discordgo.MessageEmbed{
-			Title: "Level " + strconv.Itoa(char.Level) + " " + char.Name + ". (n°" + strconv.Itoa(number) + ")",
+			Title: "Level " + strconv.Itoa(char.Level) + " " + char.Name + ". (ID: C" + strconv.Itoa(number) + ")",
 			Color: char.RarityToColor(),
 			Fields: []*discordgo.MessageEmbedField{
 				{
@@ -194,7 +194,7 @@ func grimmInfo(ctx *discord.CmdContext, grimm *models.Grimm, number int) {
 			},
 		},
 		Embed: &discordgo.MessageEmbed{
-			Title: "Level " + strconv.Itoa(grimm.Level) + " " + grimm.Name + ". (n°" + strconv.Itoa(number) + ")",
+			Title: "Level " + strconv.Itoa(grimm.Level) + " " + grimm.Name + ". (ID: G" + strconv.Itoa(number) + ")",
 			Color: grimm.RarityToColor(),
 			Fields: []*discordgo.MessageEmbedField{
 				{

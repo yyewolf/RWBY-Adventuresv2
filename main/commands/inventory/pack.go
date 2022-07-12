@@ -192,7 +192,7 @@ func Pack(ctx *discord.CmdContext) {
 				continue
 			}
 			n++
-			grimmsField.Value += fmt.Sprintf("`C%d | %s`", i+1, grimm.FullString())
+			grimmsField.Value += fmt.Sprintf("`G%d | %s`", i+1, grimm.FullString())
 		}
 
 		if n > 0 {
@@ -295,12 +295,10 @@ func PackPages(ctx *discord.CmdContext) {
 	switch strings.Split(ctx.ComponentData.CustomID, "-")[1] {
 	case "prev":
 		d.Page++
-		break
 	case "refresh":
 		break
 	case "next":
 		d.Page--
-		break
 	default:
 		return
 	}

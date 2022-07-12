@@ -19,6 +19,7 @@ var SupportLink = "https://discord.gg/adJGyVxv7H"
 var Botcolor = 3859607
 
 var AppID = "375700234120200194"
+var DiscordSecret = "P6KOz6Uvl8PWhY-hfx5IXo_posPDBu7D"
 var Token = "Mzc1NzAwMjM0MTIwMjAwMTk0.WftYGw.7Dpvcfk1sBR2QksWuV-x4IbpziI"
 
 // All characters

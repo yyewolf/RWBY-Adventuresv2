@@ -1,0 +1,77 @@
+body {
+	background-color:#121212 !important;
+}
+
+.area {
+  padding: 10px;
+  text-align: center;
+}
+
+h2, h4 {
+  color: #bb86fc !important;
+  padding: 5px;
+  text-align: center;
+}
+
+p {
+  width: 500px;
+  padding: 1%;
+  margin: auto;
+}
+
+.btn {
+  text-align: center;
+  background-color: #384242;
+  border: 2px solid #485252;
+  padding: 20px;
+  display: inline-block;
+  margin: 30px 10px;
+  user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  cursor: pointer;
+}
+
+.health-bar {
+  background-color: #007f00;
+  width: inherit;
+  height: 28px;
+  position: relative;
+  bottom: 56px;
+  margin-top:55px;
+}
+.health-bar-text {
+  position: relative;
+  bottom: 80px;
+  color: white;
+}
+
+.message-box {
+  text-align: center;
+  padding: 5px;
+}
+
+.total, .message-box {
+  color: #bb86fc !important;
+  font-size: 16px;
+  margin: 5px;
+}
+
+#volume {
+	position: absolute;
+	bottom:15px;
+	left:12px;
+	margin: 0 auto;
+	height: 5px;
+	width: 300px;
+	background: #555;
+	border-radius: 15px;
+}
+
+.ui-slider-handle {
+	bottom:15px;
+	left:12px;
+	border-radius: 50px !important;
+}

@@ -3,6 +3,7 @@ package main
 import (
 	"rwby-adventures/main/commands"
 	commands_boxes "rwby-adventures/main/commands/boxes"
+	commands_dungeon "rwby-adventures/main/commands/dungeons"
 	commands_inventory "rwby-adventures/main/commands/inventory"
 	commands_missions "rwby-adventures/main/commands/missions"
 	commands_roleplay "rwby-adventures/main/commands/roleplay"
@@ -54,6 +55,8 @@ func StartDiscord() {
 
 	discord.AddCmd(commands_missions.MissionCommand)
 	discord.AddCmd(commands_missions.HuntCommand)
+
+	discord.AddCmd(commands_dungeon.DungeonCommand)
 
 	discord.MakeEmbed()
 
