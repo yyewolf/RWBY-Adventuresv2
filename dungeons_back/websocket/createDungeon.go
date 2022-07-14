@@ -2,7 +2,7 @@ package websocket
 
 import (
 	"fmt"
-	"rwby-adventures/dungeonpc"
+	dungeonpc "rwby-adventures/dungeons_rpc"
 	"time"
 )
 

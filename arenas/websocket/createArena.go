@@ -2,7 +2,7 @@ package websocket
 
 import (
 	"fmt"
-	"rwby-adventures/arenapc"
+	arenapc "rwby-adventures/arenas_rpc"
 	"time"
 
 	"github.com/ambelovsky/gosf"

@@ -4,9 +4,9 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"rwby-adventures/arenapc"
+	arenapc "rwby-adventures/arenas_rpc"
 	"rwby-adventures/config"
-	"rwby-adventures/dungeonpc"
+	dungeonpc "rwby-adventures/dungeons_rpc"
 	"time"
 
 	"google.golang.org/grpc"

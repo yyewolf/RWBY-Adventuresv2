@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
-	"rwby-adventures/arenapc"
+	arenapc "rwby-adventures/arenas_rpc"
 	"rwby-adventures/config"
 	rwby_grpc "rwby-adventures/main/grpc"
 	"strings"

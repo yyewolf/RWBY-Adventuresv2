@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"rwby-adventures/config"
-	"rwby-adventures/dungeonpc"
+	dungeonpc "rwby-adventures/dungeons_rpc"
 	"rwby-adventures/main/discord"
 	rwby_grpc "rwby-adventures/main/grpc"
 

@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 	"os/signal"
-	dgrpc "rwby-adventures/dungeons/grpc"
-	"rwby-adventures/dungeons/web"
-	"rwby-adventures/dungeons/websocket"
+	dgrpc "rwby-adventures/dungeons_back/grpc"
+	"rwby-adventures/dungeons_back/web"
+	"rwby-adventures/dungeons_back/websocket"
 	"syscall"
 )
 

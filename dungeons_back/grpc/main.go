@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net"
 	"rwby-adventures/config"
-	"rwby-adventures/dungeonpc"
-	"rwby-adventures/dungeons/websocket"
+	"rwby-adventures/dungeons_back/websocket"
+	dungeonpc "rwby-adventures/dungeons_rpc"
 
 	"google.golang.org/grpc"
 )

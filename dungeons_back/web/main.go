@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"rwby-adventures/config"
-	"rwby-adventures/dungeons/static"
+	"rwby-adventures/dungeons_back/static"
 
 	"github.com/yyewolf/goth"
 	"github.com/yyewolf/goth/gothic"

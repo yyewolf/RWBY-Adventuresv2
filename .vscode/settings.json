@@ -5,6 +5,6 @@
             "path": "zsh",
         },  
     },
-    "terminal.integrated.defaultProfile.linux": "zsh",
+    "terminal.integrated.defaultProfile.linux": "bash",
     "terminal.integrated.shellIntegration.enabled": true,
 }

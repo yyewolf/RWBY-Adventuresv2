@@ -7,8 +7,8 @@ import (
 	"html/template"
 	"net/http"
 	"rwby-adventures/config"
-	"rwby-adventures/dungeons/static"
-	"rwby-adventures/dungeons/websocket"
+	"rwby-adventures/dungeons_back/static"
+	"rwby-adventures/dungeons_back/websocket"
 	"strings"
 
 	"github.com/gorilla/pat"

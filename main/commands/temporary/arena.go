@@ -3,7 +3,7 @@ package commands_temporary
 import (
 	"context"
 	"fmt"
-	"rwby-adventures/arenapc"
+	arenapc "rwby-adventures/arenas_rpc"
 	"rwby-adventures/main/discord"
 	rwby_grpc "rwby-adventures/main/grpc"
 

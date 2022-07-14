@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"rwby-adventures/arenapc"
 	"rwby-adventures/arenas/websocket"
+	arenapc "rwby-adventures/arenas_rpc"
 	"rwby-adventures/config"
 
 	"google.golang.org/grpc"
