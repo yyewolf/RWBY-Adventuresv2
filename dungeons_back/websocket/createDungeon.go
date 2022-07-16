@@ -2,6 +2,7 @@ package websocket
 
 import (
 	"fmt"
+	"rwby-adventures/dungeons_back/game"
 	dungeonpc "rwby-adventures/dungeons_rpc"
 	"time"
 )
@@ -11,9 +12,11 @@ func CreateDungeon(in *dungeonpc.CreateDungeonReq) (b bool, loots string) {
 	if exists {
 		return true, ""
 	}
+	d := game.NewDungeon(15, 15)
 	dungeon := &DungeonStruct{
-		ID:  in.GetId(),
-		End: endDungeon,
+		ID:   in.GetId(),
+		End:  endDungeon,
+		Game: d,
 	}
 	DungeonCache.Set(in.GetId(), dungeon, 0)
 	fmt.Println("[DUNGEON] Created dungeon:", in.GetId())

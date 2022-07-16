@@ -4,7 +4,7 @@
       <v-container ref="dungeon" :class="reflow ? '' : animation ">
         <v-col v-for="row in rows" :key="row" cols="12">
           <v-row :id="row" justify="center">
-            <img v-for="col in columns" :key="col" :src="assets[grid[row][col]]"/>
+            <img v-for="col in columns" :key="col" :src="assets[game.grid[row][col]]"/>
           </v-row>
         </v-col>
       </v-container>
@@ -47,44 +47,80 @@ import wall from "@/assets/1.png"
 import fow from "@/assets/2.png"
 import player from "@/assets/3.png"
 
+import io from 'socket.io-client'
+
+const connectRoute = "dungeonConnect";
+const moveRoute = "dungeonMove";
+
 export default {
   name: 'DungeonPage',
   
   data: function () {
       return {
-          grid: [
-            [1,1,1,1,1],
-            [1,3,0,0,1],
-            [1,0,0,0,1],
-            [1,0,0,0,1],
-            [1,1,1,1,1],
-          ],
+          game: {
+            grid: [
+              [0,0,0],
+              [0,0,0],
+              [0,0,0],
+            ],
+          },
           assets:[
             background,
             wall,
             fow,
             player,
           ],
-          playerPos:{
-            row: 1,
-            col: 1,
-          },
-          memory: 0,
           reflow: false,
           animation: '',
+          socket: undefined,
       }
   },
 
   computed: {
     columns() {
-      return Array.from({ length: 5 }, (_, i) => i)
+      return Array.from({ length: this.game.grid.length }, (_, i) => i)
     },
     rows() {
-      return Array.from({ length: 5 }, (_, i) => i)
+      return Array.from({ length: this.game.grid[0].length }, (_, i) => i)
     }
   },
 
+  mounted() {
+    this.connectToWS();
+  },
+
   methods: {
+    modifyDungeon(grid) {
+      for (let row = 0; row < grid.length; row++) {
+        for (let col = 0; col < grid[row].length; col++) {
+          this.game.grid[col][row] = grid[col][row].type;
+        }
+      }
+    },
+
+    connectToWS() {
+      this.socket = io('ws://localhost:9003/', { transports: ['websocket'] })
+      this.socket.on('connect', () => {
+        this.sendTokenToWS();
+      })
+    },
+
+    sendTokenToWS() {
+      // get token from local storage :
+      // const token = localStorage.getItem('token')
+      
+      const token = "test"
+      let data = {
+        body : {
+          token: token,
+        }
+      }
+      this.socket.emit(connectRoute, data, (data) => {
+        console.log("connected & tokened");
+        this.modifyDungeon(data.body.g);
+      })
+    },
+
     activateClass(){
       this.reflow = 1;
       this.$refs.dungeon.offsetWidth;
@@ -92,45 +128,43 @@ export default {
         this.reflow = 0;
       }, 0);
     },
-    movePlayer(direction) {
 
-      this.grid[this.playerPos.row][this.playerPos.col] = this.memory;
+    movePlayer(direction) {
+      let dir;
       switch(direction) {
         case 'up':
+          dir = 3;
           this.animation = 'animateU';
-          this.playerPos.row--;
+          //this.playerPos.row--;
           break;
         case 'down':
+          dir = 1;
           this.animation = 'animateD';
-          this.playerPos.row++;
+          //this.playerPos.row++;
           break;
         case 'left':
+          dir = 2;
           this.animation = 'animateL';
-          this.playerPos.col--;
+          //this.playerPos.col--;
           break;
         case 'right':
+          dir = 0;
           this.animation = 'animateR';
-          this.playerPos.col++;
+          //this.playerPos.col++;
           break;
       }
-      if (this.playerPos.row < 0) {
-        this.playerPos.row = 0;
+
+      let data = {
+        body : {
+          direction: dir,
+        }
       }
-      if (this.playerPos.col < 0) {
-        this.playerPos.col = 0;
-      }
-      if(this.playerPos.row > 4) {
-        this.playerPos.row = 4;
-      }
-      if(this.playerPos.col > 4) {
-        this.playerPos.col = 4;
-      }
+      this.socket.emit(moveRoute, data, (data) => {
+        this.modifyDungeon(data.body.g);
+      })
 
       // trigger reflow
       this.activateClass();
-
-      this.memory = this.grid[this.playerPos.row][this.playerPos.col];
-      this.grid[this.playerPos.row][this.playerPos.col] = 3
     },
   },
 }
@@ -143,7 +177,7 @@ export default {
     transform: translateX(0);
   }
   50% {
-    transform: translateX(0.5%);
+    transform: translateX(.5%); /* .5 */
   }
   100% {
     transform: translateX(0);
@@ -155,7 +189,7 @@ export default {
     transform: translateX(0);
   }
   50% {
-    transform: translateX(-0.5%);
+    transform: translateX(-.5%); /* .5 */
   }
   100% {
     transform: translateX(0);
@@ -167,7 +201,7 @@ export default {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-3%);
+    transform: translateY(-3%); /* 3 */
   }
   100% {
     transform: translateY(0);
@@ -179,7 +213,7 @@ export default {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-3%);
+    transform: translateY(-3%); /* 3 */
   }
   100% {
     transform: translateY(0);

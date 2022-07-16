@@ -100,7 +100,7 @@ func DungeonIndex(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "kestufai ?")
 		return
 	}
-	arena := d.(*websocket.DungeonStruct)
+	dungeon := d.(*websocket.DungeonStruct)
 
 	u, err := UserLogged(w, r)
 	if err != nil {
@@ -114,10 +114,10 @@ func DungeonIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h := sha256.Sum256([]byte(arena.ID + u.UserID))
+	h := sha256.Sum256([]byte(dungeon.ID + u.UserID))
 	token := fmt.Sprintf("%x", h)
 	data := &websocket.DungeonUserData{
-		Dungeon: arena,
+		Dungeon: dungeon,
 		User: &websocket.WebUser{
 			Name: u.Name,
 			ID:   u.UserID,

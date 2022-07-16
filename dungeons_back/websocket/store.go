@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"rwby-adventures/dungeons_back/game"
 	"sync"
 	"time"
 
@@ -19,12 +20,12 @@ type Player struct {
 }
 
 type DungeonStruct struct {
-	ID string
+	ID   string
+	Game *game.Dungeon
 
 	End     func(*DungeonStruct) (bool, string)
 	Ticker  *time.Ticker
 	Channel chan int
-	// TO DO
 }
 
 var DungeonCache = cache.New(5*time.Hour, 10*time.Minute)
