@@ -3,14 +3,14 @@ package main
 import (
 	"os"
 	"os/signal"
-	dgrpc "rwby-adventures/dungeons_back/grpc"
+	"rwby-adventures/dungeons_back/microservice"
 	"rwby-adventures/dungeons_back/web"
 	"rwby-adventures/dungeons_back/websocket"
 	"syscall"
 )
 
 func main() {
-	go dgrpc.Serve()
+	microservice.CreateMicroservice()
 	web.StartWeb()
 	websocket.StartWebsocket()
 

@@ -2,6 +2,7 @@ package websocket
 
 import (
 	"rwby-adventures/dungeons_back/game"
+	"rwby-adventures/microservices"
 	"sync"
 	"time"
 
@@ -10,7 +11,6 @@ import (
 )
 
 type Player struct {
-
 	// Useful for fast response
 	Client    *gosf.Client
 	LastClick time.Time
@@ -23,7 +23,7 @@ type DungeonStruct struct {
 	ID   string
 	Game *game.Dungeon
 
-	End     func(*DungeonStruct) (bool, string)
+	End     func(*DungeonStruct) *microservices.DungeonEndResponse
 	Ticker  *time.Ticker
 	Channel chan int
 }

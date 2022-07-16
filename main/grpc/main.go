@@ -6,7 +6,6 @@ import (
 	"fmt"
 	arenapc "rwby-adventures/arenas_rpc"
 	"rwby-adventures/config"
-	dungeonpc "rwby-adventures/dungeons_rpc"
 	"time"
 
 	"google.golang.org/grpc"
@@ -14,16 +13,13 @@ import (
 )
 
 var (
-	addrArena   = fmt.Sprintf("%s:%s", config.ArenaHost, config.ArenaRPC)
-	addrDungeon = fmt.Sprintf("%s:%s", config.DungeonHost, config.DungeonRPC)
+	addrArena = fmt.Sprintf("%s:%s", config.ArenaHost, config.ArenaRPC)
 )
 
 var ArenaServer arenapc.ArenaClient
-var DungeonServer dungeonpc.DungeonClient
 
 func ConnectToRPC() {
 	go ConnectToArena()
-	go ConnectToDungeon()
 }
 
 func ConnectToArena() {
@@ -40,20 +36,6 @@ func ConnectToArena() {
 	go arenaWatchdog()
 }
 
-func ConnectToDungeon() {
-	flag.Parse()
-	// Set up a connection to the server.
-	conn, err := grpc.Dial(addrDungeon, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		fmt.Println("[DUNGEON] Cannot connect to dungeon grpc")
-	}
-	//defer conn.Close()
-	DungeonServer = dungeonpc.NewDungeonClient(conn)
-	//fmt.Println("[DUNGEON] Connected to dungeon grpc")
-
-	go dungeonWatchdog()
-}
-
 func arenaWatchdog() {
 	for {
 		time.Sleep(time.Second * 5)
@@ -61,18 +43,6 @@ func arenaWatchdog() {
 		if err != nil {
 			fmt.Println("[ARENA] Reconnecting to RPC")
 			ConnectToArena()
-			return
-		}
-	}
-}
-
-func dungeonWatchdog() {
-	for {
-		time.Sleep(time.Second * 5)
-		_, err := DungeonServer.Ping(context.Background(), &dungeonpc.PingReq{})
-		if err != nil {
-			fmt.Println("[DUNGEON] Reconnecting to RPC")
-			ConnectToDungeon()
 			return
 		}
 	}

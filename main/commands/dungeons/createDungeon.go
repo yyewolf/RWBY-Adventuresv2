@@ -1,13 +1,13 @@
 package commands_dungeon
 
 import (
-	"context"
 	"fmt"
 	"rwby-adventures/config"
-	dungeonpc "rwby-adventures/dungeons_rpc"
 	"rwby-adventures/main/discord"
-	rwby_grpc "rwby-adventures/main/grpc"
+	"rwby-adventures/main/dungeons"
+	"rwby-adventures/microservices"
 
+	"github.com/ambelovsky/gosf"
 	"github.com/bwmarrin/discordgo"
 	uuid "github.com/satori/go.uuid"
 )
@@ -20,18 +20,17 @@ var DungeonCommand = &discord.Command{
 }
 
 func createDungeon(ctx *discord.CmdContext) {
-	_, err := rwby_grpc.DungeonServer.Ping(context.Background(), &dungeonpc.PingReq{})
-	if err != nil {
+	if !dungeons.DungeonsMicroservice.Connected() {
 		ctx.Reply(discord.ReplyParams{
-			Content:   "There has been an error : " + err.Error(),
+			Content:   "Cannot contact dungeons at the moment.",
 			Ephemeral: true,
 		})
 		return
 	}
 
 	ID := uuid.NewV4().String()
-	in := &dungeonpc.CreateDungeonReq{
-		Id: ID,
+	req := &microservices.DungeonCreateRequest{
+		ID: ID,
 	}
 
 	ctx.Reply(discord.ReplyParams{
@@ -49,13 +48,13 @@ func createDungeon(ctx *discord.CmdContext) {
 		},
 	})
 
-	rep, err := rwby_grpc.DungeonServer.CreateDungeon(context.Background(), in)
+	response, err := dungeons.CreateDungeon(req)
 	if err != nil {
 		return
 	}
-	if rep.Status == 1 {
-		return
-	}
+
+	resp := &microservices.DungeonEndResponse{}
+	gosf.MapToStruct(response.Body, resp)
 
 	// HERE THE DUNGEON FINISHED
 

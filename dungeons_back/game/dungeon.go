@@ -1,12 +1,20 @@
 package game
 
-import "math/rand"
+import (
+	"fmt"
+	"math/rand"
+)
 
 const (
 	tileFloor = iota
 	tileWall
 	tileFow
 	tilePlayer
+	tileMoney
+)
+
+const (
+	findMoney = "You found %dⱠ (Lien) !"
 )
 
 var (
@@ -20,7 +28,10 @@ type PlayerPosition struct {
 }
 
 type DungeonCell struct {
-	Type int `json:"type"`
+	Type    int    `json:"type"`
+	Amount  int    `json:"amount"`
+	Claimed bool   `json:"claimed"`
+	Message string `json:"message"`
 }
 
 type Dungeon struct {
@@ -40,16 +51,13 @@ func NewDungeon(height, width int) *Dungeon {
 		},
 	}
 	d.GenerateMaze()
-	d.Grid[d.Position.Y][d.Position.X].Type = tilePlayer
 	return d
 }
 
 func (d *Dungeon) MovePlayer(direction int) {
-	if d.Grid[d.Position.Y+dy[direction]][d.Position.X+dx[direction]].Type == tileFloor {
-		d.Grid[d.Position.Y][d.Position.X].Type = tileFloor
+	if d.Grid[d.Position.Y+dy[direction]][d.Position.X+dx[direction]].Type != tileWall {
 		d.Position.Y += dy[direction]
 		d.Position.X += dx[direction]
-		d.Grid[d.Position.Y][d.Position.X].Type = tilePlayer
 	}
 }
 
@@ -136,12 +144,12 @@ func (d *Dungeon) GenerateMaze() {
 			for row := miny; row < maxy+1; row++ {
 				d.Grid[row][minx+cutposi].Type = tileWall
 			}
-			d.Grid[miny+doorposi][minx+cutposi].Type = tileFloor
+			d.Grid[miny+doorposi][minx+cutposi].Generate()
 		} else {
 			for col := minx; col < maxx+1; col++ {
 				d.Grid[miny+cutposi][col].Type = tileWall
 			}
-			d.Grid[miny+cutposi][minx+doorposi].Type = tileFloor
+			d.Grid[miny+cutposi][minx+doorposi].Generate()
 		}
 		if cutdirection == 0 {
 			var firstArea = [][]int{{miny, minx}, {maxy, minx + cutposi - 1}}
@@ -165,4 +173,17 @@ func (d *Dungeon) GetSmallGrid(width, height int) [][]DungeonCell {
 		smallGrid = append(smallGrid, d.Grid[i][x:x+width])
 	}
 	return smallGrid
+}
+
+func (c *DungeonCell) Generate() {
+	rng := rand.Float64() * 100
+
+	if rng < 20 {
+		c.Type = tileMoney
+		c.Amount = rand.Intn(100) + 1
+		c.Message = fmt.Sprintf(findMoney, c.Amount)
+		return
+	}
+
+	c.Type = tileFloor
 }

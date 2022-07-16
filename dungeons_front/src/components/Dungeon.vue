@@ -1,10 +1,11 @@
 <template>
   <v-container class="vertical-center">
+    <notifications position="top center" classes="notif vue-notification"/>
     <v-row>
       <v-container ref="dungeon" :class="reflow ? '' : animation ">
         <v-col v-for="row in rows" :key="row" cols="12">
           <v-row :id="row" justify="center">
-            <img v-for="col in columns" :key="col" :src="assets[game.grid[row][col]]"/>
+            <img v-for="col in columns" :key="col" :src="assets[grid[row][col]]"/>
           </v-row>
         </v-col>
       </v-container>
@@ -12,7 +13,7 @@
       <v-container class="mt-5">
           <v-row>
               <v-col cols="12" class="text-center">
-                  <v-btn v-on:click="movePlayer('up')">
+                  <v-btn v-on:click="movePlayer('up');">
                       UP
                   </v-btn>
               </v-col>
@@ -46,6 +47,8 @@ import background from "@/assets/0.png"
 import wall from "@/assets/1.png"
 import fow from "@/assets/2.png"
 import player from "@/assets/3.png"
+import money from "@/assets/4.png"
+import ding from "@/assets/ding.mp3"
 
 import io from 'socket.io-client'
 
@@ -57,18 +60,17 @@ export default {
   
   data: function () {
       return {
-          game: {
-            grid: [
-              [0,0,0],
-              [0,0,0],
-              [0,0,0],
-            ],
-          },
+          grid: [
+            [0,0,0],
+            [0,0,0],
+            [0,0,0],
+          ],
           assets:[
             background,
             wall,
             fow,
             player,
+            money,
           ],
           reflow: false,
           animation: '',
@@ -78,10 +80,10 @@ export default {
 
   computed: {
     columns() {
-      return Array.from({ length: this.game.grid.length }, (_, i) => i)
+      return Array.from({ length: this.grid.length }, (_, i) => i)
     },
     rows() {
-      return Array.from({ length: this.game.grid[0].length }, (_, i) => i)
+      return Array.from({ length: this.grid[0].length }, (_, i) => i)
     }
   },
 
@@ -91,9 +93,26 @@ export default {
 
   methods: {
     modifyDungeon(grid) {
+      let centerOfGridX = Math.floor(grid.length / 2);
+      let centerOfGridY = Math.floor(grid[0].length / 2);
+
+      if (grid[centerOfGridX][centerOfGridY].message != "") {
+        var audio = new Audio(ding);
+        audio.volume = 0.2;
+        audio.play();
+        this.animation = "loot";
+        this.activateClass();
+        this.$notify({
+          text:grid[centerOfGridX][centerOfGridY].message
+        });
+      }
       for (let row = 0; row < grid.length; row++) {
         for (let col = 0; col < grid[row].length; col++) {
-          this.game.grid[col][row] = grid[col][row].type;
+          if (col == centerOfGridY && row == centerOfGridX) {
+            this.grid[col][row] = 3;
+            continue;
+          }
+          this.grid[col][row] = grid[col][row].type;
         }
       }
     },
@@ -171,13 +190,12 @@ export default {
 </script>
 
 <style scoped>
-
 @keyframes moveLeft {
   0% {
     transform: translateX(0);
   }
   50% {
-    transform: translateX(.5%); /* .5 */
+    transform: translateX(.75%); /* .75 */
   }
   100% {
     transform: translateX(0);
@@ -189,7 +207,7 @@ export default {
     transform: translateX(0);
   }
   50% {
-    transform: translateX(-.5%); /* .5 */
+    transform: translateX(-.75%); /* .75 */
   }
   100% {
     transform: translateX(0);
@@ -201,7 +219,7 @@ export default {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-3%); /* 3 */
+    transform: translateY(-4%); /* 4 */
   }
   100% {
     transform: translateY(0);
@@ -213,27 +231,39 @@ export default {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-3%); /* 3 */
+    transform: translateY(-4%); /* 4 */
   }
   100% {
     transform: translateY(0);
   }
 }
 
-.animateL{
+@keyframes loot {
+  30% { transform: scale(1.2); }
+  40%, 60% { transform: rotate(-5deg) scale(1.2); }
+  50% { transform: rotate(5deg) scale(1.2); }
+  70% { transform: rotate(0deg) scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.animateL {
   animation: moveLeft 0.25s ease-in-out;
 }
 
-.animateR{
+.animateR {
   animation: moveRight 0.25s ease-in-out;
 }
 
-.animateU{
+.animateU {
   animation: moveUp 0.25s ease-in-out;
 }
 
-.animateD{
+.animateD {
   animation: moveDown 0.25s ease-in-out;
+}
+
+.loot{
+  animation: loot 0.25s ease-in-out;
 }
 
 .vertical-center {
@@ -242,5 +272,11 @@ export default {
   justify-content: center;
   height:100vh;
 }
+</style>
 
+<style>
+.notif {
+  /* higher font size */
+  font-size: 1.5em !important;
+}
 </style>

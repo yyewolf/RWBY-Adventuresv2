@@ -3,7 +3,7 @@ package websocket
 import (
 	"fmt"
 	"rwby-adventures/config"
-	dungeonpc "rwby-adventures/dungeons_rpc"
+	"rwby-adventures/dungeons_back/game"
 
 	"github.com/ambelovsky/gosf"
 	"github.com/pmylund/go-cache"
@@ -20,9 +20,20 @@ func StartWebsocket() {
 
 	fmt.Println("[WS] Started.")
 
-	go CreateDungeon(&dungeonpc.CreateDungeonReq{
-		Id: "test",
-	})
+	d := game.NewDungeon(15, 15)
+	dungeon := &DungeonStruct{
+		ID:   "test",
+		End:  EndDungeon,
+		Game: d,
+	}
+	DungeonCache.Set("test", dungeon, 0)
+
+	for row := range d.Grid {
+		for col := range d.Grid[row] {
+			fmt.Printf("%d ", d.Grid[row][col].Type)
+		}
+		fmt.Println()
+	}
 }
 
 func GetString(request *gosf.Request, key string) (string, bool) {

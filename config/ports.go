@@ -15,7 +15,7 @@ var (
 
 	// RPC
 	ArenaRPC   = "8000"
-	DungeonRPC = "8001"
+	DungeonRPC = 8001
 
 	TradeHost       = "194.163.142.107"
 	TradeTestHost   = "localhost"
