@@ -23,9 +23,9 @@ func createDungeon(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	}
 	d := game.NewDungeon(15, 15)
 	dungeon := &websocket.DungeonStruct{
-		ID:   ID,
-		End:  websocket.EndDungeon,
-		Game: d,
+		ID:    ID,
+		Game:  d,
+		EndIt: make(chan int),
 	}
 	websocket.DungeonCache.Set(ID, dungeon, 0)
 
@@ -45,8 +45,8 @@ func dungeonLoop(dungeon *websocket.DungeonStruct) *microservices.DungeonEndResp
 	dungeon.Ticker = t
 	for {
 		select {
-		case <-dungeon.Channel:
-			return dungeon.End(dungeon)
+		case <-dungeon.EndIt:
+			return dungeon.End()
 		case <-dungeon.Ticker.C:
 		}
 	}

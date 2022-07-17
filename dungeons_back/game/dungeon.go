@@ -3,6 +3,7 @@ package game
 import (
 	"fmt"
 	"math/rand"
+	"rwby-adventures/microservices"
 )
 
 const (
@@ -11,10 +12,15 @@ const (
 	tileFow
 	tilePlayer
 	tileMoney
+	tileEscape
+	tileVoid
+	tileEnnemy
+	tileAmbrosius
 )
 
 const (
-	findMoney = "You found %dⱠ (Lien) !"
+	findMoney  = "You found %dⱠ (Liens) !"
+	findEnnemy = "You found an ennemy and lost %d HP !"
 )
 
 var (
@@ -28,17 +34,20 @@ type PlayerPosition struct {
 }
 
 type DungeonCell struct {
-	Type    int    `json:"type"`
-	Amount  int    `json:"amount"`
-	Claimed bool   `json:"claimed"`
-	Message string `json:"message"`
+	Type    int              `json:"type"`
+	Amount  int              `json:"amount,omitempty"`
+	Message string           `json:"message,omitempty"`
+	Damages int              `json:"damages,omitempty"`
+	Choices []*DungeonChoice `json:"choices,omitempty"`
 }
 
 type Dungeon struct {
-	Grid     [][]DungeonCell
+	Grid     [][]*DungeonCell
+	Rewards  *microservices.DungeonReward
 	Height   int
 	Width    int
 	Position PlayerPosition
+	Health   int
 }
 
 func NewDungeon(height, width int) *Dungeon {
@@ -49,22 +58,67 @@ func NewDungeon(height, width int) *Dungeon {
 			X: 1,
 			Y: 1,
 		},
+		Rewards: &microservices.DungeonReward{},
+		Health:  150,
 	}
 	d.GenerateMaze()
 	return d
 }
 
-func (d *Dungeon) MovePlayer(direction int) {
-	if d.Grid[d.Position.Y+dy[direction]][d.Position.X+dx[direction]].Type != tileWall {
-		d.Position.Y += dy[direction]
-		d.Position.X += dx[direction]
+func (d *Dungeon) MovePlayer(direction int) (end bool) {
+	if d.Position.X+dx[direction] < 0 || d.Position.X+dx[direction] >= d.Width {
+		return
 	}
+	if d.Position.Y+dy[direction] < 0 || d.Position.Y+dy[direction] >= d.Height {
+		return
+	}
+	newCell := d.Grid[d.Position.Y+dy[direction]][d.Position.X+dx[direction]]
+	if newCell.Type == tileWall {
+		return
+	}
+	oldCell := d.Grid[d.Position.Y][d.Position.X]
+
+	d.Position.Y += dy[direction]
+	d.Position.X += dx[direction]
+
+	if oldCell.Type == tileMoney {
+		d.Rewards.Lien += oldCell.Amount
+		oldCell.Type = tileFloor
+		oldCell.Amount = 0
+		oldCell.Message = ""
+	}
+
+	if oldCell.Type == tileEnnemy {
+		if oldCell.Amount <= 0 {
+			oldCell.Type = tileFloor
+			oldCell.Amount = 0
+			oldCell.Message = ""
+		}
+	}
+
+	if newCell.Type == tileEnnemy {
+		newCell.Amount -= 1
+		d.Health -= newCell.Damages
+		if d.Health <= 0 {
+			d.Health = 0
+			return true
+		}
+	}
+
+	if newCell.Type == tileEscape {
+		return true
+	}
+
+	return
 }
 
 func (d *Dungeon) Init() {
-	d.Grid = make([][]DungeonCell, d.Height)
+	d.Grid = make([][]*DungeonCell, d.Height)
 	for i := 0; i < d.Height; i++ {
-		d.Grid[i] = make([]DungeonCell, d.Width)
+		d.Grid[i] = make([]*DungeonCell, d.Width)
+		for j := 0; j < d.Width; j++ {
+			d.Grid[i][j] = &DungeonCell{}
+		}
 		if i == 0 || i == d.Height-1 {
 			for j := 0; j < d.Width; j++ {
 				d.Grid[i][j].Type = tileWall
@@ -163,14 +217,32 @@ func (d *Dungeon) GenerateMaze() {
 			stack = append(stack, secondArea)
 		}
 	}
+
+	// make exit
+	d.Grid[d.Height-2][d.Width-1].Type = tileEscape
+	d.Grid[d.Height-2][d.Width-1].Message = "You escaped!"
+
+	// remove what's under the player
+	d.Grid[1][1] = &DungeonCell{
+		Type: tileFloor,
+	}
 }
 
-func (d *Dungeon) GetSmallGrid(width, height int) [][]DungeonCell {
-	var smallGrid [][]DungeonCell
+func (d *Dungeon) GetSmallGrid(width, height int) [][]*DungeonCell {
+	var smallGrid [][]*DungeonCell
 	x := d.Position.X - width/2
 	y := d.Position.Y - height/2
 	for i := y; i < y+height; i++ {
-		smallGrid = append(smallGrid, d.Grid[i][x:x+width])
+		currentRow := make([]*DungeonCell, width)
+		for j := x; j < x+width; j++ {
+			currentRow[j-x] = &DungeonCell{}
+			if i < 0 || i >= d.Height || j < 0 || j >= d.Width {
+				currentRow[j-x].Type = tileVoid
+			} else {
+				currentRow[j-x] = d.Grid[i][j]
+			}
+		}
+		smallGrid = append(smallGrid, currentRow)
 	}
 	return smallGrid
 }
@@ -180,8 +252,26 @@ func (c *DungeonCell) Generate() {
 
 	if rng < 20 {
 		c.Type = tileMoney
-		c.Amount = rand.Intn(100) + 1
+		c.Amount = rand.Intn(100) + 50
 		c.Message = fmt.Sprintf(findMoney, c.Amount)
+		return
+	}
+
+	rng -= 20
+
+	if rng < 5 {
+		c.Type = tileEnnemy
+		c.Amount = 3
+		c.Damages = rand.Intn(10) + 100
+		c.Message = fmt.Sprintf(findEnnemy, c.Damages)
+		return
+	}
+
+	rng -= 5
+
+	if rng < 80 {
+		c.Type = tileAmbrosius
+		c.Choices = generateChoices(2)
 		return
 	}
 

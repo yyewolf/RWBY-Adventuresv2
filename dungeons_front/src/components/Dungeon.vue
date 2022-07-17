@@ -1,36 +1,98 @@
 <template>
   <v-container class="vertical-center">
     <notifications position="top center" classes="notif vue-notification"/>
+
+    <!-- Dungeon ending -->
+    <v-dialog transition="dialog-top-transition" persistent v-model="finished" max-width="600">
+      <v-card>
+        <v-toolbar color="secondary" dark>Dungeon finished !</v-toolbar>
+        <v-card-text>
+          <v-container>
+            <p>Liens : {{rewards.liens}}Ⱡ</p>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <!-- Ambrosius -->
+    <v-dialog transition="dialog-top-transition" v-model="ambrosius">
+      <v-card>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" class="text-center">
+                <v-img class="ambrosius" :src="require('@/assets/ambrosius.png')"/>
+              </v-col>
+              <v-col v-for="choice in choices" :key="choice" cols="12" class="text-center">
+                <v-btn block v-on:click="ambrosiusChoice(choice.index)">
+                    {{choice.message}}
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <v-row>
+      <!-- Title -->
+      <v-container>
+        <v-row>
+          <v-col cols="12" class="text-center">
+            <h1>
+              Escape the dungeon !
+            </h1>
+          </v-col>
+        </v-row>
+      </v-container>
+
+      <!-- Life -->
+      <v-container>
+        <v-row>
+          <v-col cols="12" class="text-center">
+            <v-container>
+              <img class="heart" style="vertical-align: bottom;" :src="require('@/assets/health.png')"/>
+              <span class="text-warning ml-2">{{life}}</span>
+            </v-container>
+          </v-col>
+        </v-row>
+      </v-container>
+
+      <!-- Dungeon box -->
       <v-container ref="dungeon" :class="reflow ? '' : animation ">
         <v-col v-for="row in rows" :key="row" cols="12">
           <v-row :id="row" justify="center">
-            <img v-for="col in columns" :key="col" :src="assets[grid[row][col]]"/>
+            <img :class="grid[row][col] != 6 ? 'tile' : 'tileVoid' " v-for="col in columns" :key="col" :src="assets[grid[row][col]]"/>
           </v-row>
         </v-col>
       </v-container>
       
+      <!-- Controller -->
       <v-container class="mt-5">
           <v-row>
-              <v-col cols="12" class="text-center">
-                  <v-btn v-on:click="movePlayer('up');">
+              <v-col cols="5">
+              </v-col>
+              <v-col cols="2" class="text-center controller">
+                  <v-btn block v-on:click="movePlayer('up')">
                       UP
                   </v-btn>
               </v-col>
+              <v-col cols="5">
+              </v-col>
               <v-col cols="3">
               </v-col>
-              <v-col cols="2" class="text-right">
-                  <v-btn v-on:click="movePlayer('left')">
+              <v-col cols="2" class="text-right controller">
+                  <v-btn block v-on:click="movePlayer('left')">
                       LEFT
                   </v-btn>
               </v-col>
-              <v-col cols="2" class="text-center">
-                  <v-btn v-on:click="movePlayer('down')">
+              <v-col cols="2" class="text-center controller">
+                  <v-btn block v-on:click="movePlayer('down')">
                       DOWN
                   </v-btn>
               </v-col>
-              <v-col cols="2" class="text-left">
-                  <v-btn v-on:click="movePlayer('right')">
+              <v-col cols="2" class="text-left controller">
+                  <v-btn block v-on:click="movePlayer('right')">
                       RIGHT
                   </v-btn>
               </v-col>
@@ -43,17 +105,27 @@
 </template>
 
 <script>
-import background from "@/assets/0.png"
-import wall from "@/assets/1.png"
-import fow from "@/assets/2.png"
-import player from "@/assets/3.png"
-import money from "@/assets/4.png"
+import background from "@/assets/floor.png"
+import wall from "@/assets/wall.jpg"
+import fow from "@/assets/2.png" // Unused
+// import player from "@/assets/3.png" // Unused
+import money from "@/assets/money.png"
+import door from "@/assets/door.png"
+import empty from "@/assets/void.png"
+import ennemy from "@/assets/ennemy.png"
+import ambrosius from "@/assets/ambrosius_tile.png"
 import ding from "@/assets/ding.mp3"
+
+import player_up from "@/assets/player_up.png"
+import player_down from "@/assets/player_down.png"
+import player_left from "@/assets/player_left.png"
+import player_right from "@/assets/player_right.png"
 
 import io from 'socket.io-client'
 
 const connectRoute = "dungeonConnect";
 const moveRoute = "dungeonMove";
+const ambrosiusChoice = "ambrosiusChoice";
 
 export default {
   name: 'DungeonPage',
@@ -69,12 +141,27 @@ export default {
             background,
             wall,
             fow,
-            player,
+            player_up,
             money,
+            door,
+            empty,
+            ennemy,
+            ambrosius,
           ],
+          player_directions: [
+            player_right,
+            player_down,
+            player_left,
+            player_up,
+          ],
+          rewards: undefined,
           reflow: false,
           animation: '',
           socket: undefined,
+          finished: false,
+          life: 150,
+          ambrosius: false,
+          choices: undefined,
       }
   },
 
@@ -89,6 +176,22 @@ export default {
 
   mounted() {
     this.connectToWS();
+    window.addEventListener("keyup", e => {
+      switch (e.key) {
+        case "ArrowUp":
+          this.movePlayer("up");
+          break;
+        case "ArrowDown":
+          this.movePlayer("down");
+          break;
+        case "ArrowLeft":
+          this.movePlayer("left");
+          break;
+        case "ArrowRight":
+          this.movePlayer("right");
+          break;
+      }
+    });
   },
 
   methods: {
@@ -96,7 +199,7 @@ export default {
       let centerOfGridX = Math.floor(grid.length / 2);
       let centerOfGridY = Math.floor(grid[0].length / 2);
 
-      if (grid[centerOfGridX][centerOfGridY].message != "") {
+      if (grid[centerOfGridX][centerOfGridY].message != undefined) {
         var audio = new Audio(ding);
         audio.volume = 0.2;
         audio.play();
@@ -106,6 +209,12 @@ export default {
           text:grid[centerOfGridX][centerOfGridY].message
         });
       }
+
+      if (grid[centerOfGridX][centerOfGridY].choices != undefined) {
+        this.ambrosius = true;
+        this.choices = grid[centerOfGridX][centerOfGridY].choices;
+      }
+
       for (let row = 0; row < grid.length; row++) {
         for (let col = 0; col < grid[row].length; col++) {
           if (col == centerOfGridY && row == centerOfGridX) {
@@ -114,6 +223,16 @@ export default {
           }
           this.grid[col][row] = grid[col][row].type;
         }
+      }
+    },
+
+    receiveUpdate(data) {
+      this.modifyDungeon(data.g); // Grid update
+      this.life = data.h; // Life update
+      if (data.e) {
+        // Dungeon ended
+        this.rewards = data.r;
+        this.finished = true;
       }
     },
 
@@ -136,7 +255,7 @@ export default {
       }
       this.socket.emit(connectRoute, data, (data) => {
         console.log("connected & tokened");
-        this.modifyDungeon(data.body.g);
+        this.receiveUpdate(data.body);
       })
     },
 
@@ -172,18 +291,33 @@ export default {
           //this.playerPos.col++;
           break;
       }
-
+      this.assets[3] = this.player_directions[dir];
       let data = {
         body : {
           direction: dir,
         }
       }
       this.socket.emit(moveRoute, data, (data) => {
-        this.modifyDungeon(data.body.g);
+        this.receiveUpdate(data.body);
       })
 
       // trigger reflow
       this.activateClass();
+    },
+
+    ambrosiusChoice(choice) {
+      let data = {
+        body : {
+          choice: choice,
+        }
+      }
+      console.log(choice);
+      this.socket.emit(ambrosiusChoice, data, (data) => {
+        this.ambrosius = false;
+        this.$notify({
+          text:data.text
+        });
+      })
     },
   },
 }
@@ -191,51 +325,27 @@ export default {
 
 <style scoped>
 @keyframes moveLeft {
-  0% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(.75%); /* .75 */
-  }
-  100% {
-    transform: translateX(0);
-  }
+  0% {transform: translateX(0);}
+  50% {transform: translateX(.75%); /* .75 */}
+  100% {transform: translateX(0);}
 }
 
 @keyframes moveRight {
-  0% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(-.75%); /* .75 */
-  }
-  100% {
-    transform: translateX(0);
-  }
+  0% {transform: translateX(0);}
+  50% {transform: translateX(-.75%); /* .75 */}
+  100% {transform: translateX(0);}
 }
 
 @keyframes moveUp {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4%); /* 4 */
-  }
-  100% {
-    transform: translateY(0);
-  }
+  0% {transform: translateY(0);}
+  50% {transform: translateY(-4%); /* 4 */}
+  100% {transform: translateY(0);}
 }
 
 @keyframes moveDown {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4%); /* 4 */
-  }
-  100% {
-    transform: translateY(0);
-  }
+  0% {transform: translateY(0);}
+  50% {transform: translateY(-4%); /* 4 */}
+  100% {transform: translateY(0);}
 }
 
 @keyframes loot {
@@ -244,6 +354,12 @@ export default {
   50% { transform: rotate(5deg) scale(1.2); }
   70% { transform: rotate(0deg) scale(1.2); }
   100% { transform: scale(1); }
+}
+
+@keyframes heartbeat{
+  0%, 40%, 80%, 100%{transform: scale( 1 );}
+  20%,60%{transform: scale( 1.25 );}
+  60%{transform: scale( 1.25 );}
 }
 
 .animateL {
@@ -271,6 +387,35 @@ export default {
   align-items: center;
   justify-content: center;
   height:100vh;
+}
+
+.tile {
+  width: 100px;
+  height: 100px;
+  background-color:white;
+  margin: -1px;
+}
+.tileVoid {
+  width: 100px;
+  height: 100px;
+  margin: -1px;
+}
+
+.heart {
+  animation: heartbeat 1.75s ease-in-out infinite;
+}
+
+h1 {
+  color:white;
+}
+
+.controller {
+  padding: 3px;
+}
+
+.ambrosius {
+  height: 175px;
+  width: auto;
 }
 </style>
 

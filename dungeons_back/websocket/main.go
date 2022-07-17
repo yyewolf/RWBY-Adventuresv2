@@ -1,9 +1,7 @@
 package websocket
 
 import (
-	"fmt"
 	"rwby-adventures/config"
-	"rwby-adventures/dungeons_back/game"
 
 	"github.com/ambelovsky/gosf"
 	"github.com/pmylund/go-cache"
@@ -15,25 +13,9 @@ func StartWebsocket() {
 	// Start the server using a basic configuration
 	gosf.Listen("dungeonConnect", DungeonConnect)
 	gosf.Listen("dungeonMove", DungeonMove)
+	gosf.Listen("ambrosiusChoice", AmbrosiusChoice)
 
 	go gosf.Startup(map[string]interface{}{"port": config.DungeonWebsocket, "enableCORS": "http://localhost:8080"})
-
-	fmt.Println("[WS] Started.")
-
-	d := game.NewDungeon(15, 15)
-	dungeon := &DungeonStruct{
-		ID:   "test",
-		End:  EndDungeon,
-		Game: d,
-	}
-	DungeonCache.Set("test", dungeon, 0)
-
-	for row := range d.Grid {
-		for col := range d.Grid[row] {
-			fmt.Printf("%d ", d.Grid[row][col].Type)
-		}
-		fmt.Println()
-	}
 }
 
 func GetString(request *gosf.Request, key string) (string, bool) {

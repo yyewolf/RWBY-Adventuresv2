@@ -2,6 +2,8 @@ package websocket
 
 import (
 	"rwby-adventures/config"
+	"rwby-adventures/dungeons_back/game"
+	"rwby-adventures/microservices"
 
 	"github.com/ambelovsky/gosf"
 )
@@ -18,6 +20,13 @@ type DungeonUserData struct {
 	Token   string
 	Host    string
 	Port    int
+}
+
+type WebsocketUpdate struct {
+	Grid    [][]*game.DungeonCell        `json:"g"`
+	Health  int                          `json:"h"`
+	Ended   bool                         `json:"e"`
+	Rewards *microservices.DungeonReward `json:"r"`
 }
 
 func DungeonConnect(client *gosf.Client, request *gosf.Request) *gosf.Message {
@@ -54,12 +63,25 @@ func DungeonConnect(client *gosf.Client, request *gosf.Request) *gosf.Message {
 
 	smallGrid := dungeon.Game.GetSmallGrid(3, 3)
 
+	if dungeon.Ended {
+		return &gosf.Message{
+			Success: true,
+			Body: gosf.StructToMap(&WebsocketUpdate{
+				Grid:    smallGrid,
+				Health:  dungeon.Game.Health,
+				Ended:   true,
+				Rewards: dungeon.Game.Rewards,
+			}),
+		}
+	}
+
 	//fmt.Println("[WS] Arena connected!")
 	return &gosf.Message{
 		Success: true,
-		Body: map[string]interface{}{
-			"g": smallGrid,
-		},
+		Body: gosf.StructToMap(&WebsocketUpdate{
+			Grid:   smallGrid,
+			Health: dungeon.Game.Health,
+		}),
 	}
 }
 
@@ -76,19 +98,59 @@ func DungeonMove(client *gosf.Client, request *gosf.Request) *gosf.Message {
 		return gosf.NewFailureMessage("f")
 	}
 	dungeon := data.(*DungeonStruct)
+	if dungeon.Ended {
+		return gosf.NewFailureMessage("f")
+	}
+
 	direction, found := GetInteger(request, "direction")
 	if !found {
 		return gosf.NewFailureMessage("no dir found")
 	}
 
-	dungeon.Game.MovePlayer(direction)
-
+	end := dungeon.Game.MovePlayer(direction)
 	smallGrid := dungeon.Game.GetSmallGrid(3, 3)
+	if end {
+		dungeon.EndIt <- 1
+		dungeon.Ended = true
+
+		if dungeon.Game.Health <= 0 {
+			dungeon.Game.Rewards.Lien /= 2
+		}
+
+		return &gosf.Message{
+			Success: true,
+			Body: gosf.StructToMap(&WebsocketUpdate{
+				Grid:    smallGrid,
+				Health:  dungeon.Game.Health,
+				Ended:   true,
+				Rewards: dungeon.Game.Rewards,
+			}),
+		}
+	}
 
 	return &gosf.Message{
 		Success: true,
-		Body: map[string]interface{}{
-			"g": smallGrid,
-		},
+		Body: gosf.StructToMap(&WebsocketUpdate{
+			Grid:   smallGrid,
+			Health: dungeon.Game.Health,
+		}),
 	}
+}
+
+func AmbrosiusChoice(client *gosf.Client, request *gosf.Request) *gosf.Message {
+	data, found := DungeonCache.Get("test")
+	if !found {
+		return gosf.NewFailureMessage("f")
+	}
+	dungeon := data.(*DungeonStruct)
+	if dungeon.Ended {
+		return gosf.NewFailureMessage("f")
+	}
+
+	choice, found := GetInteger(request, "choice")
+	if !found {
+		return gosf.NewFailureMessage("no choice found")
+	}
+
+	return dungeon.Game.MakeChoice(choice)
 }

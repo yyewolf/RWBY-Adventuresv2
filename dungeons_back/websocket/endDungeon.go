@@ -2,8 +2,8 @@ package websocket
 
 import "rwby-adventures/microservices"
 
-func EndDungeon(dungeon *DungeonStruct) *microservices.DungeonEndResponse {
+func (dungeon *DungeonStruct) End() *microservices.DungeonEndResponse {
 	return &microservices.DungeonEndResponse{
-		Loots: "",
+		Rewards: dungeon.Game.Rewards,
 	}
 }
