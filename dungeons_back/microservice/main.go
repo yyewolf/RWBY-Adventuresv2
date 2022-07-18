@@ -23,6 +23,13 @@ func init() {
 	}
 	websocket.DungeonCache.Set("test", dungeon, 0)
 
+	for y := 0; y < d.Height; y++ {
+		for x := 0; x < d.Width; x++ {
+			fmt.Print(d.Grid[y][x].Type)
+		}
+		fmt.Println()
+	}
+
 	go func() {
 		dungeonLoop(dungeon)
 	}()

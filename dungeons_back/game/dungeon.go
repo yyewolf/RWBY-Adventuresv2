@@ -16,11 +16,13 @@ const (
 	tileVoid
 	tileEnnemy
 	tileAmbrosius
+	tileArm
 )
 
 const (
 	findMoney  = "You found %dⱠ (Liens) !"
 	findEnnemy = "You found an ennemy and lost %d HP !"
+	findArm    = "You found an arm !"
 )
 
 var (
@@ -73,13 +75,7 @@ func (d *Dungeon) MovePlayer(direction int) (end bool) {
 		return
 	}
 	newCell := d.Grid[d.Position.Y+dy[direction]][d.Position.X+dx[direction]]
-	if newCell.Type == tileWall {
-		return
-	}
 	oldCell := d.Grid[d.Position.Y][d.Position.X]
-
-	d.Position.Y += dy[direction]
-	d.Position.X += dx[direction]
 
 	if oldCell.Type == tileMoney {
 		d.Rewards.Lien += oldCell.Amount
@@ -95,6 +91,20 @@ func (d *Dungeon) MovePlayer(direction int) (end bool) {
 			oldCell.Message = ""
 		}
 	}
+
+	if oldCell.Type == tileArm {
+		d.Rewards.Arms += 1
+		oldCell.Type = tileFloor
+		oldCell.Amount = 0
+		oldCell.Message = ""
+	}
+
+	if newCell.Type == tileWall {
+		return
+	}
+
+	d.Position.Y += dy[direction]
+	d.Position.X += dx[direction]
 
 	if newCell.Type == tileEnnemy {
 		newCell.Amount -= 1
@@ -118,6 +128,7 @@ func (d *Dungeon) Init() {
 		d.Grid[i] = make([]*DungeonCell, d.Width)
 		for j := 0; j < d.Width; j++ {
 			d.Grid[i][j] = &DungeonCell{}
+			d.Grid[i][j].Generate()
 		}
 		if i == 0 || i == d.Height-1 {
 			for j := 0; j < d.Width; j++ {
@@ -196,14 +207,16 @@ func (d *Dungeon) GenerateMaze() {
 		}
 		if cutdirection == 0 {
 			for row := miny; row < maxy+1; row++ {
-				d.Grid[row][minx+cutposi].Type = tileWall
+				if row != miny+doorposi {
+					d.Grid[row][minx+cutposi] = &DungeonCell{Type: tileWall}
+				}
 			}
-			d.Grid[miny+doorposi][minx+cutposi].Generate()
 		} else {
 			for col := minx; col < maxx+1; col++ {
-				d.Grid[miny+cutposi][col].Type = tileWall
+				if col != minx+doorposi {
+					d.Grid[miny+cutposi][col] = &DungeonCell{Type: tileWall}
+				}
 			}
-			d.Grid[miny+cutposi][minx+doorposi].Generate()
 		}
 		if cutdirection == 0 {
 			var firstArea = [][]int{{miny, minx}, {maxy, minx + cutposi - 1}}
@@ -250,16 +263,16 @@ func (d *Dungeon) GetSmallGrid(width, height int) [][]*DungeonCell {
 func (c *DungeonCell) Generate() {
 	rng := rand.Float64() * 100
 
-	if rng < 20 {
+	if rng < 10 && rng > 0 {
 		c.Type = tileMoney
 		c.Amount = rand.Intn(100) + 50
 		c.Message = fmt.Sprintf(findMoney, c.Amount)
 		return
 	}
 
-	rng -= 20
+	rng -= 10
 
-	if rng < 5 {
+	if rng < 5 && rng > 0 {
 		c.Type = tileEnnemy
 		c.Amount = 3
 		c.Damages = rand.Intn(10) + 100
@@ -269,11 +282,21 @@ func (c *DungeonCell) Generate() {
 
 	rng -= 5
 
-	if rng < 80 {
+	if rng < 5 && rng > 0 {
+		c.Type = tileArm
+		c.Message = findArm
+		return
+	}
+
+	rng -= 5
+
+	if rng < 1 && rng > 0 {
 		c.Type = tileAmbrosius
 		c.Choices = generateChoices(2)
 		return
 	}
+
+	rng -= 1
 
 	c.Type = tileFloor
 }

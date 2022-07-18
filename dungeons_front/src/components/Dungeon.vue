@@ -8,7 +8,9 @@
         <v-toolbar color="secondary" dark>Dungeon finished !</v-toolbar>
         <v-card-text>
           <v-container>
-            <p>Liens : {{rewards.liens}}Ⱡ</p>
+            <p>Lien(s) : {{rewards.liens}}Ⱡ</p>
+            <p>Box(es) : {{rewards.ccBox}}Ⱡ</p>
+            <p>Arm(s) : {{rewards.arms}}Ⱡ</p>
           </v-container>
         </v-card-text>
       </v-card>
@@ -62,7 +64,7 @@
       <v-container ref="dungeon" :class="reflow ? '' : animation ">
         <v-col v-for="row in rows" :key="row" cols="12">
           <v-row :id="row" justify="center">
-            <img :class="grid[row][col] != 6 ? 'tile' : 'tileVoid' " v-for="col in columns" :key="col" :src="assets[grid[row][col]]"/>
+            <img :class="grid[row][col] != 6 ? 'tile' : 'tileVoid' " v-for="col in columns" :key="col" :src="chooseAsset(row, col)"/>
           </v-row>
         </v-col>
       </v-container>
@@ -116,10 +118,13 @@ import ennemy from "@/assets/ennemy.png"
 import ambrosius from "@/assets/ambrosius_tile.png"
 import ding from "@/assets/ding.mp3"
 
-import player_up from "@/assets/player_up.png"
-import player_down from "@/assets/player_down.png"
-import player_left from "@/assets/player_left.png"
-import player_right from "@/assets/player_right.png"
+import player_up from "@/assets/player/up.png"
+import player_down from "@/assets/player/down.png"
+import player_left from "@/assets/player/left.png"
+import player_right from "@/assets/player/right.png"
+
+import arm_1 from "@/assets/arm/1.png"
+import arm_2 from "@/assets/arm/2.png"
 
 import io from 'socket.io-client'
 
@@ -137,6 +142,7 @@ export default {
             [0,0,0],
             [0,0,0],
           ],
+          random: {},
           assets:[
             background,
             wall,
@@ -147,6 +153,7 @@ export default {
             empty,
             ennemy,
             ambrosius,
+            [arm_1, arm_2],
           ],
           player_directions: [
             player_right,
@@ -319,6 +326,22 @@ export default {
         });
       })
     },
+
+    chooseAsset(row, col) {
+      let asset = this.assets[this.grid[row][col]];
+      if (asset == undefined) {
+        asset = empty;
+      }
+      if (typeof(asset) == "object") {
+        if (this.random['' + row + col] == undefined) {
+          asset = asset[Math.floor(Math.random() * asset.length)];
+          this.random['' + row + col] = asset;
+        } else {
+          asset = this.random['' + row + col];
+        }
+      }
+      return asset;
+    }
   },
 }
 </script>
