@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math/rand"
 	"rwby-adventures/microservices"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 const (
@@ -17,12 +19,14 @@ const (
 	tileEnnemy
 	tileAmbrosius
 	tileArm
+	tileMinion
 )
 
 const (
 	findMoney  = "You found %dⱠ (Liens) !"
 	findEnnemy = "You found an ennemy and lost %d HP !"
 	findArm    = "You found an arm !"
+	findMinion = "You found a minion !"
 )
 
 var (
@@ -36,6 +40,7 @@ type PlayerPosition struct {
 }
 
 type DungeonCell struct {
+	ID      string           `json:"id"`
 	Type    int              `json:"type"`
 	Amount  int              `json:"amount,omitempty"`
 	Message string           `json:"message,omitempty"`
@@ -94,6 +99,13 @@ func (d *Dungeon) MovePlayer(direction int) (end bool) {
 
 	if oldCell.Type == tileArm {
 		d.Rewards.Arms += 1
+		oldCell.Type = tileFloor
+		oldCell.Amount = 0
+		oldCell.Message = ""
+	}
+
+	if oldCell.Type == tileMinion {
+		d.Rewards.Minions += 1
 		oldCell.Type = tileFloor
 		oldCell.Amount = 0
 		oldCell.Message = ""
@@ -261,6 +273,7 @@ func (d *Dungeon) GetSmallGrid(width, height int) [][]*DungeonCell {
 }
 
 func (c *DungeonCell) Generate() {
+	c.ID = uuid.NewV4().String()
 	rng := rand.Float64() * 100
 
 	if rng < 10 && rng > 0 {
@@ -285,6 +298,14 @@ func (c *DungeonCell) Generate() {
 	if rng < 5 && rng > 0 {
 		c.Type = tileArm
 		c.Message = findArm
+		return
+	}
+
+	rng -= 5
+
+	if rng < 5 && rng > 0 {
+		c.Type = tileMinion
+		c.Message = findMinion
 		return
 	}
 

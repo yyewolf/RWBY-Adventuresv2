@@ -9,8 +9,9 @@
         <v-card-text>
           <v-container>
             <p>Lien(s) : {{rewards.liens}}Ⱡ</p>
-            <p>Box(es) : {{rewards.ccBox}}Ⱡ</p>
-            <p>Arm(s) : {{rewards.arms}}Ⱡ</p>
+            <p>Box(es) : {{rewards.ccBox}}</p>
+            <p>Arm(s) : {{rewards.arms}}</p>
+            <p>Minion(s) : {{rewards.minions}}</p>
           </v-container>
         </v-card-text>
       </v-card>
@@ -126,6 +127,10 @@ import player_right from "@/assets/player/right.png"
 import arm_1 from "@/assets/arm/1.png"
 import arm_2 from "@/assets/arm/2.png"
 
+import minion_1 from "@/assets/minion/0.png"
+import minion_2 from "@/assets/minion/1.png"
+import minion_3 from "@/assets/minion/2.png"
+
 import io from 'socket.io-client'
 
 const connectRoute = "dungeonConnect";
@@ -142,6 +147,7 @@ export default {
             [0,0,0],
             [0,0,0],
           ],
+          lastUpdate: [],
           random: {},
           assets:[
             background,
@@ -154,6 +160,7 @@ export default {
             ennemy,
             ambrosius,
             [arm_1, arm_2],
+            [minion_1, minion_2, minion_3],
           ],
           player_directions: [
             player_right,
@@ -203,6 +210,7 @@ export default {
 
   methods: {
     modifyDungeon(grid) {
+      this.lastUpdate = grid;
       let centerOfGridX = Math.floor(grid.length / 2);
       let centerOfGridY = Math.floor(grid[0].length / 2);
 
@@ -328,16 +336,26 @@ export default {
     },
 
     chooseAsset(row, col) {
-      let asset = this.assets[this.grid[row][col]];
+      let cell;
+      try {
+        cell = this.lastUpdate[row][col];
+        cell.type = this.grid[row][col];
+      } catch (e) {
+        cell = {
+          type:0,
+          id:0,
+        }
+      }
+      let asset = this.assets[cell.type];
       if (asset == undefined) {
         asset = empty;
       }
       if (typeof(asset) == "object") {
-        if (this.random['' + row + col] == undefined) {
+        if (this.random[cell.id] == undefined) {
           asset = asset[Math.floor(Math.random() * asset.length)];
-          this.random['' + row + col] = asset;
+          this.random[cell.id] = asset;
         } else {
-          asset = this.random['' + row + col];
+          asset = this.random[cell.id];
         }
       }
       return asset;
