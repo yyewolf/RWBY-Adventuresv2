@@ -8,60 +8,11 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-const (
-	tileFloor = iota
-	tileWall
-	tileFow
-	tilePlayer
-	tileMoney
-	tileEscape
-	tileVoid
-	tileEnnemy
-	tileAmbrosius
-	tileArm
-	tileMinion
-)
-
-const (
-	findMoney  = "You found %dⱠ (Liens) !"
-	findEnnemy = "You found an ennemy and lost %d HP !"
-	findArm    = "You found an arm !"
-	findMinion = "You found a minion !"
-)
-
-var (
-	dx = [4]int{1, 0, -1, 0}
-	dy = [4]int{0, 1, 0, -1}
-)
-
-type PlayerPosition struct {
-	X int
-	Y int
-}
-
-type DungeonCell struct {
-	ID      string           `json:"id"`
-	Type    int              `json:"type"`
-	Amount  int              `json:"amount,omitempty"`
-	Message string           `json:"message,omitempty"`
-	Damages int              `json:"damages,omitempty"`
-	Choices []*DungeonChoice `json:"choices,omitempty"`
-}
-
-type Dungeon struct {
-	Grid     [][]*DungeonCell
-	Rewards  *microservices.DungeonReward
-	Height   int
-	Width    int
-	Position PlayerPosition
-	Health   int
-}
-
 func NewDungeon(height, width int) *Dungeon {
 	d := &Dungeon{
 		Height: height,
 		Width:  width,
-		Position: PlayerPosition{
+		Position: &PlayerPosition{
 			X: 1,
 			Y: 1,
 		},
@@ -115,6 +66,28 @@ func (d *Dungeon) MovePlayer(direction int) (end bool) {
 		return
 	}
 
+	if newCell.Type == tileTPWall {
+		if d.InSecretRoom {
+			d.InSecretRoom = false
+			d.Position = d.PreviousPos
+			d.Grid = d.Temp
+			d.Temp = nil
+		} else {
+			d.InSecretRoom = true
+			d.PreviousPos = &PlayerPosition{
+				X: d.Position.X,
+				Y: d.Position.Y,
+			}
+			d.Position = &PlayerPosition{
+				X: 1,
+				Y: 1,
+			}
+			d.Temp = d.Grid
+			d.Grid = d.SecretRoom
+		}
+		return
+	}
+
 	d.Position.Y += dy[direction]
 	d.Position.X += dx[direction]
 
@@ -145,15 +118,47 @@ func (d *Dungeon) Init() {
 		if i == 0 || i == d.Height-1 {
 			for j := 0; j < d.Width; j++ {
 				d.Grid[i][j].Type = tileWall
+				if j%2 == 1 {
+					d.Grid[i][j].GenerateWall()
+				}
 			}
 		} else {
 			for j := 0; j < d.Width; j++ {
 				if j == 0 || j == d.Width-1 {
 					d.Grid[i][j].Type = tileWall
+					if i%2 == 1 {
+						d.Grid[i][j].GenerateWall()
+					}
 				}
 			}
 		}
 	}
+}
+
+func (d *Dungeon) GenerateSecretRoom() {
+	var height = 6
+	var width = 6
+	d.SecretRoom = make([][]*DungeonCell, height)
+	for i := 0; i < height; i++ {
+		d.SecretRoom[i] = make([]*DungeonCell, width)
+		for j := 0; j < width; j++ {
+			d.SecretRoom[i][j] = &DungeonCell{}
+			d.SecretRoom[i][j].Generate()
+		}
+		if i == 0 || i == height-1 {
+			for j := 0; j < width; j++ {
+				d.SecretRoom[i][j].Type = tileWall
+			}
+		} else {
+			for j := 0; j < width; j++ {
+				if j == 0 || j == width-1 {
+					d.SecretRoom[i][j].Type = tileWall
+				}
+			}
+		}
+	}
+	d.SecretRoom[1][1].Message = findWall
+	d.SecretRoom[height-1][width/2].Type = tileTPWall
 }
 
 func (d *Dungeon) GenerateMaze() {
@@ -251,12 +256,14 @@ func (d *Dungeon) GenerateMaze() {
 	d.Grid[1][1] = &DungeonCell{
 		Type: tileFloor,
 	}
+	d.GenerateSecretRoom()
 }
 
 func (d *Dungeon) GetSmallGrid(width, height int) [][]*DungeonCell {
 	var smallGrid [][]*DungeonCell
 	x := d.Position.X - width/2
 	y := d.Position.Y - height/2
+
 	for i := y; i < y+height; i++ {
 		currentRow := make([]*DungeonCell, width)
 		for j := x; j < x+width; j++ {
@@ -269,6 +276,7 @@ func (d *Dungeon) GetSmallGrid(width, height int) [][]*DungeonCell {
 		}
 		smallGrid = append(smallGrid, currentRow)
 	}
+
 	return smallGrid
 }
 
@@ -320,4 +328,14 @@ func (c *DungeonCell) Generate() {
 	rng -= 1
 
 	c.Type = tileFloor
+}
+
+func (c *DungeonCell) GenerateWall() {
+	c.ID = uuid.NewV4().String()
+	rng := rand.Float64() * 100
+
+	if rng < 100 && rng > 0 {
+		c.Type = tileTPWall
+		return
+	}
 }

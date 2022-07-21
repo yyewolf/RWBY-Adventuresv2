@@ -118,6 +118,7 @@ import empty from "@/assets/void.png"
 import ennemy from "@/assets/ennemy.png"
 import ambrosius from "@/assets/ambrosius_tile.png"
 import ding from "@/assets/ding.mp3"
+import other_wall from "@/assets/other_wall.png"
 
 import player_up from "@/assets/player/up.png"
 import player_down from "@/assets/player/down.png"
@@ -161,6 +162,7 @@ export default {
             ambrosius,
             [arm_1, arm_2],
             [minion_1, minion_2, minion_3],
+            other_wall,
           ],
           player_directions: [
             player_right,
