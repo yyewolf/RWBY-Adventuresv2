@@ -163,6 +163,9 @@ func (c *CmdContext) ReplyInteraction(p ReplyParams) (st *discordgo.Message, err
 		return
 	}
 	switch p.Content.(type) {
+	case *discordgo.InteractionResponse:
+		err = c.Session.InteractionRespond(c.Interaction, p.Content.(*discordgo.InteractionResponse))
+		return
 	case string:
 		if !p.FollowUp {
 			if p.Edit {

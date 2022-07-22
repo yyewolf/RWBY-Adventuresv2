@@ -38,6 +38,7 @@ func Start() {
 	manager.AddHandler(routeMessages)
 	manager.AddHandler(routeInteraction)
 	manager.AddHandler(routeComponents)
+	manager.AddHandler(routeModals)
 	manager.AddHandler(botReady)
 
 	log.Println("Starting the shard manager")

@@ -41,9 +41,11 @@ func routeComponents(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	m.MenuID = split[0]
 
-	s.InteractionRespond(ctx.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseDeferredMessageUpdate,
-	})
+	if !m.Modal {
+		s.InteractionRespond(ctx.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseDeferredMessageUpdate,
+		})
+	}
 
 	m.Call(ctx)
 }

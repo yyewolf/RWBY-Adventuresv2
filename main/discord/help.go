@@ -10,10 +10,11 @@ import (
 type menuName string
 
 const (
-	GeneralMenu   menuName = "General"
-	InventoryMenu menuName = "Inventory"
-	BoxMenu       menuName = "Boxes"
-	RoleplayMenu  menuName = "Roleplay"
+	GeneralMenu       menuName = "General"
+	InventoryMenu     menuName = "Inventory"
+	BoxMenu           menuName = "Boxes"
+	RoleplayMenu      menuName = "Roleplay"
+	ConfigurationMenu menuName = "Configuration"
 )
 
 //🎮
@@ -27,6 +28,8 @@ func menuEmoji(name string) string {
 		return "📦"
 	case string(RoleplayMenu):
 		return "👩‍🔧"
+	case string(ConfigurationMenu):
+		return "🔧"
 	}
 	return ""
 }

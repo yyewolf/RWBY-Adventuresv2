@@ -141,7 +141,7 @@ func DropBoxes(ctx *CmdContext) {
 
 func SpawnArena(ctx *CmdContext) {
 	if ctx.GuildID == "" {
-		//return
+		return
 	}
 	// Every 5 hours
 	if ctx.Guild.LastArena < 5*60*60 {

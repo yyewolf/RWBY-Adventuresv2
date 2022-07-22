@@ -7,6 +7,7 @@ import (
 	commands_inventory "rwby-adventures/main/commands/inventory"
 	commands_missions "rwby-adventures/main/commands/missions"
 	commands_roleplay "rwby-adventures/main/commands/roleplay"
+	commands_settings "rwby-adventures/main/commands/settings"
 	commands_temporary "rwby-adventures/main/commands/temporary"
 	commands_trade "rwby-adventures/main/commands/trade"
 	"rwby-adventures/main/discord"
@@ -57,6 +58,8 @@ func StartDiscord() {
 	discord.AddCmd(commands_missions.HuntCommand)
 
 	discord.AddCmd(commands_dungeon.DungeonCommand)
+
+	discord.AddCmd(commands_settings.ReportCommand)
 
 	discord.MakeEmbed()
 

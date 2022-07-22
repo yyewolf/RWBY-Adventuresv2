@@ -24,6 +24,7 @@ type CmdContext struct {
 	Menu          *Menus
 
 	ComponentData discordgo.MessageComponentInteractionData
+	ModalData     discordgo.ModalSubmitInteractionData
 	Interaction   *discordgo.Interaction
 	Message       *discordgo.Message
 }
@@ -71,6 +72,7 @@ type router struct {
 
 type Menus struct {
 	MenuID        string
+	Modal         bool
 	Source        *discordgo.MessageEmbed
 	SourceContext *CmdContext
 	Data          interface{}
