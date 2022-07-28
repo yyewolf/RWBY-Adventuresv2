@@ -3,6 +3,7 @@ package discord
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"rwby-adventures/config"
 	"rwby-adventures/models"
 	"strconv"
@@ -80,7 +81,6 @@ func (ctx *CmdContext) GiveCharXP(char *models.Character, add int64, notif bool)
 }
 
 func (ctx *CmdContext) GiveGrimmXP(grimm *models.Grimm, add int64, notif bool) {
-
 	if ctx.Player.Shop.XPBoost && ctx.Player.Shop.XPBoostTime > 0 {
 		// ctx.Player.sendXPNotice(s)
 		ctx.Player.Shop.XPBoostTime--
@@ -106,6 +106,100 @@ func (ctx *CmdContext) GiveGrimmXP(grimm *models.Grimm, add int64, notif bool) {
 
 	//Adds XP to char
 	config.Database.Save(grimm)
+}
+
+func (ctx *CmdContext) GiveCP(CP int64, notif bool) {
+	if ctx.Player.Shop.XPBoost && ctx.Player.Shop.XPBoostTime > 0 {
+		// ctx.Player.sendXPNotice(s)
+		ctx.Player.Shop.XPBoostTime--
+		config.Database.Save(ctx.Player.Shop)
+	}
+	before := ctx.Player.Level
+	levelUp := ctx.Player.GiveCP(CP)
+	levelEarned := ctx.Player.Level - before
+	if levelUp && notif {
+		var lootboxes int
+		var grimmboxes int
+		var money int64
+		var arms int
+		var minions int
+		var backpacks int
+
+		for i := int64(0); i < levelEarned; i++ {
+			// Lootboxes
+			rng := rand.Float64() * 100
+			if rng < 5 {
+				amount := rand.Intn(int(math.Sqrt(float64(ctx.Player.Level)))) + 1
+				lootboxes += amount
+			}
+
+			// Grimmboxes
+			rng = rand.Float64() * 100
+			if rng < 5 {
+				amount := rand.Intn(int(math.Sqrt(float64(ctx.Player.Level)))) + 1
+				grimmboxes += amount
+			}
+
+			// Liens
+			money += rand.Int63n(128+(ctx.Player.Level-i+1)*6) + 21
+
+			// Every 10 levels
+			if (ctx.Player.Level-i+1)%10 == 0 {
+				//10% chance
+				rng = rand.Float64() * 100
+				if rng < 10 {
+					if rng < 5 {
+						arms++
+					} else {
+						minions++
+					}
+				}
+
+				//1% chance
+				rng = rand.Float64() * 100
+				if rng < 1 {
+					backpacks++
+				}
+			}
+		}
+
+		// Save everything
+		ctx.Player.Boxes.Boxes += lootboxes
+		ctx.Player.Boxes.GrimmBoxes += grimmboxes
+		ctx.Player.Balance += money
+		ctx.Player.Arms += arms
+		ctx.Player.Minions += minions
+		ctx.Player.Shop.Extensions += backpacks
+
+		var earnings []string
+		earnings = append(earnings, fmt.Sprintf("%d Box(es)", lootboxes))
+		earnings = append(earnings, fmt.Sprintf("%d Grimm Box(es)", grimmboxes))
+		earnings = append(earnings, fmt.Sprintf("%d Ⱡ (Liens)", money))
+		earnings = append(earnings, fmt.Sprintf("%d Arms", arms))
+		earnings = append(earnings, fmt.Sprintf("%d Minions", minions))
+		earnings = append(earnings, fmt.Sprintf("%d Backpacks", backpacks))
+
+		content := &discordgo.MessageEmbed{
+			Title:       fmt.Sprintf("%s, you just leveled up !", ctx.Author.Username),
+			Description: fmt.Sprintf("You are now level **%d**!\n\nYou earned :\n", ctx.Player.Level),
+			Thumbnail: &discordgo.MessageEmbedThumbnail{
+				URL: ctx.Author.AvatarURL("512"),
+			},
+			Color: config.Botcolor,
+		}
+
+		for _, earning := range earnings {
+			content.Description += fmt.Sprintf("=> %s\n", earning)
+		}
+
+		ctx.Reply(ReplyParams{
+			FollowUp: true,
+		})
+	}
+
+	// Save everything to database
+	config.Database.Save(ctx.Player)
+	config.Database.Save(ctx.Player.Shop)
 }
 
 func (ctx *CmdContext) GetUnix() (i int64, err error) {

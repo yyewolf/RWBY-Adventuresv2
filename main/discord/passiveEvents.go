@@ -72,6 +72,9 @@ func TrainCharacter(ctx *CmdContext) {
 
 	XP := ctx.Player.CalcSelectedXP(3, ctx.Player.Shop.XPBoost)
 	ctx.GiveSelectionXP(XP, true)
+
+	CP := ctx.Player.CalcCP(0.3)
+	ctx.GiveCP(CP, true)
 }
 
 func DropBoxes(ctx *CmdContext) {

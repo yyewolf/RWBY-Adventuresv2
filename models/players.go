@@ -2,6 +2,8 @@ package models
 
 import (
 	"errors"
+	"math"
+	"math/rand"
 	"rwby-adventures/config"
 	"time"
 
@@ -154,7 +156,7 @@ func (p *Player) CanDungeon() bool {
 }
 
 func (p *Player) MaxChar() int {
-	return p.CharLimit + p.Shop.Extensions
+	return p.CharLimit + 20*p.Shop.Extensions
 }
 
 func (p *Player) TotalBalance() int64 {
@@ -289,4 +291,34 @@ func (p *Player) GiveSelectedXP(add int64) (levelUp bool) {
 		return p.SelectedGrimm.GiveXP(add)
 	}
 	return false
+}
+
+func (p *Player) CalcCP(difficulty float64) int64 {
+	rand.Seed(time.Now().UTC().UnixNano())
+	rint := int(5*difficulty*math.Pow(float64(p.Level), 1.48)) + 10
+	add := difficulty*float64(rand.Intn(rint)) + 5 + math.Pow(float64(p.Level), 1.45)
+	if p.Shop.XPBoost {
+		rint = ((3 / 2) * difficulty) * (p.Level)
+		add = int(float64((rand.Intn(33+rint))+25) * (math.Pow(float64(Level), 0.84) + 1))
+		p.Shop.XPBoostTime--
+	}
+	return int64(add)
+}
+
+func (p *Player) CalcCPCap() int64 {
+	return int64(10*int(math.Pow(float64(p.Level), 1.8)) + 20)
+}
+
+func (p *Player) GiveCP(CP int64) (levelUp bool) {
+	for p.CP+CP > p.MaxCP {
+		levelUp = true
+		//if level up
+		CP -= p.MaxCP - p.CP
+		p.Level++
+		p.CP = 0
+		p.MaxCP = p.CalcCPCap()
+	}
+	p.CP += CP
+	p.MaxCP = p.CalcCPCap()
+	return levelUp
 }
