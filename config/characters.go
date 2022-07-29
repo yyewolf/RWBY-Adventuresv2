@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+var (
+	MaxBuffs = 2
+)
+
 func LoadCharacters() {
 	BaseCharacters = chars.BaseCharacters
 

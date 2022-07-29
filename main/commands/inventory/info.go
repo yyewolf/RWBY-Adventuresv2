@@ -275,6 +275,13 @@ func MenuInfo(ctx *discord.CmdContext) {
 			isGrimm:  d.IsGrimm,
 			FollowUp: true,
 		})
+	case "buff":
+		AddBuff(ctx, &AddBuffData{
+			Char:     d.Char,
+			Grimm:    d.Grimm,
+			isGrimm:  d.IsGrimm,
+			FollowUp: true,
+		})
 	default:
 		return
 	}
@@ -307,6 +314,14 @@ func InfoComponent(menuID string) []discordgo.MessageComponent {
 					},
 					Style:    discordgo.SecondaryButton,
 					CustomID: menuID + "-remfav",
+				},
+				&discordgo.Button{
+					Label: "Add Arm / Minion",
+					Emoji: discordgo.ComponentEmoji{
+						Name: "💪",
+					},
+					Style:    discordgo.SecondaryButton,
+					CustomID: menuID + "-buff",
 				},
 				&discordgo.Button{
 					Label: "Pick",
