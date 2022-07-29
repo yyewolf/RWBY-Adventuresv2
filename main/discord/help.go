@@ -15,6 +15,7 @@ const (
 	BoxMenu           menuName = "Boxes"
 	RoleplayMenu      menuName = "Roleplay"
 	ConfigurationMenu menuName = "Configuration"
+	MiscMenu          menuName = "Miscellaneous"
 )
 
 //🎮
@@ -30,6 +31,8 @@ func menuEmoji(name string) string {
 		return "👩‍🔧"
 	case string(ConfigurationMenu):
 		return "🔧"
+	case string(MiscMenu):
+		return "🎴"
 	}
 	return ""
 }
