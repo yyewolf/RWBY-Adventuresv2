@@ -5,14 +5,21 @@
     <!-- Dungeon ending -->
     <v-dialog transition="dialog-top-transition" persistent v-model="finished" max-width="600">
       <v-card>
-        <v-toolbar color="secondary" dark>Dungeon finished !</v-toolbar>
+        <v-toolbar color="secondary" dark>Dungeon {{rewards.win ? "finished" : "lost"}} !</v-toolbar>
         <v-card-text>
-          <v-container>
-            <p>Lien(s) : {{rewards.liens}}Ⱡ</p>
-            <p>Box(es) : {{rewards.ccBox}}</p>
-            <p>Arm(s) : {{rewards.arms}}</p>
-            <p>Minion(s) : {{rewards.minions}}</p>
-          </v-container>
+            <v-row>
+              <v-col cols="12" class="text-center">
+                <v-img class="gods" :src="rewards.win ? require('@/assets/gods/w.png') : require('@/assets/gods/l.png')"/>
+              </v-col>
+              <v-col cols="12" class="text-center" style="margin-top:-200px;">
+                <v-container>
+                  <p>Lien(s) : {{rewards.liens}}Ⱡ</p>
+                  <p>Box(es) : {{rewards.ccBox}}</p>
+                  <p>Arm(s) : {{rewards.arms}}</p>
+                  <p>Minion(s) : {{rewards.minions}}</p>
+                </v-container>
+              </v-col>
+            </v-row>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -249,6 +256,7 @@ export default {
       if (data.e) {
         // Dungeon ended
         this.rewards = data.r;
+        this.rewards.win = data.w;
         this.finished = true;
       }
     },
@@ -459,6 +467,13 @@ h1 {
 .ambrosius {
   height: 175px;
   width: auto;
+}
+
+.gods {
+  height: 200px;
+  width: auto;
+  object-fit: cover;
+  opacity: 35%;
 }
 </style>
 

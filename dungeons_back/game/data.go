@@ -56,6 +56,7 @@ type Dungeon struct {
 
 	SecretRoom   [][]*DungeonCell
 	Temp         [][]*DungeonCell
+	Win          bool
 	InSecretRoom bool
 	PreviousPos  *PlayerPosition
 }

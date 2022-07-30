@@ -13,5 +13,6 @@ type DungeonCreateRequest struct {
 }
 
 type DungeonEndResponse struct {
+	Win     bool
 	Rewards *DungeonReward
 }

@@ -26,6 +26,7 @@ type WebsocketUpdate struct {
 	Grid    [][]*game.DungeonCell        `json:"g"`
 	Health  int                          `json:"h"`
 	Ended   bool                         `json:"e"`
+	Win     bool                         `json:"w"`
 	Rewards *microservices.DungeonReward `json:"r"`
 }
 
@@ -124,6 +125,7 @@ func DungeonMove(client *gosf.Client, request *gosf.Request) *gosf.Message {
 				Health:  dungeon.Game.Health,
 				Ended:   true,
 				Rewards: dungeon.Game.Rewards,
+				Win:     dungeon.Game.Win,
 			}),
 		}
 	}

@@ -68,6 +68,7 @@ func (d *Dungeon) MovePlayer(direction int) (end bool) {
 
 	if newCell.Type == tileTPWall {
 		if d.InSecretRoom {
+			d.SecretRoom[1][1].Message = findWall
 			d.InSecretRoom = false
 			d.Position = d.PreviousPos
 			d.Grid = d.Temp
@@ -96,11 +97,13 @@ func (d *Dungeon) MovePlayer(direction int) (end bool) {
 		d.Health -= newCell.Damages
 		if d.Health <= 0 {
 			d.Health = 0
+			d.Win = false
 			return true
 		}
 	}
 
 	if newCell.Type == tileEscape {
+		d.Win = true
 		return true
 	}
 
