@@ -147,6 +147,10 @@ func (d *Dungeon) GenerateSecretRoom() {
 		for j := 0; j < width; j++ {
 			d.SecretRoom[i][j] = &DungeonCell{}
 			d.SecretRoom[i][j].Generate()
+			// Regenerates for double luck
+			if d.SecretRoom[i][j].Type == tileFloor {
+				d.SecretRoom[i][j].Generate()
+			}
 		}
 		if i == 0 || i == height-1 {
 			for j := 0; j < width; j++ {
@@ -287,48 +291,48 @@ func (c *DungeonCell) Generate() {
 	c.ID = uuid.NewV4().String()
 	rng := rand.Float64() * 100
 
-	if rng < 10 && rng > 0 {
+	if rng < 6.5 && rng > 0 {
 		c.Type = tileMoney
 		c.Amount = rand.Intn(100) + 50
 		c.Message = fmt.Sprintf(findMoney, c.Amount)
 		return
 	}
 
-	rng -= 10
+	rng -= 6.5
 
-	if rng < 5 && rng > 0 {
+	if rng < 3 && rng > 0 {
 		c.Type = tileEnnemy
 		c.Amount = 3
-		c.Damages = rand.Intn(10) + 100
+		c.Damages = rand.Intn(15) + 7
 		c.Message = fmt.Sprintf(findEnnemy, c.Damages)
 		return
 	}
 
-	rng -= 5
+	rng -= 3
 
-	if rng < 5 && rng > 0 {
+	if rng < 1 && rng > 0 {
 		c.Type = tileArm
 		c.Message = findArm
 		return
 	}
 
-	rng -= 5
+	rng -= 1
 
-	if rng < 5 && rng > 0 {
+	if rng < 1 && rng > 0 {
 		c.Type = tileMinion
 		c.Message = findMinion
 		return
 	}
 
-	rng -= 5
+	rng -= 1
 
-	if rng < 1 && rng > 0 {
+	if rng < 0.5 && rng > 0 {
 		c.Type = tileAmbrosius
 		c.Choices = generateChoices(2)
 		return
 	}
 
-	rng -= 1
+	rng -= 0.5
 
 	c.Type = tileFloor
 }
