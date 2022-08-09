@@ -10,6 +10,7 @@ func init() {
 		&Player{},
 		&PlayerStatus{},
 		&PlayerMission{},
+		&PlayerSettings{},
 		&PlayerShop{},
 	)
 	config.Database.AutoMigrate(

@@ -23,13 +23,13 @@ type Player struct {
 	SelectedID    string `gorm:"column:selected_id;not null"`
 	SelectedType  int    `gorm:"column:selected_type;not null"`
 	Badges        int64  `gorm:"column:badges;not null"`
-	Settings      int64  `gorm:"column:settings;not null"`
 	Disabled      bool   `gorm:"column:disabled;not null"`
 	Arms          int    `gorm:"column:arms;not null"`
 	Minions       int    `gorm:"column:minions;not null"`
 	Jar           int64  `gorm:"column:jar;not null"`
 
 	// Foreign keys
+	Settings     *PlayerSettings `gorm:"foreignkey:DiscordID;references:DiscordID"`
 	Missions     *PlayerMission  `gorm:"foreignkey:DiscordID;references:DiscordID"`
 	Status       *PlayerStatus   `gorm:"foreignkey:DiscordID;references:DiscordID"`
 	Shop         *PlayerShop     `gorm:"foreignkey:DiscordID;references:DiscordID"`
@@ -58,6 +58,7 @@ func GetPlayer(id string) *Player {
 	e := config.Database.
 		Joins("Status").
 		Joins("Missions").
+		Joins("Settings").
 		Joins("Shop").
 		Joins("LastBoxes").
 		Joins("Gamble").
@@ -298,8 +299,8 @@ func (p *Player) CalcCP(difficulty float64) int64 {
 	rint := int(5*difficulty*math.Pow(float64(p.Level), 1.48)) + 10
 	add := difficulty*float64(rand.Intn(rint)) + 5 + math.Pow(float64(p.Level), 1.45)
 	if p.Shop.XPBoost {
-		rint = ((3 / 2) * difficulty) * (p.Level)
-		add = int(float64((rand.Intn(33+rint))+25) * (math.Pow(float64(Level), 0.84) + 1))
+		rint = int(((3 / 2) * difficulty) * float64(p.Level))
+		add = float64((rand.Intn(33+rint))+25) * (math.Pow(float64(p.Level), 0.84) + 1)
 		p.Shop.XPBoostTime--
 	}
 	return int64(add)
@@ -321,4 +322,9 @@ func (p *Player) GiveCP(CP int64) (levelUp bool) {
 	p.CP += CP
 	p.MaxCP = p.CalcCPCap()
 	return levelUp
+}
+
+func (p *Player) DungeonCooldown() time.Duration {
+	t := (p.Status.LastDungeon + config.DungeonCooldown)
+	return time.Until(time.Unix(t, 0))
 }

@@ -63,6 +63,7 @@ func StartDiscord() {
 	discord.AddCmd(commands_settings.ReportCommand)
 
 	discord.AddCmd(commands_misc.InviteCommand)
+	discord.AddCmd(commands_misc.Eventcommand)
 
 	discord.MakeEmbed()
 
