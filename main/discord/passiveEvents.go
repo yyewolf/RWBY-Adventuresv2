@@ -148,7 +148,7 @@ func SpawnArena(ctx *CmdContext) {
 	}
 	// Every 5 hours
 	if ctx.Guild.LastArena < 5*60*60 {
-		//return
+		return
 	}
 	ctx.Guild.LastArena = time.Now().Unix()
 	config.Database.Save(ctx.Guild)
@@ -165,7 +165,7 @@ func SpawnArena(ctx *CmdContext) {
 		return
 	}
 	if c.Type == discordgo.ChannelTypeDM {
-		//return
+		return
 	}
 
 	ID := uuid.NewV4().String()

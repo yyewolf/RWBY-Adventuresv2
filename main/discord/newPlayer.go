@@ -45,6 +45,6 @@ func HandleNewPlayer(ctx *CmdContext) {
 	})
 	p.IsNew = false
 	p.Badges = 0
-	p.Settings = config.CanDMPlayer
+	p.Settings.DMable = true
 	config.Database.Create(p)
 }
