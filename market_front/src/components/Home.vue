@@ -23,11 +23,13 @@
             <p class="text-h5" style="float:left;">Random Characters</p>
           </v-card-title>
           <v-card-text>
-            <v-layout row class="scrollbar justify-center">
-              <div class="ms-4 mb-5" v-for="p in personas" :key="p">
-                <Persona :data="p" width="175" height="100%"></Persona>
+            <v-container class="d-flex justify-center">
+              <div class="d-flex scrollbar">
+                <div class="ms-4 mb-5" v-for="p in personas" :key="p">
+                  <Persona :data="p" width="175" height="100%"></Persona>
+                </div>
               </div>
-            </v-layout>
+            </v-container>
           </v-card-text>
         </v-card>
       </v-col>
@@ -131,7 +133,10 @@ export default {
   overflow-x: scroll;
   height: 100%;
 }
-
+.scrollbarF {
+  flex-direction: row;
+  justify-content: center;
+}
 .scrollbar::-webkit-scrollbar{
   height: 8px;
   width: 8px;

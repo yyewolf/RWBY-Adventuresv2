@@ -1,5 +1,5 @@
 <template>
-    <v-card class="d-flex flex-column" height="100%" variant="outlined" :style="'border-color:'+this.border">
+    <v-card class="d-flex flex-column" height="100%" variant="outlined">
         <div>
             <v-avatar class="mt-3" size="75" rounded>
                 <v-img :src="data.IconURL"></v-img>
@@ -17,7 +17,9 @@
 <script>
 export default {
     name: "r-persona",
-    data () {},
+    data () {
+        return {}
+    },
     props: ['data'],
 }
 </script>
