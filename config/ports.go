@@ -5,17 +5,21 @@ var TestMode = true
 var (
 	TradePort        = ":50"
 	TradeTestPort    = ":50000"
-	TradeWebsocket   = 9001
+	TradeWebsocket   = 9000
 	ArenaPort        = ":51"
 	ArenaTestPort    = ":50001"
-	ArenaWebsocket   = 9002
+	ArenaWebsocket   = 9001
 	DungeonPort      = ":52"
 	DungeonTestPort  = ":50002"
-	DungeonWebsocket = 9003
+	DungeonWebsocket = 9002
+	MarketPort       = ":53"
+	MarketTestPort   = ":50003"
+	MarketWebsocket  = 9003
 
 	// RPC
-	ArenaRPC   = "8000"
-	DungeonRPC = 8001
+	ArenaRPC   = "8001"
+	DungeonRPC = 8002
+	MarketRPC  = 8003
 
 	TradeHost       = "194.163.142.107"
 	TradeTestHost   = "localhost"
@@ -23,6 +27,8 @@ var (
 	ArenaTestHost   = "localhost"
 	DungeonHost     = "194.163.142.107"
 	DungeonTestHost = "localhost"
+	MarketHost      = "194.163.142.107"
+	MarketTestHost  = "localhost"
 )
 
 func init() {
@@ -35,5 +41,8 @@ func init() {
 
 		DungeonPort = DungeonTestPort
 		DungeonHost = DungeonTestHost
+
+		MarketPort = MarketTestPort
+		MarketHost = MarketTestHost
 	}
 }

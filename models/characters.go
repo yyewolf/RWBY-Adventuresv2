@@ -59,8 +59,10 @@ type Character struct {
 }
 
 func GetChar(id string) (*Character, error) {
-	c := &Character{}
-	e := config.Database.Joins("Stats").Find(c, id)
+	c := &Character{
+		CharID: id,
+	}
+	e := config.Database.Joins("Stats").Find(c)
 	if e.Error != nil || e.RowsAffected == 0 {
 		return nil, errors.New("oof")
 	}
@@ -68,11 +70,16 @@ func GetChar(id string) (*Character, error) {
 }
 
 func (c Character) ToRealChar() chars.CharacterStruct {
-	i := 0
+	i := -1
 	for i = range config.BaseCharacters {
 		if config.BaseCharacters[i].Name == c.Name {
 			break
 		}
+	}
+
+	if i == -1 {
+		fmt.Println("Error: Character not found")
+		return chars.CharacterStruct{}
 	}
 
 	returnChar := config.BaseCharacters[i]
@@ -99,22 +106,16 @@ func (c *Character) RarityToColor() int {
 	switch c.Rarity {
 	case 0: // Common
 		EmbedColor = 0x808080
-		break
 	case 1: // Uncommon
 		EmbedColor = 0x7CFC00
-		break
 	case 2: // Rare
 		EmbedColor = 0x87CEEB
-		break
 	case 3: // Very Rare
 		EmbedColor = 0xBA55D3
-		break
 	case 4: // Legendary
 		EmbedColor = 0xFFD700
-		break
 	case 5: // Collector
 		EmbedColor = 0xFF0000
-		break
 	}
 	return EmbedColor
 }
@@ -123,22 +124,16 @@ func (c *Character) RarityString() (x string) {
 	switch c.Rarity {
 	case 0: // Common
 		x = "□ Common"
-		break
 	case 1: // Uncommon
 		x = "◇ Uncommon"
-		break
 	case 2: // Rare
 		x = "♡ Rare"
-		break
 	case 3: // Very Rare
 		x = "♤ Very Rare"
-		break
 	case 4: // Legendary
 		x = "♧ Legendary"
-		break
 	case 5: // Collector
 		x = "☆ Collector"
-		break
 	}
 
 	for i := 0; i < c.Buffs; i++ {

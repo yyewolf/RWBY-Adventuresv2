@@ -18,7 +18,7 @@ func choiceConvert(c []*Choice) (r []*discordgo.ApplicationCommandOptionChoice) 
 }
 
 func (c *Command) makeOption() (opts []*discordgo.ApplicationCommandOption) {
-	if len(c.SubCommands) == 0 {
+	if len(c.SubCommands) == 0 && len(c.SubCommandsGroup) == 0 {
 		for _, arg := range c.Args {
 			opt := &discordgo.ApplicationCommandOption{
 				Name:        arg.Name,
@@ -29,12 +29,22 @@ func (c *Command) makeOption() (opts []*discordgo.ApplicationCommandOption) {
 			}
 			opts = append(opts, opt)
 		}
-	} else {
+	} else if len(c.SubCommands) > 0 {
 		for _, sub := range c.SubCommands {
 			opt := &discordgo.ApplicationCommandOption{
 				Name:        sub.Name,
 				Description: sub.Description,
 				Type:        discordgo.ApplicationCommandOptionSubCommand,
+				Options:     sub.makeOption(),
+			}
+			opts = append(opts, opt)
+		}
+	} else if len(c.SubCommandsGroup) > 0 {
+		for _, sub := range c.SubCommandsGroup {
+			opt := &discordgo.ApplicationCommandOption{
+				Name:        sub.Name,
+				Description: sub.Description,
+				Type:        discordgo.ApplicationCommandOptionSubCommandGroup,
 				Options:     sub.makeOption(),
 			}
 			opts = append(opts, opt)

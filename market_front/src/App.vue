@@ -12,6 +12,7 @@
             append-icon="mdi-magnify" 
             single-line 
             outlined
+
             label="Search"
             density="compact"
             variant="outlined"

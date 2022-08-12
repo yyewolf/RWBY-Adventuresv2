@@ -260,7 +260,7 @@ func Pack(ctx *discord.CmdContext) {
 	discord.ActiveMenus.Set(ctx.ID, &discord.Menus{
 		MenuID:        menuID,
 		SourceContext: ctx,
-		Call:          InventoryPages,
+		Call:          PackPages,
 		Data: &inventoryMenuData{
 			UserID:  ctx.Author.ID,
 			Page:    page,

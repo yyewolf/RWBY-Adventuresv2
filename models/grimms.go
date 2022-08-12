@@ -42,8 +42,10 @@ type Grimm struct {
 }
 
 func GetGrimm(id string) (*Grimm, error) {
-	g := &Grimm{}
-	e := config.Database.Joins("Stats").Find(g, id)
+	g := &Grimm{
+		GrimmID: id,
+	}
+	e := config.Database.Joins("Stats").Find(g)
 	if e.Error != nil || e.RowsAffected == 0 {
 		return nil, errors.New("oof")
 	}
@@ -80,24 +82,18 @@ func (g *Grimm) ToRealGrimm() grimms.GrimmStruct {
 func (g *Grimm) RarityToColor() int {
 	EmbedColor := 0
 	switch g.Rarity {
-	case 0: // Common
+	case 0: // Normal
 		EmbedColor = 0x808080
-		break
-	case 1: // Uncommon
-		EmbedColor = 0x7CFC00
-		break
-	case 2: // Rare
-		EmbedColor = 0x87CEEB
-		break
-	case 3: // Very Rare
-		EmbedColor = 0xBA55D3
-		break
-	case 4: // Legendary
-		EmbedColor = 0xFFD700
-		break
-	case 5: // Collector
-		EmbedColor = 0xFF0000
-		break
+	case 1: // Abnormal
+		EmbedColor = 0x285300
+	case 2: // Sparse
+		EmbedColor = 0x00008b
+	case 3: // Freaky
+		EmbedColor = 0xB22222
+	case 4: // Mysterious
+		EmbedColor = 0x800080
+	case 5: // Bloody
+		EmbedColor = 0x121212
 	}
 	return EmbedColor
 }

@@ -262,7 +262,7 @@ export default {
     },
 
     connectToWS() {
-      this.socket = io('ws://localhost:9003/', { transports: ['websocket'] })
+      this.socket = io('ws://localhost:9002/', { transports: ['websocket'] })
       this.socket.on('connect', () => {
         this.sendTokenToWS();
       })

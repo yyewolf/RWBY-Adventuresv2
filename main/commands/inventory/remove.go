@@ -250,7 +250,7 @@ func removeMenu(ctx *discord.CmdContext) {
 				})
 				return
 			}
-			if d.Grimm.InHunt || d.Grimm.UserID != ctx.Player.DiscordID {
+			if d.Char.InMission || d.Char.UserID != ctx.Player.DiscordID {
 				ctx.Reply(discord.ReplyParams{
 					Content:  "You cannot delete that character.",
 					FollowUp: true,
@@ -306,5 +306,4 @@ func removeComponent(menuID string, emojis []*discordgo.ComponentEmoji, correct 
 			Components: c,
 		},
 	}
-
 }

@@ -20,9 +20,21 @@ type Auction struct {
 	Type           int    `gorm:"column:type;not null"`
 
 	// Foreign keys
-	Char    Character        `gorm:"foreignkey:UserID"`
-	Grimm   Grimm            `gorm:"foreignkey:UserID"`
-	Bidders []AuctionBidders `gorm:"foreignkey:AuctionID"`
+	Char    *Character        `gorm:"foreignkey:UserID"`
+	Grimm   *Grimm            `gorm:"foreignkey:UserID"`
+	Bidders []*AuctionBidders `gorm:"foreignkey:AuctionID"`
+}
+
+func CreateAuction(a *Auction) (err error) {
+	d := config.Database.Create(a)
+	if a.Char != nil {
+		a.Char.UserID = a.ID
+		config.Database.Save(a.Char)
+	} else if a.Grimm != nil {
+		a.Grimm.UserID = a.ID
+		config.Database.Save(a.Grimm)
+	}
+	return d.Error
 }
 
 func GetAuction(id string) (a *Auction, err error) {
@@ -34,5 +46,16 @@ func GetAuction(id string) (a *Auction, err error) {
 	config.Database.Joins("Stats").Find(&a.Grimm, "user_id = ?", a.ID)
 	config.Database.Find(&a.Bidders, "auction_id = ?", a.ID)
 	err = e.Error
+	return
+}
+
+func GetAuctions() (m []*Auction, err error) {
+	e := config.Database.Order("auction_id desc").Find(&m)
+	err = e.Error
+	for _, a := range m {
+		config.Database.Joins("Stats").Find(&a.Char, "user_id = ?", a.ID)
+		config.Database.Joins("Stats").Find(&a.Grimm, "user_id = ?", a.ID)
+		config.Database.Find(&a.Bidders, "auction_id = ?", a.ID)
+	}
 	return
 }

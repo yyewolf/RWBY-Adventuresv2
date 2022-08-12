@@ -6,15 +6,15 @@ import (
 
 type Listing struct {
 	ID         string `gorm:"primary_key;column:listing_id"`
-	SellerID   string `gorm:"column:seller_id;not null"`
-	SellerName string `gorm:"column:seller_name"`
-	Price      int    `gorm:"column:price;not null"`
-	Note       string `gorm:"column:note"`
-	Type       int    `gorm:"column:type;not null"`
+	SellerID   string `gorm:"column:seller_id;not null" json:"-"`
+	SellerName string `gorm:"column:seller_name" json:"seller_name"`
+	Price      int    `gorm:"column:price;not null" json:"price"`
+	Note       string `gorm:"column:note" json:"note"`
+	Type       int    `gorm:"column:type;not null" json:"type"`
 
 	// Foreign keys
-	Char  Character `gorm:"foreignkey:UserID"`
-	Grimm Grimm     `gorm:"foreignkey:UserID"`
+	Char  *Character `gorm:"foreignkey:UserID" json:"char"`
+	Grimm *Grimm     `gorm:"foreignkey:UserID" json:"grimm"`
 }
 
 type PlayerMarket struct {
@@ -22,6 +22,18 @@ type PlayerMarket struct {
 
 	Listings []*Listing `gorm:"foreignkey:SellerID"`
 	Auctions []*Auction `gorm:"foreignkey:SellerID"`
+}
+
+func CreateListing(l *Listing) (err error) {
+	d := config.Database.Create(l)
+	if l.Char != nil {
+		l.Char.UserID = l.ID
+		config.Database.Save(l.Char)
+	} else if l.Grimm != nil {
+		l.Grimm.UserID = l.ID
+		config.Database.Save(l.Grimm)
+	}
+	return d.Error
 }
 
 func GetListing(id string) (m *Listing, err error) {
@@ -32,6 +44,16 @@ func GetListing(id string) (m *Listing, err error) {
 	config.Database.Joins("Stats").Find(&m.Char, "user_id = ?", m.ID)
 	config.Database.Joins("Stats").Find(&m.Grimm, "user_id = ?", m.ID)
 	err = e.Error
+	return
+}
+
+func GetListings() (m []*Listing, err error) {
+	e := config.Database.Order("listing_id desc").Find(&m)
+	err = e.Error
+	for _, l := range m {
+		config.Database.Joins("Stats").Find(&l.Char, "user_id = ?", l.ID)
+		config.Database.Joins("Stats").Find(&l.Grimm, "user_id = ?", l.ID)
+	}
 	return
 }
 

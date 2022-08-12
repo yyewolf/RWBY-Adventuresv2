@@ -10,7 +10,7 @@ var (
 	MaxBuffs = 2
 )
 
-func LoadCharacters() {
+func init() {
 	BaseCharacters = chars.BaseCharacters
 
 	for i := range BaseCharacters {

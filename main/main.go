@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 	"os/signal"
-	"rwby-adventures/config"
 	commands_missions "rwby-adventures/main/commands/missions"
 	"rwby-adventures/main/discord"
 	rwby_grpc "rwby-adventures/main/grpc"
@@ -18,7 +17,6 @@ func main() {
 	web.StartWeb()
 	loadPassives()
 	StartDiscord()
-	config.LoadCharacters()
 
 	// Wait here until CTRL-C or other term signal is received.
 	sc := make(chan os.Signal, 1)

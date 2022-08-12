@@ -51,8 +51,9 @@ type Command struct {
 	Aliases     CmdAlias
 	Menu        menuName
 
-	Args        []Arg
-	SubCommands []*Command
+	Args             []Arg
+	SubCommands      []*Command
+	SubCommandsGroup []*Command
 
 	// Not needed when registering a command
 	IsSub    bool
@@ -90,9 +91,7 @@ func (r *router) findTopCommand(name string) *Command {
 }
 
 func (c *Command) findDeepestLink(args []string) (*Command, []string) {
-	if len(c.SubCommands) == 0 {
-		return c, args
-	} else {
+	if len(c.SubCommands) > 0 {
 		if len(args) == 0 {
 			return c, args
 		}
@@ -105,6 +104,21 @@ func (c *Command) findDeepestLink(args []string) (*Command, []string) {
 			}
 		}
 		return nil, args
+	} else if len(c.SubCommandsGroup) > 0 {
+		if len(args) == 0 {
+			return c, args
+		}
+		for _, sub := range c.SubCommandsGroup {
+			if args[0] == sub.Name {
+				test, args := sub.findDeepestLink(args[1:])
+				if test != nil {
+					return test, args
+				}
+			}
+		}
+		return nil, args
+	} else {
+		return c, args
 	}
 }
 
@@ -116,7 +130,7 @@ func slicer(data *discordgo.ApplicationCommandInteractionDataOption, args []stri
 	if len(data.Options) > 1 {
 		return args, data.Options
 	}
-	if data.Options[0].Type != discordgo.ApplicationCommandOptionSubCommand {
+	if data.Options[0].Type != discordgo.ApplicationCommandOptionSubCommand && data.Options[0].Type != discordgo.ApplicationCommandOptionSubCommandGroup {
 		return args, data.Options
 	}
 	return slicer(data.Options[0], args)
@@ -130,7 +144,7 @@ func interactionToSlice(data *discordgo.ApplicationCommandInteractionData) ([]st
 	if len(data.Options) > 1 {
 		return args, data.Options
 	}
-	if data.Options[0].Type != discordgo.ApplicationCommandOptionSubCommand {
+	if data.Options[0].Type != discordgo.ApplicationCommandOptionSubCommand && data.Options[0].Type != discordgo.ApplicationCommandOptionSubCommandGroup {
 		return args, data.Options
 	}
 	return slicer(data.Options[0], args)
