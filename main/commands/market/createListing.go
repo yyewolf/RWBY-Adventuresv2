@@ -5,6 +5,8 @@ import (
 	"math/rand"
 	"rwby-adventures/config"
 	"rwby-adventures/main/discord"
+	"rwby-adventures/main/market"
+	"rwby-adventures/microservices"
 	"rwby-adventures/models"
 	"strings"
 
@@ -21,8 +23,8 @@ type ListingMenuData struct {
 func CreateListing(ctx *discord.CmdContext) {
 	var char *models.Character
 	var grimm *models.Grimm
-	arg := ctx.Arguments.GetArg("id", 0, "")
-	price := ctx.Arguments.GetArg("price", 1, 0)
+	arg := ctx.Arguments.GetArg("id", 1, "")
+	price := ctx.Arguments.GetArg("price", 0, 0)
 	note := ctx.Arguments.GetArg("note", 2, "")
 	isGrimm, index, err := arg.CharGrimmParse()
 	// No ID => selected character
@@ -65,7 +67,7 @@ func CreateListing(ctx *discord.CmdContext) {
 			ID:         uuid.NewV4().String(),
 			SellerID:   ctx.Player.DiscordID,
 			SellerName: ctx.Author.Username,
-			Price:      int(price.Value.(float64)),
+			Price:      int64(price.Value.(float64)),
 			Note:       fmt.Sprint(note.Value),
 
 			Grimm: grimm,
@@ -115,6 +117,7 @@ func CreateListing(ctx *discord.CmdContext) {
 	ctx.Reply(discord.ReplyParams{
 		Content: &discordgo.MessageEmbed{
 			Title:       "Create listing confirmation",
+			Color:       config.Botcolor,
 			Description: fmt.Sprintf("You are creating a listing for `%s` at **%d** Liens?\n\nTo confirm this operation, please click on the following emoji : %s", personaStr, data.Listing.Price, e[r].Name),
 		},
 		Components: createListingComponent(ctx.ID, e, e[r]),
@@ -212,6 +215,10 @@ func createListingMenu(ctx *discord.CmdContext) {
 			Content:   reply,
 			FollowUp:  true,
 			Ephemeral: true,
+		})
+
+		market.UpdateListings(&microservices.MarketCreate{
+			ID: d.Listing.ID,
 		})
 	case "notcorrect":
 		ctx.Reply(discord.ReplyParams{

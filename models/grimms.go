@@ -232,3 +232,7 @@ func (g *Grimm) GiveXP(XP int64) (levelUp bool) {
 	g.XPCap = g.CalcXPCap()
 	return levelUp
 }
+
+func (g *Grimm) Save() (err error) {
+	return config.Database.Save(g).Error
+}

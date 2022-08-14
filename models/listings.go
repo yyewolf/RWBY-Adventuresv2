@@ -8,7 +8,7 @@ type Listing struct {
 	ID         string `gorm:"primary_key;column:listing_id"`
 	SellerID   string `gorm:"column:seller_id;not null" json:"-"`
 	SellerName string `gorm:"column:seller_name" json:"seller_name"`
-	Price      int    `gorm:"column:price;not null" json:"price"`
+	Price      int64  `gorm:"column:price;not null" json:"price"`
 	Note       string `gorm:"column:note" json:"note"`
 	Type       int    `gorm:"column:type;not null" json:"type"`
 
@@ -40,7 +40,7 @@ func GetListing(id string) (m *Listing, err error) {
 	m = &Listing{
 		ID: id,
 	}
-	e := config.Database.Find(m, id)
+	e := config.Database.Find(m)
 	config.Database.Joins("Stats").Find(&m.Char, "user_id = ?", m.ID)
 	config.Database.Joins("Stats").Find(&m.Grimm, "user_id = ?", m.ID)
 	err = e.Error
@@ -73,4 +73,12 @@ func (p *Player) FillPlayerMarket() {
 		config.Database.Find(&m.Auctions[i].Bidders, "auction_id = ?", m.Auctions[i].ID)
 	}
 	p.Market = m
+}
+
+func (l *Listing) Save() (err error) {
+	return config.Database.Save(l).Error
+}
+
+func (l *Listing) Delete() (err error) {
+	return config.Database.Delete(l).Error
 }

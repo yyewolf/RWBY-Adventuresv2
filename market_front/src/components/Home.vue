@@ -1,4 +1,5 @@
 <template>
+  <notifications position="top center" classes="notif vue-notification"/>
   <v-container>
     <v-row class="text-center">
       <v-col cols="12">
@@ -11,7 +12,7 @@
             <v-card-subtitle v-if="noAuctions"> No auctions available... </v-card-subtitle>
             <v-layout row class="scrollbar" v-if="!noAuctions">
               <div class="ms-4 mb-5" v-for="a in auctions" :key="a">
-                <Listing :data="l" width="225" height="100%"></Listing>
+                <Auction :data="a"></Auction>
               </div>
             </v-layout>
           </v-card-text>
@@ -26,7 +27,7 @@
             <v-container class="d-flex justify-center">
               <div class="d-flex scrollbar">
                 <div class="ms-4 mb-5" v-for="p in personas" :key="p">
-                  <Persona :data="p" width="175" height="100%"></Persona>
+                  <Persona :data="p"></Persona>
                 </div>
               </div>
             </v-container>
@@ -43,7 +44,7 @@
             <v-card-subtitle v-if="noListings"> No listings available... </v-card-subtitle>
             <v-layout row class="scrollbar" v-if="!noListings">
               <div class="ms-4 mb-5" v-for="l in listings" :key="l">
-                <Listing :data="l" width="225" height="100%"></Listing>
+                <Listing :data="l"></Listing>
               </div>
             </v-layout>
           </v-card-text>
@@ -56,6 +57,7 @@
 <script>
 import socket from '@/plugins/websocket';
 import Listing from './Listing.vue'
+import Auction from './Auction.vue'
 import Persona from './Persona.vue'
 
 const latestListingsRoute = "listings/latest"
@@ -120,11 +122,10 @@ export default {
             for (let g of data.body.grimms) {
               this.personas.push(g);
             }
-            console.log(this.personas);
           });
         }
     },
-    components: { Listing, Persona }
+    components: { Listing, Persona, Auction }
 }
 </script>
 

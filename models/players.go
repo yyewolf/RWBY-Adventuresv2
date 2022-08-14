@@ -328,3 +328,7 @@ func (p *Player) DungeonCooldown() time.Duration {
 	t := (p.Status.LastDungeon + config.DungeonCooldown)
 	return time.Until(time.Unix(t, 0))
 }
+
+func (p *Player) Save() (err error) {
+	return config.Database.Save(p).Error
+}

@@ -10,18 +10,15 @@ import (
 func getLatestAuctions(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	// Get 10 auctions from cache :
 	var auctions []*models.Auction
+	var icons []string
 	for i, a := range cache.Auctions {
 		if i >= 10 {
 			break
 		}
 		auctions = append(auctions, a)
-	}
-
-	var icons []string
-	for _, a := range auctions {
-		if a.Char != nil {
+		if a.Type == models.CharType {
 			icons = append(icons, a.Char.ToRealChar().IconURL)
-		} else if a.Grimm != nil {
+		} else {
 			icons = append(icons, a.Grimm.ToRealGrimm().IconURL)
 		}
 	}
@@ -30,5 +27,6 @@ func getLatestAuctions(client *gosf.Client, request *gosf.Request) *gosf.Message
 	msg.Body = make(map[string]interface{})
 	msg.Body["auctions"] = auctions
 	msg.Body["icons"] = icons
+
 	return msg
 }

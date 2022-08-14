@@ -13,8 +13,14 @@ var Tokens *cache.Cache
 func StartWebsocket() {
 	// Start the server using a basic configuration
 	gosf.Listen("listings/latest", getLatestListings)
+	gosf.Listen("listings/buy", listingPurchase)
 	gosf.Listen("auctions/latest", getLatestAuctions)
+	gosf.Listen("auctions/bid", auctionBid)
 	gosf.Listen("randomPersonas", getRandomPersonas)
+
+	gosf.OnConnect(func(client *gosf.Client, request *gosf.Request) {
+		client.Join("*")
+	})
 
 	fmt.Println("[MARKET] WS server started on port", config.MarketWebsocket)
 

@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/signal"
 	"rwby-adventures/market_back/cache"
+	"rwby-adventures/market_back/microservice"
 	"rwby-adventures/market_back/websocket"
 	"syscall"
 )
@@ -11,6 +12,7 @@ import (
 func main() {
 	cache.Init()
 	websocket.StartWebsocket()
+	microservice.CreateMicroservice()
 
 	// websocket.CreateArena(&arenapc.CreateArenaReq{
 	// 	Id: "main",

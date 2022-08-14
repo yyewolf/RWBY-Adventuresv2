@@ -45,5 +45,33 @@ var MarketCommand = &discord.Command{
 				},
 			},
 		},
+		{
+			Name:        "auctions",
+			Description: "All auctions commands.",
+			SubCommands: []*discord.Command{
+				{
+					Name:        "create",
+					Description: "Create an auction.",
+					Menu:        discord.MarketMenu,
+					Call:        CreateAuction,
+					Args: []discord.Arg{
+						{
+							Name:        "id",
+							Description: "Identification number of your persona.",
+							Size:        1,
+							Required:    true,
+							Type:        discordgo.ApplicationCommandOptionString,
+						},
+						{
+							Name:        "duration",
+							Description: "Duration for the auction.",
+							Size:        1,
+							Required:    true,
+							Type:        discordgo.ApplicationCommandOptionInteger,
+						},
+					},
+				},
+			},
+		},
 	},
 }

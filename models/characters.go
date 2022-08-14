@@ -44,7 +44,7 @@ type CharacterStats struct {
 
 type Character struct {
 	CharID        string    `gorm:"primary_key;column:id"`
-	UserID        string    `gorm:"column:user_id;not null"`
+	UserID        string    `gorm:"column:user_id;not null" json:"-"`
 	Name          string    `gorm:"column:name;not null"`
 	Level         int       `gorm:"column:level;not null"`
 	XP            int64     `gorm:"column:xp;not null"`
@@ -253,4 +253,8 @@ func (c *Character) CalcStats() {
 	c.Stats.Healing = int(float64(def.Stats.Healing) + float64(11*c.Level)*float64(c.Stats.Value/100.0)*math.Pow(2, float64(c.Rarity)/9.0)*math.Pow(3, float64(c.Buffs)/10.0))
 	c.Stats.Armor = int(float64(def.Stats.Armor) + float64(8*c.Level)*float64(c.Stats.Value/100.0)*math.Pow(2, float64(c.Rarity)/11.8)*math.Pow(3, float64(c.Buffs)/14.0))
 	c.Stats.Health = int(float64(def.Stats.Health) + float64(18*c.Level)*float64(c.Stats.Value/100.0)*math.Pow(2, float64(c.Rarity)/4.6)*math.Pow(3, float64(c.Buffs)/7.0))
+}
+
+func (c *Character) Save() (err error) {
+	return config.Database.Save(c).Error
 }

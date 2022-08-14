@@ -1,5 +1,5 @@
 package microservices
 
-type MarketListingCreateRequest struct {
-	Name string
+type MarketCreate struct {
+	ID string
 }

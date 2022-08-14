@@ -1,5 +1,5 @@
 <template>
-    <v-card class="d-flex flex-column" height="100%" variant="outlined">
+    <v-card class="d-flex flex-column" height="100%" variant="outlined" width="175">
         <div>
             <v-avatar class="mt-3" size="75" rounded>
                 <v-img :src="data.IconURL"></v-img>

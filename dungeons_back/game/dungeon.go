@@ -341,7 +341,7 @@ func (c *DungeonCell) GenerateWall() {
 	c.ID = uuid.NewV4().String()
 	rng := rand.Float64() * 100
 
-	if rng < 100 && rng > 0 {
+	if rng < 1 && rng > 0 {
 		c.Type = tileTPWall
 		return
 	}
