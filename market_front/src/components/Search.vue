@@ -5,8 +5,7 @@
       <v-col cols="12">
         <v-card :loading="!noAuctions && auctions.length == 0" elevation="2" height="100%">
           <v-card-title class="mb-5">
-            <p class="text-h5" style="float:left;">Latest auctions</p>
-            <!-- <v-btn variant="plain" href="/" style="float:right">(View all)</v-btn> -->
+            <p class="text-h5" style="float:left;">Auctions</p>
           </v-card-title>
           <v-card-text>
             <v-card-subtitle v-if="noAuctions"> No auctions available... </v-card-subtitle>
@@ -19,26 +18,9 @@
         </v-card>
       </v-col>
       <v-col cols="12">
-        <v-card :loading="personas.length == 0" elevation="2" height="100%">
-          <v-card-title class="mb-5">
-            <p class="text-h5" style="float:left;">Random Characters</p>
-          </v-card-title>
-          <v-card-text>
-            <v-container class="d-flex justify-center">
-              <div class="d-flex scrollbar">
-                <div class="ms-4 mb-5" v-for="p in personas" :key="p">
-                  <Persona :data="p"></Persona>
-                </div>
-              </div>
-            </v-container>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12">
         <v-card :loading="!noListings && listings.length == 0" elevation="2" height="100%">
           <v-card-title class="mb-5">
-            <p class="text-h5" style="float:left;">Latest listings</p> 
-            <!-- <v-btn variant="plain" href="/" style="float:right;">(View all)</v-btn> -->
+            <p class="text-h5" style="float:left;">Listings</p> 
           </v-card-title>
           <v-card-text>
             <v-card-subtitle v-if="noListings"> No listings available... </v-card-subtitle>
@@ -58,24 +40,23 @@
 import socket from '@/plugins/websocket';
 import Listing from './Listing.vue'
 import Auction from './Auction.vue'
-import Persona from './Persona.vue'
 
-const latestListingsRoute = "listings/latest"
-const latestAuctionsRoute = "auctions/latest"
-const randomPersonasRoute = "randomPersonas"
+const listingsRoute = "listings/search"
+const auctionsRoute = "auctions/search"
 
 export default {
     name: "HomePage",
     data: () => ({
         listings: [],
         auctions: [],
-        personas: [],
 
+        filters: undefined,
         noListings: false,
         noAuctions: false,
     }),
     mounted() {
       // Wait for socket connection
+      this.filters = JSON.parse(localStorage.getItem("filters"))
       this.waitForConnect();
     },
     methods: {
@@ -87,10 +68,12 @@ export default {
           }
           this.getListings();
           this.getAuctions();
-          this.getRandomPersonas();
         },
         getListings() {
-            socket.emit(latestListingsRoute, {}, (data) => {
+            let data = {
+                body: this.filters,
+            }
+            socket.emit(listingsRoute, data, (data) => {
                 if (!data.body.listings || data.body.listings.length == 0) {
                     this.noListings = true;
                     return
@@ -102,7 +85,10 @@ export default {
             });
         },
         getAuctions() {
-            socket.emit(latestAuctionsRoute, {}, (data) => {
+            let data = {
+                body: this.filters,
+            }
+            socket.emit(auctionsRoute, data, (data) => {
                 if (!data.body.auctions || data.body.auctions.length == 0) {
                   this.noAuctions = true; 
                   return
@@ -113,19 +99,8 @@ export default {
                 this.auctions = data.body.auctions;
             });
         },
-        getRandomPersonas() {
-          socket.emit(randomPersonasRoute, {}, (data) => {
-            this.personas = [];
-            for (let p of data.body.characters) {
-              this.personas.push(p);
-            }
-            for (let g of data.body.grimms) {
-              this.personas.push(g);
-            }
-          });
-        }
     },
-    components: { Listing, Persona, Auction }
+    components: { Listing, Auction }
 }
 </script>
 

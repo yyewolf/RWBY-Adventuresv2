@@ -121,6 +121,20 @@ func GetPlayer(id string) *Player {
 	if p.GrimmInHunt.Name == "" {
 		p.GrimmInHunt = nil
 	}
+
+	if p.SelectedChar == nil && p.SelectedGrimm == nil {
+		if len(p.Characters) != 0 {
+			p.SelectedID = p.Characters[0].CharID
+			p.SelectedType = CharType
+		}
+		if len(p.Grimms) != 0 {
+			p.SelectedID = p.Grimms[0].GrimmID
+			p.SelectedType = GrimmType
+		}
+	}
+
+	p.FillPlayerMarket()
+
 	return p
 }
 
@@ -176,6 +190,19 @@ func (p *Player) Lootbox() (s int) {
 
 func (p *Player) CharAmount() int {
 	r := len(p.Characters)
+
+	for _, l := range p.Market.Listings {
+		if l.Type == CharType {
+			r++
+		}
+	}
+
+	for _, l := range p.Market.Auctions {
+		if l.Type == CharType {
+			r++
+		}
+	}
+
 	if p.Missions.IsInMission {
 		r += 1
 	}
@@ -184,6 +211,19 @@ func (p *Player) CharAmount() int {
 
 func (p *Player) GrimmAmount() int {
 	r := len(p.Grimms)
+
+	for _, l := range p.Market.Listings {
+		if l.Type == GrimmType {
+			r++
+		}
+	}
+
+	for _, l := range p.Market.Auctions {
+		if l.Type == GrimmType {
+			r++
+		}
+	}
+
 	if p.Missions.IsInHunt {
 		r += 1
 	}

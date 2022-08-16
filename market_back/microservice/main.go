@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"rwby-adventures/config"
 
-	"github.com/ambelovsky/gosf"
+	"github.com/yyewolf/gosf"
 )
 
 func init() {
 	// Listen on an endpoint
 	gosf.Listen("createListing", createListing)
 	gosf.Listen("createAuction", createAuction)
+	gosf.OnConnect(joinRoom)
 
 	fmt.Println("[WS] Started.")
 }

@@ -13,16 +13,14 @@ import (
 func Addchar(ctx *discord.CmdContext) {
 	ID := uuid.NewV4().String()
 	config.Database.Create(&models.Character{
-		CharID: ID,
-		Level:  rand.Intn(20) + 5,
-		Rarity: rand.Intn(6),
-		XP:     400,
-		XPCap:  5000,
-		Name:   config.BaseCharacters[rand.Intn(len(config.BaseCharacters))].Name,
-		UserID: ctx.Author.ID,
-		Stats: models.CharacterStats{
-			Value: rand.Float64() * 100,
-		},
+		CharID:  ID,
+		Level:   rand.Intn(20) + 5,
+		Rarity:  rand.Intn(6),
+		XP:      400,
+		XPCap:   5000,
+		Name:    config.BaseCharacters[rand.Intn(len(config.BaseCharacters))].Name,
+		UserID:  ctx.Author.ID,
+		Value:   rand.Float64() * 100,
 		OwnedAt: time.Now(),
 	})
 	ctx.Reply(discord.ReplyParams{

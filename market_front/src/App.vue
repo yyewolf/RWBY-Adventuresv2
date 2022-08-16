@@ -5,6 +5,8 @@
         <v-tab to="/">RWBYzon</v-tab>
       </template>
 
+      <AdvancedSearch :open="dialogSearch" @close="dialogSearch = false;" ></AdvancedSearch>
+
       <v-row class="justify-center">
         <v-col cols="12" sm="6">
           <v-text-field 
@@ -16,12 +18,14 @@
             label="Search"
             density="compact"
             variant="outlined"
+            @focus="dialogSearch = true"
           ></v-text-field>
         </v-col>
       </v-row>
 
       <template v-slot:append>
-        <v-btn prepend-icon="mdi-discord">Log in</v-btn>
+        <v-btn prepend-icon="mdi-discord" v-if="!logged_in" :href="login_link">Log in</v-btn>
+        <v-btn prepend-icon="mdi-discord" v-else>Log out</v-btn>
       </template>
     </v-app-bar>
     <v-main>
@@ -31,14 +35,82 @@
 </template>
 
 <script>
+import socket from '@/plugins/websocket';
+import { authStore } from "@/store/authStore";
+import AdvancedSearch from './components/AdvancedSearch.vue';
 
 export default {
   name: 'App',
 
-  components: {},
+  components: { AdvancedSearch },
 
   data: () => ({
-    //
+    dialogSearch: false,
+    value_range: [0, 100],
+    level_range: [1, 500],
+    buffs_range: [0, 2],
+    rarity_range: [0, 5],
+    order_by: undefined,
+    orderState: false,
+    filters: {
+      name_has: '',
+      value_above: '0',
+      value_below: '100',
+      level_above: '1',
+      level_below: '500',
+      buffs_above: '0',
+      buffs_below: '2',
+      rarity_above: '0',
+      rarity_below: '5',
+      order_by: '',
+      order_type: '',
+    },
+    login_link: undefined,
+    logged_in: false,
   }),
+
+  mounted() {
+    this.waitForConnect();
+    this.connect();
+  },
+
+  methods : {
+    async waitForConnect() {
+      socket.removeAllListeners()
+      while(!socket.connected) {
+        console.log("Waiting for socket connection...")
+        await new Promise(r => setTimeout(r, 1000));
+      }
+    },
+    getToken: function() {
+      socket.emit("getToken", {}, (data) => {
+        if (data.success) {
+          authStore.commit("setToken", data.body.token);
+        }
+      });
+    },
+    connect: function() {
+      let data = {
+        body: {
+          token: authStore.getters.token
+        }
+      }
+      console.log(data);
+      socket.emit("marketConnect", data, (data) => {
+        if (data.success) {
+          authStore.commit("setLogin", data.body.connected);
+          this.logged_in = data.body.connected;
+          if (!data.body.connected) {
+            this.login_link = data.body.link;
+            authStore.commit("setLoginLink", data.body.link);
+          }
+        } else {
+          this.logged_in = false;
+          this.getToken();
+          this.connect();
+        }
+      });
+    },
+  }
 }
 </script>

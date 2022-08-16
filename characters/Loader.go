@@ -27,6 +27,7 @@ type CharacterStruct struct {
 	Parent            string                   `json:"-"`
 	Weapon            string                   `json:"-"`
 	Rarity            int                      `json:"Rarity"`
+	Value             float64                  `json:"Value"`
 	Level             int                      `json:"Level"`
 	IconURL           string                   `json:"IconURL"`
 	WinURL            string                   `json:"-"`
@@ -55,13 +56,12 @@ type CharacterAttacksStruct struct {
 
 //CharacterStatsStruct represents the stats of a character
 type CharacterStatsStruct struct {
-	CharID      string  `json:"char_id" db:"char_id"`
-	Value       float64 `json:"value" db:"value"`
-	Health      int     `json:"health"  db:"health"`
-	Armor       int     `json:"armor" db:"armor"`
-	Damage      int     `json:"damage" db:"damage"`
-	Healing     int     `json:"healing" db:"healing"`
-	DodgeChance int     `json:"dodge_chance" db:"dodge_chance"`
+	CharID      string `json:"char_id" db:"char_id"`
+	Health      int    `json:"health"  db:"health"`
+	Armor       int    `json:"armor" db:"armor"`
+	Damage      int    `json:"damage" db:"damage"`
+	Healing     int    `json:"healing" db:"healing"`
+	DodgeChance int    `json:"dodge_chance" db:"dodge_chance"`
 }
 
 //BaseCharacters represents all the characters in the game

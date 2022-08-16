@@ -93,7 +93,7 @@ func TradeInfos(client *gosf.Client, request *gosf.Request) *gosf.Message {
 			list = append(list, Persona{
 				ID:       grimm.GrimmID,
 				Name:     grimm.Name,
-				Value:    grimm.Stats.Value,
+				Value:    grimm.Value,
 				Rarity:   grimm.RarityString(),
 				ImageURL: grimm.ToRealGrimm().IconURL,
 				Type:     "grimm",
@@ -107,7 +107,7 @@ func TradeInfos(client *gosf.Client, request *gosf.Request) *gosf.Message {
 			list = append(list, Persona{
 				ID:       char.CharID,
 				Name:     char.Name,
-				Value:    char.Stats.Value,
+				Value:    char.Value,
 				Rarity:   char.RarityString(),
 				ImageURL: char.ToRealChar().IconURL,
 				Type:     "char",

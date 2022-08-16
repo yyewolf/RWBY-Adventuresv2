@@ -3,7 +3,7 @@ package market
 import (
 	"rwby-adventures/microservices"
 
-	"github.com/ambelovsky/gosf"
+	"github.com/yyewolf/gosf"
 )
 
 func UpdateListings(req *microservices.MarketCreate) (*gosf.Message, error) {

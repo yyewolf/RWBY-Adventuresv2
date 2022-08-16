@@ -2,11 +2,16 @@ package websocket
 
 import (
 	"encoding/json"
+	"fmt"
+	"rwby-adventures/config"
 	"rwby-adventures/market_back/cache"
+	"rwby-adventures/market_back/microservice"
+	"rwby-adventures/microservices"
 	"rwby-adventures/models"
 	"strconv"
 
 	"github.com/ambelovsky/gosf"
+	"github.com/bwmarrin/discordgo"
 )
 
 type AuctionBidReq struct {
@@ -15,6 +20,12 @@ type AuctionBidReq struct {
 }
 
 func auctionBid(client *gosf.Client, request *gosf.Request) *gosf.Message {
+	token, exists := GetToken(request)
+	if !exists {
+		return gosf.NewFailureMessage("Invalid token")
+	}
+	t := token.(*Token)
+
 	var req AuctionBidReq
 	// unmarshal body :
 	data, _ := json.Marshal(request.Message.Body)
@@ -35,14 +46,14 @@ func auctionBid(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	if auction.Bid()+100 >= bid {
 		return gosf.NewFailureMessage("Bid must be at least 100 Liens greater than current bid.")
 	}
-	p := models.GetPlayer("144472011924570113")
+	p := models.GetPlayer(t.UserID)
 	if p.TotalBalance() < bid {
 		return gosf.NewFailureMessage("You do not have enough Liens.")
 	}
 
 	b := &models.AuctionBidders{
 		AuctionID: req.AuctionID,
-		UserID:    "144472011924570113",
+		UserID:    t.UserID,
 		Bid:       bid,
 	}
 	b.Save()
@@ -61,6 +72,23 @@ func auctionBid(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	msg.Body = make(map[string]interface{})
 	msg.Body["amount"] = bid
 	msg.Body["ends_at"] = auction.EndsAt
+
+	var personaString string
+	if auction.Type == models.CharType {
+		personaString = auction.Char.FullString()
+	} else {
+		personaString = auction.Grimm.FullString()
+	}
+
+	// Bidders's message
+	go microservice.SendMessageToBot(&microservices.MarketMessage{
+		UserID: p.DiscordID,
+		Message: &discordgo.MessageEmbed{
+			Title:       "Auction Bid",
+			Color:       config.Botcolor,
+			Description: fmt.Sprintf("You have successfully bidded %d Liens on `%s`.", b.Bid, personaString),
+		},
+	})
 
 	go gosf.Broadcast("*", req.AuctionID, msg)
 	go cache.SaveAuction(auction)

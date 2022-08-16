@@ -14,9 +14,14 @@ func StartWebsocket() {
 	// Start the server using a basic configuration
 	gosf.Listen("listings/latest", getLatestListings)
 	gosf.Listen("listings/buy", listingPurchase)
+	gosf.Listen("listings/search", searchListings)
 	gosf.Listen("auctions/latest", getLatestAuctions)
 	gosf.Listen("auctions/bid", auctionBid)
+	gosf.Listen("auctions/search", searchAuctions)
+
 	gosf.Listen("randomPersonas", getRandomPersonas)
+	gosf.Listen("getToken", getToken)
+	gosf.Listen("marketConnect", connect)
 
 	gosf.OnConnect(func(client *gosf.Client, request *gosf.Request) {
 		client.Join("*")

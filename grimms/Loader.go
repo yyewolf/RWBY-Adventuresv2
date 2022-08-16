@@ -26,6 +26,7 @@ type GrimmStruct struct {
 	Skin         string               `json:"-"`
 	Parent       string               `json:"-"`
 	Rarity       int                  `json:"Rarity"`
+	Value        float64              `json:"Value"`
 	Level        int                  `json:"Level"`
 	IconURL      string               `json:"IconURL"`
 	WinURL       string               `json:"-"`
@@ -54,13 +55,12 @@ type GrimmAttacksStruct struct {
 
 //GrimmStatsStruct represents the stats of a character
 type GrimmStatsStruct struct {
-	GrimmID     string  `json:"grimm_id" db:"grimm_id"`
-	Value       float64 `json:"value" db:"value"`
-	Health      int     `json:"health"  db:"health"`
-	Armor       int     `json:"armor" db:"armor"`
-	Damage      int     `json:"damage" db:"damage"`
-	Healing     int     `json:"healing" db:"healing"`
-	DodgeChance int     `json:"dodge_chance" db:"dodge_chance"`
+	GrimmID     string `json:"grimm_id" db:"grimm_id"`
+	Health      int    `json:"health"  db:"health"`
+	Armor       int    `json:"armor" db:"armor"`
+	Damage      int    `json:"damage" db:"damage"`
+	Healing     int    `json:"healing" db:"healing"`
+	DodgeChance int    `json:"dodge_chance" db:"dodge_chance"`
 }
 
 //BaseGrimms represents all the grimms in the game

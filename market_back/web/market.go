@@ -2,13 +2,12 @@ package web
 
 import (
 	"context"
-	"crypto/sha256"
 	"fmt"
 	"html/template"
 	"net/http"
 	"rwby-adventures/config"
-	"rwby-adventures/dungeons_back/static"
-	"rwby-adventures/dungeons_back/websocket"
+	"rwby-adventures/market_back/static"
+	"rwby-adventures/market_back/websocket"
 	"strings"
 
 	"github.com/gorilla/pat"
@@ -19,8 +18,8 @@ import (
 	"github.com/yyewolf/goth/providers/discord"
 )
 
-var provider = discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("http://%s%s/auth/discord/callback", config.DungeonHost, config.DungeonPort), discord.ScopeIdentify)
-var redirections = make(map[string]string)
+var provider = discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("http://%s%s/auth/discord/callback", config.MarketHost, config.MarketPort), discord.ScopeIdentify)
+var stateToken = make(map[string]*websocket.Token)
 
 func startMarketService() {
 
@@ -43,14 +42,17 @@ func startMarketService() {
 
 	mux.Get("/auth/{provider}/callback", func(res http.ResponseWriter, req *http.Request) {
 		goth.UseProviders(provider)
-		gothic.CompleteUserAuth(res, req)
 		state := gothic.SetState(req)
-		redir, found := redirections[state]
-		if !found {
-			http.Redirect(res, req, "/", http.StatusTemporaryRedirect)
+		token := stateToken[state]
+		usr, err := UserLogged(res, req)
+		if err != nil {
+			token.Empty = true
 		} else {
-			http.Redirect(res, req, redir, http.StatusTemporaryRedirect)
+			token.Empty = false
+			token.UserID = usr.UserID
+			token.Secret = usr.AccessTokenSecret
 		}
+		http.Redirect(res, req, "http://localhost:8080", http.StatusTemporaryRedirect)
 		res.Write([]byte(""))
 	})
 
@@ -74,6 +76,7 @@ func startMarketService() {
 
 	mux.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", DirectoryListing(http.FileServer(http.FS(static.Assets)))))
 	mux.HandleFunc("/", http.HandlerFunc(MarketIndex))
+	mux.HandleFunc("/login/{token}", http.HandlerFunc(MarketLogin))
 	go srv.ListenAndServe()
 }
 
@@ -88,30 +91,22 @@ func DirectoryListing(next http.Handler) http.Handler {
 	})
 }
 
-func MarketIndex(w http.ResponseWriter, r *http.Request) {
-	u, err := UserLogged(w, r)
-	if err != nil {
-		goth.UseProviders(provider)
-		state := gothic.SetState(r)
-		redirections[state] = fmt.Sprintf("/")
-		r.URL.RawQuery += fmt.Sprintf("&state=%s", state)
-		state = gothic.SetState(r)
-		r = r.WithContext(context.WithValue(r.Context(), "provider", "discord"))
-		gothic.BeginAuthHandler(w, r)
+func MarketLogin(w http.ResponseWriter, r *http.Request) {
+	token := r.URL.Query().Get(":token")
+	t, found := websocket.Tokens.Get(token)
+	if !found {
+		http.Error(w, "Invalid token", http.StatusBadRequest)
 		return
 	}
+	goth.UseProviders(provider)
+	state := gothic.SetState(r)
+	stateToken[state] = t.(*websocket.Token)
+	r.URL.RawQuery += fmt.Sprintf("&state=%s", state)
+	state = gothic.SetState(r)
+	r = r.WithContext(context.WithValue(r.Context(), "provider", "discord"))
+	gothic.BeginAuthHandler(w, r)
+}
 
-	h := sha256.Sum256([]byte(u.UserID))
-	token := fmt.Sprintf("%x", h)
-	data := &websocket.DungeonUserData{
-		User: &websocket.WebUser{
-			Name: u.Name,
-			ID:   u.UserID,
-		},
-		Token: token,
-		Host:  config.DungeonHost,
-		Port:  config.DungeonWebsocket,
-	}
-	websocket.Tokens.Add(token, data, 0)
-	templates.ExecuteTemplate(w, "market.html", data)
+func MarketIndex(w http.ResponseWriter, r *http.Request) {
+	templates.ExecuteTemplate(w, "market.html", nil)
 }

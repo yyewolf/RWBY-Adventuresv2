@@ -2,7 +2,6 @@ package discord
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -51,7 +50,6 @@ func (a *CommandArg) CharGrimmParse() (grimm bool, index int, err error) {
 		return false, 0, errors.New("nil pointer")
 	}
 	txt := a.Value.(string)
-	fmt.Println(txt)
 	txt = strings.ToLower(txt)
 	if strings.Contains(txt, "g") {
 		txt = strings.Replace(txt, "g", "", 1)

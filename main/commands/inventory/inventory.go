@@ -227,14 +227,14 @@ func Inventory(ctx *discord.CmdContext) {
 		Value: "You did not select any character/grimm yet.",
 	}
 	if ctx.Player.SelectedType == 0 {
-		if ctx.Player.SelectedChar.Name != "" {
+		if ctx.Player.SelectedChar != nil {
 			selectedField = &discordgo.MessageEmbedField{
 				Name:  "**Selected character**",
 				Value: fmt.Sprintf("`%s`", ctx.Player.SelectedChar.FullString()),
 			}
 		}
 	} else {
-		if ctx.Player.SelectedGrimm.Name != "" {
+		if ctx.Player.SelectedGrimm != nil {
 			selectedField = &discordgo.MessageEmbedField{
 				Name:  "**Selected grimm**",
 				Value: fmt.Sprintf("`%s`", ctx.Player.SelectedGrimm.FullString()),

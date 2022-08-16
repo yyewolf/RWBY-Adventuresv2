@@ -40,20 +40,25 @@ func GetListing(id string) (m *Listing, err error) {
 	m = &Listing{
 		ID: id,
 	}
-	e := config.Database.Find(m)
-	config.Database.Joins("Stats").Find(&m.Char, "user_id = ?", m.ID)
-	config.Database.Joins("Stats").Find(&m.Grimm, "user_id = ?", m.ID)
+	e := config.Database.
+		Preload("Grimm.Stats").
+		Preload("Char.Stats").
+		Joins("Char").
+		Joins("Grimm").
+		Find(m)
 	err = e.Error
 	return
 }
 
 func GetListings() (m []*Listing, err error) {
-	e := config.Database.Order("listing_id desc").Find(&m)
+	e := config.Database.
+		Order("listing_id desc").
+		Preload("Grimm.Stats").
+		Preload("Char.Stats").
+		Joins("Char").
+		Joins("Grimm").
+		Find(&m)
 	err = e.Error
-	for _, l := range m {
-		config.Database.Joins("Stats").Find(&l.Char, "user_id = ?", l.ID)
-		config.Database.Joins("Stats").Find(&l.Grimm, "user_id = ?", l.ID)
-	}
 	return
 }
 
@@ -72,6 +77,7 @@ func (p *Player) FillPlayerMarket() {
 		config.Database.Joins("Stats").Find(&m.Auctions[i].Char, "user_id = ?", m.Auctions[i].ID)
 		config.Database.Find(&m.Auctions[i].Bidders, "auction_id = ?", m.Auctions[i].ID)
 	}
+
 	p.Market = m
 }
 

@@ -2,6 +2,7 @@ package models
 
 import (
 	"rwby-adventures/config"
+	"time"
 )
 
 type AuctionBidders struct {
@@ -18,6 +19,7 @@ type Auction struct {
 	EndsAt         int64  `gorm:"column:ends_at;not null" json:"ends_at"`
 	TimeExtensions int64  `gorm:"column:time_extension;not null" json:"-"`
 	Type           int    `gorm:"column:type;not null" json:"type"`
+	Ended          bool   `gorm:"-" json:"ended"`
 
 	// Foreign keys
 	Char    *Character        `gorm:"foreignkey:UserID" json:"char"`
@@ -46,6 +48,11 @@ func GetAuction(id string) (a *Auction, err error) {
 	config.Database.Joins("Stats").Find(&a.Grimm, "user_id = ?", a.ID)
 	config.Database.Order("bid desc").Find(&a.Bidders, "auction_id = ?", a.ID)
 	err = e.Error
+
+	a.Ended = a.EndsAt < time.Now().Unix()
+	if a.Ended {
+		a.End()
+	}
 	return
 }
 
@@ -56,8 +63,52 @@ func GetAuctions() (m []*Auction, err error) {
 		config.Database.Joins("Stats").Find(&a.Char, "user_id = ?", a.ID)
 		config.Database.Joins("Stats").Find(&a.Grimm, "user_id = ?", a.ID)
 		config.Database.Order("bid desc").Find(&a.Bidders, "auction_id = ?", a.ID)
+
+		a.Ended = a.EndsAt < time.Now().Unix()
+		if a.Ended {
+			a.End()
+		}
 	}
 	return
+}
+
+func (a *Auction) End() {
+	if len(a.Bidders) > 0 {
+		b := a.Bidders[len(a.Bidders)-1]
+		bidder := GetPlayer(b.UserID)
+		seller := GetPlayer(a.SellerID)
+
+		// Money transfer :
+		if bidder.DiscordID != seller.DiscordID {
+			seller.Balance += b.Bid
+			bidder.Balance -= b.Bid
+		}
+		bidder.BiddedBalance -= b.Bid
+
+		seller.Save()
+		bidder.Save()
+
+		if a.Type == CharType {
+			a.Char.UserID = bidder.DiscordID
+			a.Char.Save()
+		} else {
+			a.Grimm.UserID = bidder.DiscordID
+			a.Grimm.Save()
+		}
+	} else {
+		if a.Type == CharType {
+			a.Char.UserID = a.SellerID
+			a.Char.Save()
+		} else {
+			a.Grimm.UserID = a.SellerID
+			a.Grimm.Save()
+		}
+	}
+
+	for _, b := range a.Bidders {
+		b.Delete()
+	}
+	a.Delete()
 }
 
 func (a *Auction) Save() (err error) {

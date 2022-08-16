@@ -16,13 +16,12 @@ import (
 )
 
 type GrimmStat struct {
-	GrimmID     string  `gorm:"primary_key;column:id"`
-	Value       float64 `gorm:"column:value;not null"`
-	Health      int     `gorm:"column:health;not null"`
-	Armor       int     `gorm:"column:armor;not null"`
-	Damage      int     `gorm:"column:damage;not null"`
-	Healing     int     `gorm:"column:healing;not null"`
-	DodgeChance int     `gorm:"column:dodge_chance;not null"`
+	GrimmID     string `gorm:"primary_key;column:id"`
+	Health      int    `gorm:"column:health;not null"`
+	Armor       int    `gorm:"column:armor;not null"`
+	Damage      int    `gorm:"column:damage;not null"`
+	Healing     int    `gorm:"column:healing;not null"`
+	DodgeChance int    `gorm:"column:dodge_chance;not null"`
 }
 
 type Grimm struct {
@@ -33,6 +32,7 @@ type Grimm struct {
 	XP            int64     `gorm:"column:xp;not null"`
 	XPCap         int64     `gorm:"column:xp_max;not null"`
 	Rarity        int       `gorm:"column:rarity;not null"`
+	Value         float64   `gorm:"column:value;not null"`
 	InHunt        bool      `gorm:"column:in_hunt;not null"`
 	IsInFavorites bool      `gorm:"column:is_in_favorites;not null"`
 	Buffs         int       `gorm:"column:buffs;not null"`
@@ -66,7 +66,7 @@ func (g *Grimm) ToRealGrimm() grimms.GrimmStruct {
 	returnGrimm.Stats.Damage = g.Stats.Damage
 	returnGrimm.Stats.Healing = g.Stats.Healing
 	returnGrimm.Stats.Health = g.Stats.Health
-	returnGrimm.Stats.Value = g.Stats.Value
+	returnGrimm.Value = g.Value
 	returnGrimm.Rarity = g.Rarity
 	returnGrimm.Level = g.Level
 
@@ -121,11 +121,11 @@ func (g *Grimm) RarityString() (x string) {
 }
 
 func (g *Grimm) FullString() string {
-	return fmt.Sprintf("`%s level %d (%d/%dXP) %s (%.2f%%)`", g.RarityString(), g.Level, g.XP, g.XPCap, g.Name, g.Stats.Value)
+	return fmt.Sprintf("`%s level %d (%d/%dXP) %s (%.2f%%)`", g.RarityString(), g.Level, g.XP, g.XPCap, g.Name, g.Value)
 }
 
 func (g *Grimm) MiniString() string {
-	return fmt.Sprintf("%s level %d %s (%.2f%%)", g.RarityString(), g.Level, g.Name, g.Stats.Value)
+	return fmt.Sprintf("%s level %d %s (%.2f%%)", g.RarityString(), g.Level, g.Name, g.Value)
 }
 
 func (g *Grimm) CheckConditions(f *InvFilters) bool {
@@ -136,10 +136,10 @@ func (g *Grimm) CheckConditions(f *InvFilters) bool {
 		if f.Level != 1000 && g.Level != f.Level {
 			return false
 		}
-		if g.Stats.Value < f.ValAbove {
+		if g.Value < f.ValAbove {
 			return false
 		}
-		if g.Stats.Value > f.ValBelow {
+		if g.Value > f.ValBelow {
 			return false
 		}
 		if f.Rarity != -1 && g.Rarity != f.Rarity {
@@ -198,10 +198,10 @@ func (g *Grimm) CalcXPCap() int64 {
 
 func (g *Grimm) CalcStats() {
 	def := g.ToRealGrimm()
-	g.Stats.Damage = int(float64(def.Stats.Damage) + float64(9*g.Level)*float64(g.Stats.Value/100.0)*math.Pow(2, float64(g.Rarity)/4.6)*math.Pow(3, float64(g.Buffs)/7.0))
-	g.Stats.Healing = int(float64(def.Stats.Healing) + float64(11*g.Level)*float64(g.Stats.Value/100.0)*math.Pow(2, float64(g.Rarity)/9.0)*math.Pow(3, float64(g.Buffs)/10.0))
-	g.Stats.Armor = int(float64(def.Stats.Armor) + float64(8*g.Level)*float64(g.Stats.Value/100.0)*math.Pow(2, float64(g.Rarity)/11.8)*math.Pow(3, float64(g.Buffs)/14.0))
-	g.Stats.Health = int(float64(def.Stats.Health) + float64(18*g.Level)*float64(g.Stats.Value/100.0)*math.Pow(2, float64(g.Rarity)/4.6)*math.Pow(3, float64(g.Buffs)/7.0))
+	g.Stats.Damage = int(float64(def.Stats.Damage) + float64(9*g.Level)*float64(g.Value/100.0)*math.Pow(2, float64(g.Rarity)/4.6)*math.Pow(3, float64(g.Buffs)/7.0))
+	g.Stats.Healing = int(float64(def.Stats.Healing) + float64(11*g.Level)*float64(g.Value/100.0)*math.Pow(2, float64(g.Rarity)/9.0)*math.Pow(3, float64(g.Buffs)/10.0))
+	g.Stats.Armor = int(float64(def.Stats.Armor) + float64(8*g.Level)*float64(g.Value/100.0)*math.Pow(2, float64(g.Rarity)/11.8)*math.Pow(3, float64(g.Buffs)/14.0))
+	g.Stats.Health = int(float64(def.Stats.Health) + float64(18*g.Level)*float64(g.Value/100.0)*math.Pow(2, float64(g.Rarity)/4.6)*math.Pow(3, float64(g.Buffs)/7.0))
 }
 
 func (g *Grimm) CalcXP(multiplier int, boost bool) int64 {

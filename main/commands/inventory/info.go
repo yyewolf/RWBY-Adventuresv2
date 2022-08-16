@@ -143,7 +143,7 @@ func charInfo(ctx *discord.CmdContext, char *models.Character, number int) {
 					Name: "**Statistics :**",
 					Value: "Category : **" + original.Category + "**\n" +
 						"XP : " + strconv.FormatInt(char.XP, 10) + "/" + strconv.FormatInt(char.XPCap, 10) + "\n" +
-						"Value : " + fmt.Sprintf("%.2f", char.Stats.Value) + "%\n" +
+						"Value : " + fmt.Sprintf("%.2f", char.Value) + "%\n" +
 						"Rarity : " + char.RarityString() + "\n" +
 						"Health : " + strconv.Itoa(char.Stats.Health) + "\n" +
 						"Armor : " + strconv.Itoa(char.Stats.Armor) + "\n" +
@@ -201,7 +201,7 @@ func grimmInfo(ctx *discord.CmdContext, grimm *models.Grimm, number int) {
 					Name: "**Statistics :**",
 					Value: "Category : **" + original.Category + "**\n" +
 						"XP : " + strconv.FormatInt(grimm.XP, 10) + "/" + strconv.FormatInt(grimm.XPCap, 10) + "\n" +
-						"Value : " + fmt.Sprintf("%.2f", grimm.Stats.Value) + "%\n" +
+						"Value : " + fmt.Sprintf("%.2f", grimm.Value) + "%\n" +
 						"Rarity : " + grimm.RarityString() + "\n" +
 						"Health : " + strconv.Itoa(grimm.Stats.Health) + "\n" +
 						"Armor : " + strconv.Itoa(grimm.Stats.Armor) + "\n" +

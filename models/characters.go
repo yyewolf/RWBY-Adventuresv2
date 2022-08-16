@@ -33,13 +33,12 @@ type InvFilters struct {
 }
 
 type CharacterStats struct {
-	CharID      string  `gorm:"primary_key;column:id"`
-	Value       float64 `gorm:"column:value;not null"`
-	Health      int     `gorm:"column:health;not null"`
-	Armor       int     `gorm:"column:armor;not null"`
-	Damage      int     `gorm:"column:damage;not null"`
-	Healing     int     `gorm:"column:healing;not null"`
-	DodgeChance int     `gorm:"column:dodge_chance;not null"`
+	CharID      string `gorm:"primary_key;column:id"`
+	Health      int    `gorm:"column:health;not null"`
+	Armor       int    `gorm:"column:armor;not null"`
+	Damage      int    `gorm:"column:damage;not null"`
+	Healing     int    `gorm:"column:healing;not null"`
+	DodgeChance int    `gorm:"column:dodge_chance;not null"`
 }
 
 type Character struct {
@@ -50,6 +49,7 @@ type Character struct {
 	XP            int64     `gorm:"column:xp;not null"`
 	XPCap         int64     `gorm:"column:xp_max;not null"`
 	Rarity        int       `gorm:"column:rarity;not null"`
+	Value         float64   `gorm:"column:value;not null"`
 	InMission     bool      `gorm:"column:in_mission;not null"`
 	IsInFavorites bool      `gorm:"column:is_in_favorites;not null"`
 	Buffs         int       `gorm:"column:buffs;not null"`
@@ -88,7 +88,7 @@ func (c Character) ToRealChar() chars.CharacterStruct {
 	returnChar.Stats.Damage = c.Stats.Damage
 	returnChar.Stats.Healing = c.Stats.Healing
 	returnChar.Stats.Health = c.Stats.Health
-	returnChar.Stats.Value = c.Stats.Value
+	returnChar.Value = c.Value
 	returnChar.Rarity = c.Rarity
 	returnChar.Level = c.Level
 
@@ -143,11 +143,11 @@ func (c *Character) RarityString() (x string) {
 }
 
 func (c *Character) FullString() string {
-	return fmt.Sprintf("%s level %d (%d/%dXP) %s (%.2f%%)", c.RarityString(), c.Level, c.XP, c.XPCap, c.Name, c.Stats.Value)
+	return fmt.Sprintf("%s level %d (%d/%dXP) %s (%.2f%%)", c.RarityString(), c.Level, c.XP, c.XPCap, c.Name, c.Value)
 }
 
 func (c *Character) MiniString() string {
-	return fmt.Sprintf("%s level %d %s (%.2f%%)", c.RarityString(), c.Level, c.Name, c.Stats.Value)
+	return fmt.Sprintf("%s level %d %s (%.2f%%)", c.RarityString(), c.Level, c.Name, c.Value)
 }
 
 func (c *Character) CheckConditions(f *InvFilters) bool {
@@ -158,10 +158,10 @@ func (c *Character) CheckConditions(f *InvFilters) bool {
 		if f.Level != 1000 && c.Level != f.Level {
 			return false
 		}
-		if c.Stats.Value < f.ValAbove {
+		if c.Value < f.ValAbove {
 			return false
 		}
-		if c.Stats.Value > f.ValBelow {
+		if c.Value > f.ValBelow {
 			return false
 		}
 		if f.Rarity != -1 && c.Rarity != f.Rarity {
@@ -249,10 +249,10 @@ func (c *Character) GiveXP(XP int64) (levelUp bool) {
 
 func (c *Character) CalcStats() {
 	def := c.ToRealChar()
-	c.Stats.Damage = int(float64(def.Stats.Damage) + float64(9*c.Level)*float64(c.Stats.Value/100.0)*math.Pow(2, float64(c.Rarity)/4.6)*math.Pow(3, float64(c.Buffs)/7.0))
-	c.Stats.Healing = int(float64(def.Stats.Healing) + float64(11*c.Level)*float64(c.Stats.Value/100.0)*math.Pow(2, float64(c.Rarity)/9.0)*math.Pow(3, float64(c.Buffs)/10.0))
-	c.Stats.Armor = int(float64(def.Stats.Armor) + float64(8*c.Level)*float64(c.Stats.Value/100.0)*math.Pow(2, float64(c.Rarity)/11.8)*math.Pow(3, float64(c.Buffs)/14.0))
-	c.Stats.Health = int(float64(def.Stats.Health) + float64(18*c.Level)*float64(c.Stats.Value/100.0)*math.Pow(2, float64(c.Rarity)/4.6)*math.Pow(3, float64(c.Buffs)/7.0))
+	c.Stats.Damage = int(float64(def.Stats.Damage) + float64(9*c.Level)*float64(c.Value/100.0)*math.Pow(2, float64(c.Rarity)/4.6)*math.Pow(3, float64(c.Buffs)/7.0))
+	c.Stats.Healing = int(float64(def.Stats.Healing) + float64(11*c.Level)*float64(c.Value/100.0)*math.Pow(2, float64(c.Rarity)/9.0)*math.Pow(3, float64(c.Buffs)/10.0))
+	c.Stats.Armor = int(float64(def.Stats.Armor) + float64(8*c.Level)*float64(c.Value/100.0)*math.Pow(2, float64(c.Rarity)/11.8)*math.Pow(3, float64(c.Buffs)/14.0))
+	c.Stats.Health = int(float64(def.Stats.Health) + float64(18*c.Level)*float64(c.Value/100.0)*math.Pow(2, float64(c.Rarity)/4.6)*math.Pow(3, float64(c.Buffs)/7.0))
 }
 
 func (c *Character) Save() (err error) {

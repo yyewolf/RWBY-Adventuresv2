@@ -15,41 +15,43 @@
             </v-card-actions>
         </v-card>
     </v-dialog>
-    <v-card variant="outlined" :style="'border-color:'+this.border" width="200" height="100%">
-        <v-overlay :model-value="bought" scroll-strategy="allow" scrim="#000" contained class="align-center justify-center">
+    <v-card class="d-flex flex-column" height="100%" variant="outlined" :style="'border-color:'+this.border" width="200">
+        <v-overlay :model-value="bought" scroll-strategy="none" scrim="#000" contained class="align-center justify-center">
             <h1>SOLD</h1>
         </v-overlay>
+        <!-- <div class="d-flex flex-column" height="100%" :class="bought ? 'blur' : ''"> -->
         <div :class="bought ? 'blur' : ''">
-            <div>
-                <v-avatar class="mt-3" size="100" rounded>
-                    <v-img :src="data.icon"></v-img>
-                </v-avatar>
-            </div>
-            <v-card-text align="left">
-                <p class="title">{{name}}</p>
-                <p class="author" v-if="data.seller_name != undefined">@{{data.seller_name}}</p>
-                <p class="star mt-2">
-                    <v-icon color="yellow" v-for="i in 5" :key="i">{{i <= this.rarity ? "mdi-star" : "mdi-star-outline"}}</v-icon> <v-icon color="green" v-for="i in buffs" :key="i" :id="i">mdi-plus</v-icon>
-                </p>
-                <p class="ml-1">{{rarityString}}</p>
-                <p>
-                    <v-icon color="green">mdi-cash</v-icon> {{data.price}}Ⱡ
-                </p>
-                <p>
-                    <v-icon>mdi-percent</v-icon> {{value.toFixed(2)}}%
-                </p>
-                <p>
-                    <v-icon>mdi-arrow-up-bold</v-icon> Level {{level}}
-                </p>
-            </v-card-text>
-            <v-card-text>
-                <v-btn color="secondary" @click="confirmation = true" :disabled="bought">Purchase</v-btn>
-            </v-card-text>
+            <v-avatar class="mt-3" size="100" rounded>
+                <v-img :src="data.icon"></v-img>
+            </v-avatar>
         </div>
+        <v-card-text align="left" :class="bought ? 'blur' : ''">
+            <p class="title">{{name}}</p>
+            <p class="author" v-if="data.seller_name != undefined">@{{data.seller_name}}</p>
+            <p class="star mt-2">
+                <v-icon color="yellow" v-for="i in 5" :key="i">{{i <= this.rarity ? "mdi-star" : "mdi-star-outline"}}</v-icon> <v-icon color="green" v-for="i in buffs" :key="i" :id="i">mdi-plus</v-icon>
+            </p>
+            <p class="ml-1">{{rarityString}}</p>
+            <p>
+                <v-icon color="green">mdi-cash</v-icon> {{data.price}}Ⱡ
+            </p>
+            <p>
+                <v-icon>mdi-percent</v-icon> {{value.toFixed(2)}}%
+            </p>
+            <p>
+                <v-icon>mdi-arrow-up-bold</v-icon> Level {{level}}
+            </p>
+        </v-card-text>
+        <v-card-actions class="justify-center" :class="bought ? 'blur' : ''">
+            <v-btn color="secondary" variant="tonal" @click="confirmation = true" :disabled="bought" v-if="logged_in">Purchase</v-btn>
+            <v-btn color="secondary" variant="tonal" :href="login_link" v-else>Login</v-btn>
+        </v-card-actions>
+        <!-- </div> -->
     </v-card>
 </template>
 
 <script>
+import { authStore } from "@/store/authStore";
 import socket from '@/plugins/websocket';
 
 const listingsBuyRoute = 'listings/buy';
@@ -68,14 +70,20 @@ export default {
 
             confirmation: false,
             bought: false,
+
+            logged_in: false,
+            login_link: "",
         }
     },
     props: ['data'],
     mounted() {
-        let persona = this.data.char || this.data.grimm
+        let persona = this.data.char
+        if (this.data.type == 1) {
+            persona = this.data.grimm
+        }
         this.name = persona.Name;
         this.rarity = persona.Rarity;
-        this.value = persona.Stats.Value;
+        this.value = persona.Value;
         this.level = persona.Level;
         this.buffs = persona.Buffs;
         if (this.data.type == 0) {
@@ -89,6 +97,9 @@ export default {
         socket.on(this.data.ID, () => {
             this.bought = true
         })
+
+        this.logged_in = authStore.getters.loggedIn;
+        this.login_link = authStore.getters.login_link;
     },
 
     methods: {
@@ -160,6 +171,7 @@ export default {
             let data = {
                 body: {
                     listing_id: this.data.ID,
+                    token: authStore.getters.token
                 },
             }
             socket.emit(listingsBuyRoute, data, (res) => {
@@ -176,7 +188,7 @@ export default {
 
 <style scoped>
 .blur {
-    filter: blur(5px);
+    filter: blur(1px);
 }
 
 .title {

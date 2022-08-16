@@ -171,7 +171,7 @@ func OpenChar(ctx *discord.CmdContext, b *BoxFilter) (success bool) {
 		Value += 2.5
 	}
 
-	Loot.Stats.Value = Value
+	Loot.Value = Value
 
 	// Rarity finder
 	var Rarity int
@@ -198,6 +198,7 @@ func OpenChar(ctx *discord.CmdContext, b *BoxFilter) (success bool) {
 		Name:   Loot.Name,
 		CharID: ID,
 		UserID: ctx.Author.ID,
+		Value:  Loot.Value,
 		Level:  Level,
 		XP:     0,
 		Stats:  models.CharacterStats(Loot.Stats),
@@ -250,7 +251,7 @@ func OpenGrimm(ctx *discord.CmdContext, b *BoxFilter) (success bool) {
 		Value += 2.5
 	}
 
-	Loot.Stats.Value = Value
+	Loot.Value = Value
 
 	// Rarity finder
 	var Rarity int
@@ -277,6 +278,7 @@ func OpenGrimm(ctx *discord.CmdContext, b *BoxFilter) (success bool) {
 		Name:    Loot.Name,
 		GrimmID: ID,
 		UserID:  ctx.Author.ID,
+		Value:   Loot.Value,
 		Level:   Level,
 		XP:      0,
 		Stats:   models.GrimmStat(Loot.Stats),
@@ -351,7 +353,7 @@ func openMenu(ctx *discord.CmdContext) {
 							Name: "**Statistics :**",
 							Value: "Category : **" + original.Category + "**\n" +
 								"XP : " + strconv.FormatInt(char.XP, 10) + "/" + strconv.FormatInt(char.XPCap, 10) + "\n" +
-								"Value : " + fmt.Sprintf("%.2f", char.Stats.Value) + "%\n" +
+								"Value : " + fmt.Sprintf("%.2f", char.Value) + "%\n" +
 								"Rarity : " + char.RarityString() + "\n" +
 								"Health : " + strconv.Itoa(char.Stats.Health) + "\n" +
 								"Armor : " + strconv.Itoa(char.Stats.Armor) + "\n" +
@@ -407,7 +409,7 @@ func openMenu(ctx *discord.CmdContext) {
 							Name: "**Statistics :**",
 							Value: "Category : **" + original.Category + "**\n" +
 								"XP : " + strconv.FormatInt(grimm.XP, 10) + "/" + strconv.FormatInt(grimm.XPCap, 10) + "\n" +
-								"Value : " + fmt.Sprintf("%.2f", grimm.Stats.Value) + "%\n" +
+								"Value : " + fmt.Sprintf("%.2f", grimm.Value) + "%\n" +
 								"Rarity : " + grimm.RarityString() + "\n" +
 								"Health : " + strconv.Itoa(grimm.Stats.Health) + "\n" +
 								"Armor : " + strconv.Itoa(grimm.Stats.Armor) + "\n" +

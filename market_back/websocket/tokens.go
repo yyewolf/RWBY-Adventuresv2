@@ -8,8 +8,10 @@ import (
 )
 
 type Token struct {
+	Token  string
 	Secret string
 	UserID string
+	Empty  bool
 }
 
 func init() {
