@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"rwby-adventures/arenas/static"
-	"rwby-adventures/arenas/websocket"
+	"rwby-adventures/arenas_back/cache"
+	"rwby-adventures/arenas_back/static"
+	"rwby-adventures/arenas_back/websocket"
 	"rwby-adventures/config"
 	"strings"
 
@@ -95,12 +96,12 @@ func ArenaIndex(w http.ResponseWriter, r *http.Request) {
 		ArenaID = p
 	}
 
-	d, found := websocket.ArenaCache.Get(ArenaID)
+	d, found := cache.Arenas.Get(ArenaID)
 	if !found {
 		fmt.Fprint(w, "kestufai ?")
 		return
 	}
-	arena := d.(*websocket.ArenaStruct)
+	arena := d.(*cache.Arena)
 
 	u, err := UserLogged(w, r)
 	if err != nil {
@@ -116,9 +117,9 @@ func ArenaIndex(w http.ResponseWriter, r *http.Request) {
 
 	h := sha256.Sum256([]byte(arena.ID + u.UserID))
 	token := fmt.Sprintf("%x", h)
-	data := &websocket.ArenaUserData{
+	data := &cache.User{
 		Arena: arena,
-		User: &websocket.WebUser{
+		User: &cache.WebUser{
 			Name: u.Name,
 			ID:   u.UserID,
 		},

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"rwby-adventures/arenas/static"
+	"rwby-adventures/arenas_back/static"
 	"rwby-adventures/config"
 
 	"github.com/yyewolf/goth"

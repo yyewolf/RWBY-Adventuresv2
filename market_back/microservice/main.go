@@ -12,8 +12,6 @@ func init() {
 	gosf.Listen("createListing", createListing)
 	gosf.Listen("createAuction", createAuction)
 	gosf.OnConnect(joinRoom)
-
-	fmt.Println("[WS] Started.")
 }
 
 func CreateMicroservice() {

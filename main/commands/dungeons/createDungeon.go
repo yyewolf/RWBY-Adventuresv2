@@ -31,11 +31,14 @@ func createDungeon(ctx *discord.CmdContext) {
 	}
 
 	if !dungeons.DungeonsMicroservice.Connected() {
-		ctx.Reply(discord.ReplyParams{
-			Content:   "Cannot contact dungeons at the moment.",
-			Ephemeral: true,
-		})
-		return
+		_, err := dungeons.DungeonsMicroservice.Connect()
+		if err != nil {
+			ctx.Reply(discord.ReplyParams{
+				Content:   "Cannot contact dungeons at the moment.",
+				Ephemeral: true,
+			})
+			return
+		}
 	}
 
 	ctx.Player.Status.LastDungeon = time.Now().Unix()

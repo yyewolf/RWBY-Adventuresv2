@@ -17,7 +17,7 @@ var (
 	MarketWebsocket  = 9003
 
 	// RPC
-	ArenaRPC   = "8001"
+	ArenaRPC   = 8001
 	DungeonRPC = 8002
 	MarketRPC  = 8003
 

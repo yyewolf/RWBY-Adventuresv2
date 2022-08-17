@@ -1,11 +1,10 @@
 package commands_temporary
 
 import (
-	"context"
 	"fmt"
-	arenapc "rwby-adventures/arenas_rpc"
+	"rwby-adventures/main/arenas"
 	"rwby-adventures/main/discord"
-	rwby_grpc "rwby-adventures/main/grpc"
+	"rwby-adventures/microservices"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -18,29 +17,39 @@ var ArenaCommand = &discord.Command{
 }
 
 func createArena(ctx *discord.CmdContext) {
+	if !arenas.ArenaMicroservice.Connected() {
+		_, err := arenas.ArenaMicroservice.Connect()
+		if err != nil {
+			ctx.Reply(discord.ReplyParams{
+				Content:   "Cannot contact arenas at the moment.",
+				Ephemeral: true,
+			})
+			return
+		}
+	}
+
 	ID := uuid.NewV4().String()
-	in := &arenapc.CreateArenaReq{
-		Id: ID,
+	in := &microservices.CreateArena{
+		ID:        ID,
+		ChannelID: ctx.ChannelID,
 	}
 
 	ctx.Reply(discord.ReplyParams{
 		Content: fmt.Sprintf("Creating arena with ID %s", ID),
 	})
-	rep, err := rwby_grpc.ArenaServer.CreateArena(context.Background(), in)
+
+	rep, err := arenas.CreateArena(in)
 	if err != nil {
 		ctx.Reply(discord.ReplyParams{
 			Content: fmt.Sprint(err),
 		})
 		return
 	}
-	fmt.Println(rep)
-	if rep.Status == 1 {
+
+	if !rep.Success {
 		ctx.Reply(discord.ReplyParams{
-			Content: "Arena creation failed.",
+			Content: rep.Text,
 		})
 		return
 	}
-	ctx.Reply(discord.ReplyParams{
-		Content: rep.GetLoots(),
-	})
 }

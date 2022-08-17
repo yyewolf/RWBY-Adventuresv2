@@ -1,12 +1,11 @@
 package discord
 
 import (
-	"context"
 	"fmt"
 	"math/rand"
-	arenapc "rwby-adventures/arenas_rpc"
 	"rwby-adventures/config"
-	rwby_grpc "rwby-adventures/main/grpc"
+	"rwby-adventures/main/arenas"
+	"rwby-adventures/microservices"
 	"strings"
 	"time"
 
@@ -26,6 +25,8 @@ func init() {
 	RegisterPassiveFunction(TrainCharacter)
 	RegisterPassiveFunction(DropBoxes)
 	RegisterPassiveFunction(SpawnArena)
+
+	arenas.ArenaMicroservice.Listen("endArena", endArena)
 }
 
 func xpLimiter(id string) bool {
@@ -169,13 +170,12 @@ func SpawnArena(ctx *CmdContext) {
 	}
 
 	ID := uuid.NewV4().String()
-	in := &arenapc.CreateArenaReq{
-		Id: ID,
+	in := &microservices.CreateArena{
+		ID:        ID,
+		ChannelID: ctx.ChannelID,
 	}
 
-	// Ping the arena service
-	_, err = rwby_grpc.ArenaServer.Ping(context.Background(), &arenapc.PingReq{})
-	if err != nil {
+	if !arenas.ArenaMicroservice.Connected() {
 		return
 	}
 
@@ -205,19 +205,5 @@ func SpawnArena(ctx *CmdContext) {
 		Automated: true,
 	})
 
-	rep, err := rwby_grpc.ArenaServer.CreateArena(context.Background(), in)
-	if err != nil {
-		return
-	}
-	if rep.Status == 1 {
-		return
-	}
-
-	ctx.Reply(ReplyParams{
-		Content: &discordgo.MessageEmbed{
-			Title:       "Congratulations you defeated the arena and all won XP !",
-			Description: rep.GetLoots(),
-			Color:       config.Botcolor,
-		},
-	})
+	arenas.CreateArena(in)
 }

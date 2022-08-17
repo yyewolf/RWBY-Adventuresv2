@@ -1,14 +1,15 @@
-package websocket
+package microservice
 
 import (
 	"fmt"
 	"math/rand"
+	"rwby-adventures/arenas_back/cache"
 	"rwby-adventures/config"
 	"rwby-adventures/models"
 	"time"
 )
 
-func EndClassicArena(arena *ArenaStruct) (b bool, loots string) {
+func EndClassicArena(arena *cache.Arena) (loots string) {
 	// We disconnect everyone from the websocket
 	for _, player := range arena.Players {
 		player.Client.Disconnect()
@@ -40,7 +41,7 @@ func EndClassicArena(arena *ArenaStruct) (b bool, loots string) {
 	}
 
 	// We delete the arena from the cache
-	ArenaCache.Delete(arena.Name)
+	cache.Arenas.Delete(arena.ID)
 
-	return false, rewards
+	return rewards
 }

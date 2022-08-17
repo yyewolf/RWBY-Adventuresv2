@@ -13,5 +13,5 @@ func init() {
 	gosf.RegisterMicroservice("market", "127.0.0.1", config.MarketRPC, false)
 	MarketMicroservice = gosf.GetMicroservice("market")
 	MarketMicroservice.Listen("sendMessage", sendMessage)
-	fmt.Println("[MARKET] Initialized market microservice.")
+	fmt.Println("[MARKET] Initialized microservice.")
 }

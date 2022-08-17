@@ -13,8 +13,6 @@ func init() {
 	// Listen on an endpoint
 	gosf.Listen("createDungeon", createDungeon)
 
-	fmt.Println("[WS] Started.")
-
 	d := game.NewDungeon(15, 15)
 	dungeon := &websocket.DungeonStruct{
 		ID:    "test",

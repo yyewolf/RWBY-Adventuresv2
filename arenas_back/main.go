@@ -3,16 +3,16 @@ package main
 import (
 	"os"
 	"os/signal"
-	agrpc "rwby-adventures/arenas/grpc"
-	"rwby-adventures/arenas/web"
-	"rwby-adventures/arenas/websocket"
+	"rwby-adventures/arenas_back/microservice"
+	"rwby-adventures/arenas_back/web"
+	"rwby-adventures/arenas_back/websocket"
 	"syscall"
 )
 
 func main() {
-	go agrpc.Serve()
 	web.StartWeb()
 	websocket.StartWebsocket()
+	microservice.CreateMicroservice()
 
 	// websocket.CreateArena(&arenapc.CreateArenaReq{
 	// 	Id: "main",

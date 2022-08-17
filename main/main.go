@@ -5,18 +5,16 @@ import (
 	"os/signal"
 	commands_missions "rwby-adventures/main/commands/missions"
 	"rwby-adventures/main/discord"
-	rwby_grpc "rwby-adventures/main/grpc"
 	"rwby-adventures/main/web"
 	"rwby-adventures/main/websocket"
 	"syscall"
 )
 
 func main() {
-	rwby_grpc.ConnectToRPC()
 	websocket.StartWebsocket()
 	web.StartWeb()
-	loadPassives()
 	StartDiscord()
+	loadPassives()
 
 	// Wait here until CTRL-C or other term signal is received.
 	sc := make(chan os.Signal, 1)
