@@ -145,6 +145,7 @@ const connectRoute = "dungeonConnect";
 const moveRoute = "dungeonMove";
 const ambrosiusChoice = "ambrosiusChoice";
 
+const token = localStorage.getItem('token') || "test"
 export default {
   name: 'DungeonPage',
   
@@ -270,9 +271,6 @@ export default {
 
     sendTokenToWS() {
       // get token from local storage :
-      // const token = localStorage.getItem('token')
-      
-      const token = "test"
       let data = {
         body : {
           token: token,

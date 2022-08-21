@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"fmt"
 	"rwby-adventures/arenas_back/cache"
 	"time"
 
@@ -8,6 +9,7 @@ import (
 )
 
 func ArenaConnect(client *gosf.Client, request *gosf.Request) *gosf.Message {
+	fmt.Println("[WS] Client connected!")
 	data, found := GetToken(request)
 	if !found {
 		client.Disconnect()
@@ -16,9 +18,9 @@ func ArenaConnect(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	d := data.(*cache.User)
 	client.Join(d.Arena.ID)
 
-	if val, ok := d.Arena.Players[d.User.ID]; ok {
-		val.Client.Disconnect()
-	}
+	// if val, ok := d.Arena.Players[d.User.ID]; ok {
+	// 	val.Client.Disconnect()
+	// }
 	d.Arena.Players[d.User.ID] = &cache.Player{
 		Client:    client,
 		Data:      d,
@@ -62,7 +64,7 @@ func ArenaLoop(arena *cache.Arena) (loots string) {
 		//No operations necessary if no one is in
 		go gosf.Broadcast(arena.ID, "arenaLoop", &gosf.Message{
 			Body: map[string]interface{}{
-				"h": arena.CurHealth,
+				"h": arena.CurHealth * 100.0 / arena.MaxHealth,
 				"n": len(arena.Players),
 			},
 		})

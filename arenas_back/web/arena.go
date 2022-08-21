@@ -73,8 +73,8 @@ func startArenaService() {
 		}
 	})
 
-	mux.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", DirectoryListing(http.FileServer(http.FS(static.Assets)))))
 	mux.HandleFunc("/a/{id}", http.HandlerFunc(ArenaIndex))
+	mux.PathPrefix("/").Handler(http.StripPrefix("/", DirectoryListing(http.FileServer(http.FS(static.Assets)))))
 	go srv.ListenAndServe()
 }
 
@@ -128,5 +128,5 @@ func ArenaIndex(w http.ResponseWriter, r *http.Request) {
 		Port:  config.ArenaWebsocket,
 	}
 	websocket.Tokens.Add(token, data, 0)
-	templates.ExecuteTemplate(w, "arena.html", data)
+	templates.ExecuteTemplate(w, "index.html", data)
 }
