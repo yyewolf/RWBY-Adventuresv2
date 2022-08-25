@@ -38,6 +38,8 @@ func EndClassicArena(arena *cache.Arena) (loots string) {
 		if p.SelectedGrimm != nil {
 			config.Database.Save(p.SelectedGrimm)
 		}
+		p.Stats.ArenasCompleted++
+		p.Stats.Save()
 	}
 
 	// We delete the arena from the cache

@@ -38,5 +38,16 @@ func init() {
 		&Trade{},
 		&TradeContent{},
 	)
+	config.Database.AutoMigrate(
+		&PlayerStats{},
+		&Badges{},
+		&PlayerBadges{},
+	)
+
+	for i, b := range DefaultBadges {
+		b.BadgeID = i + 1
+		b.Save()
+	}
+
 	fmt.Println("[DATABASE] Automigrated models.")
 }

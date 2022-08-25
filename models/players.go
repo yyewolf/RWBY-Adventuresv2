@@ -22,7 +22,6 @@ type Player struct {
 	Maxlootbox    int    `gorm:"column:max_lootbox;not null"`
 	SelectedID    string `gorm:"column:selected_id;not null"`
 	SelectedType  int    `gorm:"column:selected_type;not null"`
-	Badges        int64  `gorm:"column:badges;not null"`
 	Disabled      bool   `gorm:"column:disabled;not null"`
 	Arms          int    `gorm:"column:arms;not null"`
 	Minions       int    `gorm:"column:minions;not null"`
@@ -36,6 +35,8 @@ type Player struct {
 	LastBoxes    *PlayerLootTime `gorm:"foreignkey:DiscordID;references:DiscordID"`
 	Gamble       *PlayerGamble   `gorm:"foreignkey:DiscordID;references:DiscordID"`
 	Boxes        *PlayerBoxes    `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	Stats        *PlayerStats    `gorm:"foreignkey:DiscordID;references:DiscordID"`
+	Badges       []*PlayerBadges `gorm:"foreignkey:DiscordID"`
 	LimitedBoxes []*LimitedBoxes `gorm:"foreignkey:DiscordID"`
 	SpecialBoxes []*SpecialBoxes `gorm:"foreignkey:DiscordID"`
 
@@ -63,6 +64,9 @@ func GetPlayer(id string) *Player {
 		Joins("LastBoxes").
 		Joins("Gamble").
 		Joins("Boxes").
+		Joins("Stats").
+		Preload("Badges.Badge").
+		Preload("Badges", "discord_id = ?", id).
 		Preload("LimitedBoxes").
 		Preload("SpecialBoxes").
 		Find(p, id)
@@ -93,6 +97,9 @@ func GetPlayer(id string) *Player {
 			Gamble: &PlayerGamble{
 				DiscordID: id,
 			},
+			Stats: &PlayerStats{
+				DiscordID: id,
+			},
 		}
 		return p
 	}
@@ -121,6 +128,12 @@ func GetPlayer(id string) *Player {
 	if p.GrimmInHunt.Name == "" {
 		p.GrimmInHunt = nil
 	}
+	if p.Stats == nil {
+		p.Stats = &PlayerStats{
+			DiscordID: id,
+		}
+		p.Stats.Save()
+	}
 
 	if p.SelectedChar == nil && p.SelectedGrimm == nil {
 		if len(p.Characters) != 0 {
@@ -133,9 +146,40 @@ func GetPlayer(id string) *Player {
 		}
 	}
 
+	go p.CheckBadges()
+
 	p.FillPlayerMarket()
 
 	return p
+}
+
+func (p *Player) CheckBadges() {
+	for _, b := range DefaultBadges {
+		if b.Check(p) && !p.HasBadge(b) {
+			p.AddBadge(b)
+		}
+	}
+}
+
+func (p *Player) HasBadge(b *Badges) bool {
+	for _, bd := range p.Badges {
+		if bd.Badge.BadgeID == b.BadgeID {
+			return true
+		}
+	}
+	return false
+}
+
+func (p *Player) AddBadge(b *Badges) {
+	bp := &PlayerBadges{
+		DiscordID: p.DiscordID,
+		BadgeID:   b.BadgeID,
+		Badge:     b,
+	}
+
+	p.Badges = append(p.Badges, bp)
+
+	bp.Save()
 }
 
 func (p *Player) CanDropLootBox() (canHe bool, reset bool) {

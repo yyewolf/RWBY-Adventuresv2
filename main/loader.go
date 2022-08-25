@@ -2,6 +2,7 @@ package main
 
 import (
 	"rwby-adventures/main/commands"
+	commands_badges "rwby-adventures/main/commands/badges"
 	commands_boxes "rwby-adventures/main/commands/boxes"
 	commands_duel "rwby-adventures/main/commands/duels"
 	commands_dungeon "rwby-adventures/main/commands/dungeons"
@@ -38,9 +39,7 @@ func StartDiscord() {
 	discord.AddCmd(addchar)
 	discord.AddCmd(del)
 	discord.AddCmd(commands_temporary.ArenaCommand)
-
 	discord.AddCmd(commands.HelpCommand)
-
 	discord.AddCmd(commands_inventory.PlayerInfoCommand)
 	discord.AddCmd(commands_inventory.InfoCommand)
 	discord.AddCmd(commands_inventory.RemoveCommand)
@@ -49,27 +48,19 @@ func StartDiscord() {
 	discord.AddCmd(commands_inventory.InventoryCommand)
 	discord.AddCmd(commands_inventory.PackCommand)
 	discord.AddCmd(commands_inventory.BalanceCommand)
-
 	discord.AddCmd(commands_boxes.BoxesCommand)
-
 	discord.AddCmd(commands_trade.TradesCommand)
-
 	discord.AddCmd(commands_roleplay.RPCommand)
 	discord.AddCmd(commands_roleplay.RollCommand)
-
 	discord.AddCmd(commands_missions.MissionCommand)
 	discord.AddCmd(commands_missions.HuntCommand)
-
 	discord.AddCmd(commands_dungeon.DungeonCommand)
-
 	discord.AddCmd(commands_settings.ReportCommand)
-
 	discord.AddCmd(commands_misc.InviteCommand)
 	discord.AddCmd(commands_misc.Eventcommand)
-
 	discord.AddCmd(commands_market.MarketCommand)
-
 	discord.AddCmd(commands_duel.DuelCommand)
+	discord.AddCmd(commands_badges.BadgesCommand)
 
 	discord.MakeEmbed()
 

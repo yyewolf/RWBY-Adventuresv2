@@ -44,7 +44,6 @@ func HandleNewPlayer(ctx *CmdContext) {
 		Content: WelcomeEmbed,
 	})
 	p.IsNew = false
-	p.Badges = 0
 	p.Settings.DMable = true
 	config.Database.Create(p)
 }

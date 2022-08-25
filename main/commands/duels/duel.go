@@ -259,19 +259,13 @@ func duelXP(ctx *discord.CmdContext, player *BattlePlayer, winner bool) (XP stri
 
 	WillAdd := p.CalcSelectedXP(4, false)
 
-	// Badges
-	// tx, _ := database.Begin()
-	// defer tx.AutoRollback()
-	// if !winner {
-	// 	WillAdd = WillAdd / 2
-	// 	tx.Exec(`update badges
-	// 		set battles_lost = battles_lost + 1
-	// 		where id = '` + p.ID + `'`)
-	// } else {
-	// 	tx.Exec(`update badges
-	// 		set battles_won = battles_won + 1
-	// 		where id = '` + p.ID + `'`)
-	// }
+	if !winner {
+		WillAdd = WillAdd / 2
+		p.Stats.BattlesLost++
+	} else {
+		p.Stats.BattlesWon++
+	}
+	p.Stats.Save()
 
 	p.GiveSelectedXP(WillAdd)
 	return strconv.FormatInt(WillAdd, 10)
