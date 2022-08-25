@@ -319,6 +319,7 @@ func routeInteraction(s *discordgo.Session, interaction *discordgo.InteractionCr
 				realArgs = append(realArgs, &CommandArg{
 					Name:  arg.Name,
 					Value: arg.Value,
+					Raw:   arg,
 				})
 			}
 		}

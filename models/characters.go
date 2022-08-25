@@ -69,7 +69,14 @@ func GetChar(id string) (*Character, error) {
 	return c, nil
 }
 
-func (c Character) ToRealChar() chars.CharacterStruct {
+func (c *Character) Valid() bool {
+	if c == nil {
+		return false
+	}
+	return c.Name != ""
+}
+
+func (c *Character) ToRealChar() chars.CharacterStruct {
 	i := -1
 	for i = range config.BaseCharacters {
 		if config.BaseCharacters[i].Name == c.Name {

@@ -16,10 +16,11 @@ const (
 	RoleplayMenu      menuName = "Roleplay"
 	ConfigurationMenu menuName = "Configuration"
 	MiscMenu          menuName = "Miscellaneous"
+	GamesMenu         menuName = "Games"
 	MarketMenu        menuName = "Market"
 )
 
-//🎮
+// 🎮
 func menuEmoji(name string) string {
 	switch name {
 	case string(GeneralMenu):
@@ -36,6 +37,8 @@ func menuEmoji(name string) string {
 		return "🎴"
 	case string(MarketMenu):
 		return "💰"
+	case string(GamesMenu):
+		return "🎮"
 	}
 	return ""
 }

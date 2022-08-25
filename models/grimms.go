@@ -52,6 +52,10 @@ func GetGrimm(id string) (*Grimm, error) {
 	return g, nil
 }
 
+func (g *Grimm) Valid() bool {
+	return g.Name != ""
+}
+
 func (g *Grimm) ToRealGrimm() grimms.GrimmStruct {
 	i := 0
 	for i = range config.BaseGrimms {

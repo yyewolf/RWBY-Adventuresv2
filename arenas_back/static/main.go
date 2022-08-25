@@ -9,7 +9,7 @@ import (
 var webFS embed.FS
 var WebFS, _ = fs.Sub(webFS, "www")
 
-//go:embed www/assets www/css www/js www/fonts
+//go:embed www/css www/js www/fonts
 var assets embed.FS
 var Assets, _ = fs.Sub(assets, "www")
 

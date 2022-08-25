@@ -13,13 +13,6 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-var DungeonCommand = &discord.Command{
-	Name:        "dungeon",
-	Description: "To join in on a dungeon.",
-	Menu:        discord.InventoryMenu,
-	Call:        createDungeon,
-}
-
 func createDungeon(ctx *discord.CmdContext) {
 	if ctx.Player.CanDungeon() {
 		t := ctx.Player.DungeonCooldown()

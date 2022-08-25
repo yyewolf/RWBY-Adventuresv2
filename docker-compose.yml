@@ -1,0 +1,7 @@
+version: '3'
+services:
+  arenas:
+    image: arena:latest
+    ports:
+      - "50001:50001"
+      - "9001:9001"

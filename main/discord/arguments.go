@@ -12,6 +12,7 @@ type CommandArg struct {
 	Name  string
 	Value interface{}
 	Found bool
+	Raw   *discordgo.ApplicationCommandInteractionDataOption
 }
 
 type Args []*CommandArg
