@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	MaxBuffs = 2
+	MaxBuffs        = 2
+	ExtensionsValue = 20
 )
 
 func init() {

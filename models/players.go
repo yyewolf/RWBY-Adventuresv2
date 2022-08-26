@@ -215,7 +215,7 @@ func (p *Player) CanDungeon() bool {
 }
 
 func (p *Player) MaxChar() int {
-	return p.CharLimit + 20*p.Shop.Extensions
+	return p.CharLimit + config.ExtensionsValue*p.Shop.Extensions
 }
 
 func (p *Player) TotalBalance() int64 {
