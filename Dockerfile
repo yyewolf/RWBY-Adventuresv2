@@ -1,47 +1,83 @@
-FROM node:lts-alpine AS BUILD_FRONT_IMAGE
-
-# définit le dossier 'app' comme dossier de travail
+FROM node:lts-alpine AS ARENA_FRONT_IMAGE
 WORKDIR /app
-
-# copie les fichiers et dossiers du projet dans le dossier de travail (par exemple : le dossier 'app')
 COPY ./arenas_front/ .
-
 RUN npm install
-
-# construit l'app pour la production en la minifiant
 RUN npm run build
 
-FROM golang:1.19 AS BUILD_BACK_IMAGE
+FROM node:lts-alpine AS DUNGEON_FRONT_IMAGE
+WORKDIR /app
+COPY ./dungeons_front/ .
+RUN npm install
+RUN npm run build
 
+FROM node:lts-alpine AS MARKET_FRONT_IMAGE
+WORKDIR /app
+COPY ./market_front/ .
+RUN npm install
+RUN npm run build
+
+FROM golang:1.19 AS BUILD_GO_IMAGE
 WORKDIR /app
 COPY ./go.mod .
 COPY ./go.sum .
 RUN go mod download
-
 COPY . .
-COPY --from=BUILD_FRONT_IMAGE /app/dist /app/arenas_back/static/www/
 
+#### FRONTS
+COPY --from=ARENA_FRONT_IMAGE /app/dist /app/arenas_back/static/www/
+COPY --from=DUNGEON_FRONT_IMAGE /app/dist /app/dungeons_back/static/www/
+
+#### BACKS
 WORKDIR /app/arenas_back
-
 RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o arenas
 
-FROM alpine
+WORKDIR /app/dungeons_back
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o dungeons
+
+WORKDIR /app/market_back
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o market
+
+WORKDIR /app/main
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o main
+
+
+
+### FINAL IMAGE
+FROM node:lts-alpine
+
+RUN npm install -g http-server
 
 ENV UID 1005
 ENV GID 1005
 
 WORKDIR /app
 
-RUN addgroup -S arenas -g $GID && \
-    adduser -S arenas -G arenas -u $UID && \
-    chown -R arenas:arenas /app
+RUN addgroup -S bot -g $GID && \
+    adduser -S bot -G bot -u $UID && \
+    chown -R bot:bot /app
     
-USER arenas
+USER bot
 
-COPY --from=BUILD_BACK_IMAGE --chown=arenas:arenas /app/arenas_back/arenas /app/arenas
+COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/arenas_back/arenas /app/arenas
 RUN chmod +x /app/arenas
 
-EXPOSE 50001
-EXPOSE 9001
+COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/dungeons_back/dungeons /app/dungeons
+RUN chmod +x /app/dungeons
 
-ENTRYPOINT [ "/app/arenas" ]
+COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/market_back/market /app/market
+RUN chmod +x /app/market
+
+COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/main/main /app/main
+RUN chmod +x /app/main
+
+COPY --from=MARKET_FRONT_IMAGE --chown=bot:bot /app/dist /app/market_front/dist
+
+# HTTP
+EXPOSE 80 
+# WS
+EXPOSE 81
+# MICROSERVICE
+EXPOSE 82
+
+# MARKET FRONT
+EXPOSE 8080

@@ -1,7 +1,22 @@
 version: '3'
 services:
   arenas:
-    image: arena:latest
-    ports:
-      - "50001:50001"
-      - "9001:9001"
+    image: rwbyadventures:latest
+    network_mode: host
+    entrypoint: /app/arenas
+  dungeons:
+    image: rwbyadventures:latest
+    network_mode: host
+    entrypoint: /app/dungeons
+  market_back:
+    image: rwbyadventures:latest
+    network_mode: host
+    entrypoint: /app/market
+  market_frontend:
+    image: rwbyadventures:latest
+    network_mode: host
+    entrypoint: http-server /app/market_front/dist
+  main:
+    image: rwbyadventures:latest
+    network_mode: host
+    entrypoint: /app/main
