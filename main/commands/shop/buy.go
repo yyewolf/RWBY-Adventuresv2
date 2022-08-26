@@ -25,31 +25,22 @@ func Buy(ctx *discord.CmdContext) {
 	switch number {
 	case 1:
 		embed.Title, err = buyXPBoost(ctx.Player)
-		break
 	case 2:
 		embed.Title, err = buyLuckBoost(ctx.Player)
-		break
 	case 3:
 		embed.Title, err = buyLootbox(ctx.Player)
-		break
 	case 4:
 		embed.Title, err = buyGrimmbox(ctx.Player)
-		break
 	case 5:
 		embed.Title, err = buyRarelootbox(ctx.Player)
-		break
 	case 6:
 		embed.Title, err = buyRareGrimmbox(ctx.Player)
-		break
 	case 7:
 		embed.Title, err = exchangeRareGrimmbox(ctx.Player)
-		break
 	case 8:
 		embed.Title, err = exchangeRareLootbox(ctx.Player)
-		break
 	case 9:
 		embed.Title, err = buyBackpack(ctx.Player)
-		break
 	default:
 		ctx.Reply(discord.ReplyParams{
 			Content: "You didn't choose a valid item.",
