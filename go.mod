@@ -8,7 +8,6 @@ require (
 	github.com/bwmarrin/discordgo v0.25.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/fogleman/gg v1.3.0
-	github.com/gofrs/uuid v4.0.0+incompatible
 	github.com/gorilla/pat v1.0.1
 	github.com/gorilla/sessions v1.2.1
 	github.com/lib/pq v1.10.6

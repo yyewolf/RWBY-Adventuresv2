@@ -5,6 +5,7 @@ import (
 	"os/signal"
 	commands_missions "rwby-adventures/main/commands/missions"
 	"rwby-adventures/main/discord"
+	topgg "rwby-adventures/main/topgg"
 	"rwby-adventures/main/web"
 	"rwby-adventures/main/websocket"
 	"syscall"
@@ -13,6 +14,7 @@ import (
 func main() {
 	websocket.StartWebsocket()
 	web.StartWeb()
+	topgg.StartTopGG()
 	StartDiscord()
 	loadPassives()
 

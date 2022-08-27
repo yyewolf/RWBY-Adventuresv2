@@ -4,11 +4,13 @@ import (
 	"os"
 	"os/signal"
 	"rwby-adventures/topgg/microservice"
+	"rwby-adventures/topgg/web"
 	"syscall"
 )
 
 func main() {
 	microservice.CreateMicroservice()
+	web.StartWeb()
 	// websocket.CreateArena(&arenapc.CreateArenaReq{
 	// 	Id: "main",
 	// })
