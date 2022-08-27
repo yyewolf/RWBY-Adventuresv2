@@ -6,7 +6,7 @@ import (
 	"rwby-adventures/config"
 	"rwby-adventures/grimms"
 
-	"github.com/ambelovsky/gosf"
+	"github.com/yyewolf/gosf"
 )
 
 func getRandomPersonas(client *gosf.Client, request *gosf.Request) *gosf.Message {

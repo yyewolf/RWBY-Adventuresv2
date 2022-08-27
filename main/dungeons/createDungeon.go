@@ -3,7 +3,7 @@ package dungeons
 import (
 	"rwby-adventures/microservices"
 
-	"github.com/ambelovsky/gosf"
+	"github.com/yyewolf/gosf"
 )
 
 func CreateDungeon(req *microservices.DungeonCreateRequest) (*gosf.Message, error) {

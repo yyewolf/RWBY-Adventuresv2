@@ -3,8 +3,8 @@ package websocket
 import (
 	"time"
 
-	"github.com/ambelovsky/gosf"
 	"github.com/pmylund/go-cache"
+	"github.com/yyewolf/gosf"
 )
 
 type Token struct {

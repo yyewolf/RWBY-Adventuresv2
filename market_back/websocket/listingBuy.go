@@ -9,8 +9,8 @@ import (
 	"rwby-adventures/microservices"
 	"rwby-adventures/models"
 
-	"github.com/ambelovsky/gosf"
 	"github.com/bwmarrin/discordgo"
+	"github.com/yyewolf/gosf"
 )
 
 type ListingBuyReq struct {

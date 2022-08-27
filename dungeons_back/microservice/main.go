@@ -3,34 +3,32 @@ package microservice
 import (
 	"fmt"
 	"rwby-adventures/config"
-	"rwby-adventures/dungeons_back/game"
-	"rwby-adventures/dungeons_back/websocket"
 
-	"github.com/ambelovsky/gosf"
+	"github.com/yyewolf/gosf"
 )
 
 func init() {
 	// Listen on an endpoint
 	gosf.Listen("createDungeon", createDungeon)
 
-	d := game.NewDungeon(15, 15)
-	dungeon := &websocket.DungeonStruct{
-		ID:    "test",
-		Game:  d,
-		EndIt: make(chan int),
-	}
-	websocket.DungeonCache.Set("test", dungeon, 0)
+	// d := game.NewDungeon(15, 15)
+	// dungeon := &websocket.DungeonStruct{
+	// 	ID:    "test",
+	// 	Game:  d,
+	// 	EndIt: make(chan int),
+	// }
+	// websocket.DungeonCache.Set("test", dungeon, 0)
 
-	for y := 0; y < d.Height; y++ {
-		for x := 0; x < d.Width; x++ {
-			fmt.Print(d.Grid[y][x].Type)
-		}
-		fmt.Println()
-	}
+	// for y := 0; y < d.Height; y++ {
+	// 	for x := 0; x < d.Width; x++ {
+	// 		fmt.Print(d.Grid[y][x].Type)
+	// 	}
+	// 	fmt.Println()
+	// }
 
-	go func() {
-		dungeonLoop(dungeon)
-	}()
+	// go func() {
+	// 	dungeonLoop(dungeon)
+	// }()
 }
 
 func CreateMicroservice() {

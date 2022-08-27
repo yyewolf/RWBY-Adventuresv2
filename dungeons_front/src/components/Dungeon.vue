@@ -317,6 +317,7 @@ export default {
       this.assets[3] = this.player_directions[dir];
       let data = {
         body : {
+          token: token,
           direction: dir,
         }
       }

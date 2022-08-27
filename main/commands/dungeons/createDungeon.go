@@ -8,16 +8,16 @@ import (
 	"rwby-adventures/microservices"
 	"time"
 
-	"github.com/ambelovsky/gosf"
 	"github.com/bwmarrin/discordgo"
 	uuid "github.com/satori/go.uuid"
+	"github.com/yyewolf/gosf"
 )
 
 func createDungeon(ctx *discord.CmdContext) {
 	if ctx.Player.CanDungeon() {
 		t := ctx.Player.DungeonCooldown()
 		ctx.Reply(discord.ReplyParams{
-			Content:   fmt.Sprintf("Sorry but you still have to wait **%.0fh %.0fm and %.0fs** before you can join in on a dungeon.", t.Hours(), t.Minutes(), t.Seconds()),
+			Content:   fmt.Sprintf("Sorry but you still have to wait **%dh %dm and %ds** before you can join in on a dungeon.", int(t.Hours()), int(t.Minutes())%60, int(t.Seconds())%60),
 			Ephemeral: true,
 		})
 		return
@@ -35,7 +35,7 @@ func createDungeon(ctx *discord.CmdContext) {
 	}
 
 	ctx.Player.Status.LastDungeon = time.Now().Unix()
-	config.Database.Save(ctx.Player)
+	config.Database.Save(ctx.Player.Status)
 
 	ID := uuid.NewV4().String()
 	req := &microservices.DungeonCreateRequest{
@@ -50,7 +50,7 @@ func createDungeon(ctx *discord.CmdContext) {
 					discordgo.Button{
 						Label: "Join!",
 						Style: discordgo.LinkButton,
-						URL:   fmt.Sprintf("http://%s%s/d/%s", config.DungeonHost, config.DungeonPort, ID),
+						URL:   fmt.Sprintf("%sd/%s", config.DungeonHost, ID),
 					},
 				},
 			},

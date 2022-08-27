@@ -1,11 +1,10 @@
 package websocket
 
 import (
-	"rwby-adventures/config"
 	"rwby-adventures/dungeons_back/game"
 	"rwby-adventures/microservices"
 
-	"github.com/ambelovsky/gosf"
+	"github.com/yyewolf/gosf"
 )
 
 type WebUser struct {
@@ -18,8 +17,6 @@ type DungeonUserData struct {
 	Dungeon *DungeonStruct
 	User    *WebUser
 	Token   string
-	Host    string
-	Port    int
 }
 
 type WebsocketUpdate struct {
@@ -43,35 +40,25 @@ func DungeonConnect(client *gosf.Client, request *gosf.Request) *gosf.Message {
 		return gosf.NewFailureMessage("f")
 	}
 
-	data, found := DungeonCache.Get(token)
+	data, found := Tokens.Get(token)
 	if !found {
 		client.Disconnect()
 		return gosf.NewFailureMessage("f")
 	}
-	dungeon := data.(*DungeonStruct)
+	d := data.(*DungeonUserData)
 
-	d := &DungeonUserData{
-		Dungeon: dungeon,
-		User: &WebUser{
-			Name: "Yewolf",
-			ID:   "144472011924570113",
-		},
-		Token: "test",
-		Host:  config.DungeonHost,
-		Port:  config.DungeonWebsocket,
-	}
 	client.Join(d.Dungeon.ID)
 
-	smallGrid := dungeon.Game.GetSmallGrid(3, 3)
+	smallGrid := d.Dungeon.Game.GetSmallGrid(3, 3)
 
-	if dungeon.Ended {
+	if d.Dungeon.Ended {
 		return &gosf.Message{
 			Success: true,
 			Body: gosf.StructToMap(&WebsocketUpdate{
 				Grid:    smallGrid,
-				Health:  dungeon.Game.Health,
+				Health:  d.Dungeon.Game.Health,
 				Ended:   true,
-				Rewards: dungeon.Game.Rewards,
+				Rewards: d.Dungeon.Game.Rewards,
 			}),
 		}
 	}
@@ -81,7 +68,7 @@ func DungeonConnect(client *gosf.Client, request *gosf.Request) *gosf.Message {
 		Success: true,
 		Body: gosf.StructToMap(&WebsocketUpdate{
 			Grid:   smallGrid,
-			Health: dungeon.Game.Health,
+			Health: d.Dungeon.Game.Health,
 		}),
 	}
 }
@@ -94,12 +81,14 @@ func DungeonMove(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	// }
 	// d := data.(*DungeonUserData)
 
-	data, found := DungeonCache.Get("test")
+	token, found := GetString(request, "token")
 	if !found {
 		return gosf.NewFailureMessage("f")
 	}
-	dungeon := data.(*DungeonStruct)
-	if dungeon.Ended {
+
+	data, found := Tokens.Get(token)
+	if !found {
+		client.Disconnect()
 		return gosf.NewFailureMessage("f")
 	}
 
@@ -108,24 +97,26 @@ func DungeonMove(client *gosf.Client, request *gosf.Request) *gosf.Message {
 		return gosf.NewFailureMessage("no dir found")
 	}
 
-	end := dungeon.Game.MovePlayer(direction)
-	smallGrid := dungeon.Game.GetSmallGrid(3, 3)
-	if end {
-		dungeon.EndIt <- 1
-		dungeon.Ended = true
+	d := data.(*DungeonUserData)
 
-		if dungeon.Game.Health <= 0 {
-			dungeon.Game.Rewards.Lien /= 2
+	end := d.Dungeon.Game.MovePlayer(direction)
+	smallGrid := d.Dungeon.Game.GetSmallGrid(3, 3)
+	if end {
+		d.Dungeon.EndIt <- 1
+		d.Dungeon.Ended = true
+
+		if d.Dungeon.Game.Health <= 0 {
+			d.Dungeon.Game.Rewards.Lien /= 2
 		}
 
 		return &gosf.Message{
 			Success: true,
 			Body: gosf.StructToMap(&WebsocketUpdate{
 				Grid:    smallGrid,
-				Health:  dungeon.Game.Health,
+				Health:  d.Dungeon.Game.Health,
 				Ended:   true,
-				Rewards: dungeon.Game.Rewards,
-				Win:     dungeon.Game.Win,
+				Rewards: d.Dungeon.Game.Rewards,
+				Win:     d.Dungeon.Game.Win,
 			}),
 		}
 	}
@@ -134,7 +125,7 @@ func DungeonMove(client *gosf.Client, request *gosf.Request) *gosf.Message {
 		Success: true,
 		Body: gosf.StructToMap(&WebsocketUpdate{
 			Grid:   smallGrid,
-			Health: dungeon.Game.Health,
+			Health: d.Dungeon.Game.Health,
 		}),
 	}
 }

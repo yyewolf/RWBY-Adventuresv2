@@ -7,7 +7,7 @@ import (
 	"rwby-adventures/microservices"
 	"time"
 
-	"github.com/ambelovsky/gosf"
+	"github.com/yyewolf/gosf"
 )
 
 func createDungeon(client *gosf.Client, request *gosf.Request) *gosf.Message {

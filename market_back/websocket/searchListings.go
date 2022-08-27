@@ -6,7 +6,7 @@ import (
 	"rwby-adventures/config"
 	"rwby-adventures/models"
 
-	"github.com/ambelovsky/gosf"
+	"github.com/yyewolf/gosf"
 )
 
 type SearchFilters struct {

@@ -10,8 +10,8 @@ import (
 	"rwby-adventures/models"
 	"strconv"
 
-	"github.com/ambelovsky/gosf"
 	"github.com/bwmarrin/discordgo"
+	"github.com/yyewolf/gosf"
 )
 
 type AuctionBidReq struct {

@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ambelovsky/gosf"
 	"github.com/pmylund/go-cache"
+	"github.com/yyewolf/gosf"
 )
 
 type Player struct {

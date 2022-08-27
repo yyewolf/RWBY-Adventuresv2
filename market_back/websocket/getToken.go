@@ -4,9 +4,9 @@ import (
 	"crypto/sha256"
 	"fmt"
 
-	"github.com/ambelovsky/gosf"
 	"github.com/pmylund/go-cache"
 	uuid "github.com/satori/go.uuid"
+	"github.com/yyewolf/gosf"
 )
 
 func getToken(client *gosf.Client, request *gosf.Request) *gosf.Message {

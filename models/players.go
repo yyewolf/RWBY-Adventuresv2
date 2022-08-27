@@ -100,6 +100,9 @@ func GetPlayer(id string) *Player {
 			Stats: &PlayerStats{
 				DiscordID: id,
 			},
+			Settings: &PlayerSettings{
+				DiscordID: id,
+			},
 		}
 		return p
 	}
@@ -115,18 +118,6 @@ func GetPlayer(id string) *Player {
 	if p.SelectedID != "" {
 		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedChar, "user_id = ? and \"characters\".id = ?", p.DiscordID, p.SelectedID)
 		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedGrimm, "user_id = ? and \"grimms\".id = ?", p.DiscordID, p.SelectedID)
-	}
-	if p.SelectedChar.Name == "" {
-		p.SelectedChar = nil
-	}
-	if p.SelectedGrimm.Name == "" {
-		p.SelectedGrimm = nil
-	}
-	if p.CharInMission.Name == "" {
-		p.CharInMission = nil
-	}
-	if p.GrimmInHunt.Name == "" {
-		p.GrimmInHunt = nil
 	}
 	if p.Stats == nil {
 		p.Stats = &PlayerStats{
@@ -211,7 +202,7 @@ func (p *Player) CanGamble() (canHe, reset bool) {
 }
 
 func (p *Player) CanDungeon() bool {
-	return time.Now().Unix()-p.Status.LastDungeon > 18000
+	return p.DungeonCooldown() < 0
 }
 
 func (p *Player) MaxChar() int {

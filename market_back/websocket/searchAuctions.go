@@ -6,7 +6,7 @@ import (
 	"rwby-adventures/config"
 	"rwby-adventures/models"
 
-	"github.com/ambelovsky/gosf"
+	"github.com/yyewolf/gosf"
 )
 
 func searchAuctions(client *gosf.Client, request *gosf.Request) *gosf.Message {

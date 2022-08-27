@@ -5,7 +5,7 @@ import (
 	"rwby-adventures/config"
 	"time"
 
-	"github.com/ambelovsky/gosf"
+	"github.com/yyewolf/gosf"
 )
 
 var DungeonsMicroservice *gosf.Microservice

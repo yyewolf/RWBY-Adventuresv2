@@ -8,8 +8,8 @@ import (
 	"rwby-adventures/models"
 	"time"
 
-	"github.com/ambelovsky/gosf"
 	"github.com/bwmarrin/discordgo"
+	"github.com/yyewolf/gosf"
 )
 
 type WebUser struct {

@@ -4,7 +4,7 @@ import (
 	"rwby-adventures/market_back/cache"
 	"rwby-adventures/models"
 
-	"github.com/ambelovsky/gosf"
+	"github.com/yyewolf/gosf"
 )
 
 func getLatestListings(client *gosf.Client, request *gosf.Request) *gosf.Message {

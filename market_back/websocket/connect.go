@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"rwby-adventures/config"
 
-	"github.com/ambelovsky/gosf"
+	"github.com/yyewolf/gosf"
 )
 
 func connect(client *gosf.Client, request *gosf.Request) *gosf.Message {

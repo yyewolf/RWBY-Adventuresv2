@@ -53,6 +53,9 @@ func GetGrimm(id string) (*Grimm, error) {
 }
 
 func (g *Grimm) Valid() bool {
+	if g == nil {
+		return false
+	}
 	return g.Name != ""
 }
 

@@ -3,8 +3,8 @@ package websocket
 import (
 	"rwby-adventures/config"
 
-	"github.com/ambelovsky/gosf"
 	"github.com/pmylund/go-cache"
+	"github.com/yyewolf/gosf"
 )
 
 var Tokens *cache.Cache

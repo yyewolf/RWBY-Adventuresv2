@@ -72,8 +72,8 @@ func startDungeonService() {
 		}
 	})
 
-	mux.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", DirectoryListing(http.FileServer(http.FS(static.Assets)))))
 	mux.HandleFunc("/d/{id}", http.HandlerFunc(DungeonIndex))
+	mux.PathPrefix("/").Handler(http.StripPrefix("/", DirectoryListing(http.FileServer(http.FS(static.Assets)))))
 	go srv.ListenAndServe()
 }
 
@@ -123,9 +123,7 @@ func DungeonIndex(w http.ResponseWriter, r *http.Request) {
 			ID:   u.UserID,
 		},
 		Token: token,
-		Host:  config.DungeonHost,
-		Port:  config.DungeonWebsocket,
 	}
 	websocket.Tokens.Add(token, data, 0)
-	templates.ExecuteTemplate(w, "dungeon.html", data)
+	templates.ExecuteTemplate(w, "index.html", data)
 }
