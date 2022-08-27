@@ -1,6 +1,7 @@
 package market
 
 import (
+	"fmt"
 	"rwby-adventures/main/discord"
 	"rwby-adventures/microservices"
 	"time"
@@ -14,6 +15,7 @@ import (
 var sent = cache.New(1*time.Minute, 10*time.Second)
 
 func sendMessage(channel *gosocketio.Channel, request *gosf.Message) {
+	fmt.Println("[TOPGG] Received request.")
 	_, found := sent.Get(request.Text)
 	sent.Set(request.Text, true, 0)
 

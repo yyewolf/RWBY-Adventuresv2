@@ -1,3 +1,5 @@
 package config
 
-var TopGG = "bMpBPQ3dFprQa$pTWpm14UfC#PO%MPk"
+import "os"
+
+var TopGG = os.Getenv("TOPGG_API_TOKEN")

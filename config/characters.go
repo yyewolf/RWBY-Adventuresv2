@@ -7,8 +7,8 @@ import (
 )
 
 var (
-	MaxBuffs        = 2
-	ExtensionsValue = 20
+	MaxBuffs        = getEnvInt("PERSONA_MAX_BUFFS")
+	ExtensionsValue = getEnvInt("INVENTORY_EXTENSIONS_VALUE")
 )
 
 func init() {

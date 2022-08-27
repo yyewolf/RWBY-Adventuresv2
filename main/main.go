@@ -12,9 +12,9 @@ import (
 )
 
 func main() {
+	topgg.StartTopGG()
 	websocket.StartWebsocket()
 	web.StartWeb()
-	topgg.StartTopGG()
 	StartDiscord()
 	loadPassives()
 

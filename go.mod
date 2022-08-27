@@ -10,11 +10,12 @@ require (
 	github.com/fogleman/gg v1.3.0
 	github.com/gorilla/pat v1.0.1
 	github.com/gorilla/sessions v1.2.1
+	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.6
 	github.com/pmylund/go-cache v2.1.0+incompatible
 	github.com/satori/go.uuid v1.2.0
 	github.com/yyewolf/Name-Generator v0.0.0-20210307172340-4b6d95263d9c
-	github.com/yyewolf/gosf v0.0.0-20220816190843-6fa86ea2ad43
+	github.com/yyewolf/gosf v0.0.0-20220827180053-d6bebd1fce4e
 	github.com/yyewolf/goth v1.66.2-0.20220526102421-741891ab0359
 	gorm.io/driver/postgres v1.3.6
 	gorm.io/gorm v1.23.5

@@ -37,6 +37,9 @@ RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o dungeons
 WORKDIR /app/market_back
 RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o market
 
+WORKDIR /app/topgg
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o topgg
+
 WORKDIR /app/main
 RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o main
 
@@ -66,6 +69,9 @@ RUN chmod +x /app/dungeons
 
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/market_back/market /app/market
 RUN chmod +x /app/market
+
+COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/topgg/topgg /app/topgg
+RUN chmod +x /app/topgg
 
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/main/main /app/main
 RUN chmod +x /app/main

@@ -19,7 +19,7 @@ import (
 	"github.com/yyewolf/goth/providers/discord"
 )
 
-var tradeProvider = discord.New("375700234120200194", "P6KOz6Uvl8PWhY-hfx5IXo_posPDBu7D", fmt.Sprintf("http://%s%s/auth/discord/callback", config.TradeHost, config.TradePort), discord.ScopeIdentify)
+var tradeProvider = discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("http://%s%s/auth/discord/callback", config.TradeHost, config.TradePort), discord.ScopeIdentify)
 var tradeRedirections = make(map[string]string)
 
 func startTradeService() {
@@ -36,9 +36,6 @@ func startTradeService() {
 
 	mux := pat.New()
 	port := config.TradePort
-	if config.TestMode {
-		port = config.TradeTestPort
-	}
 	srv := http.Server{
 		Addr:    port,
 		Handler: mux,

@@ -1,7 +1,6 @@
 package microservice
 
 import (
-	"fmt"
 	"rwby-adventures/microservices"
 	"time"
 
@@ -17,7 +16,6 @@ func SendMessageToBot(message *microservices.TopGGMessage) {
 		Text: uuid.NewV4().String(),
 	}
 	msg.Body = gosf.StructToMap(message)
-	fmt.Println("[TOPGG] Waiting for room to be active...")
 	for !roomActive {
 		time.Sleep(1 * time.Second)
 		waitAfterCon = true
@@ -25,5 +23,5 @@ func SendMessageToBot(message *microservices.TopGGMessage) {
 	if waitAfterCon {
 		time.Sleep(5 * time.Second)
 	}
-	gosf.Broadcast("market", "sendMessage", msg)
+	gosf.Broadcast("topgg", "sendMessage", msg)
 }

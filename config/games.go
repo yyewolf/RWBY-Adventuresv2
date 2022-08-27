@@ -1,5 +1,5 @@
 package config
 
-const (
-	DungeonCooldown = 18000
+var (
+	DungeonCooldown = getEnvInt("DUNGEON_COOLDOWN")
 )

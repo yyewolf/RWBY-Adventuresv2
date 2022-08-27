@@ -409,7 +409,7 @@ func (p *Player) GiveCP(CP int64) (levelUp bool) {
 }
 
 func (p *Player) DungeonCooldown() time.Duration {
-	t := (p.Status.LastDungeon + config.DungeonCooldown)
+	t := p.Status.LastDungeon + int64(config.DungeonCooldown)
 	return time.Until(time.Unix(t, 0))
 }
 

@@ -1,27 +1,24 @@
 package config
 
 import (
+	"os"
 	chars "rwby-adventures/characters"
 	"rwby-adventures/grimms"
 )
 
-var dbhost = "admin.rwbyadventures.com"
-var dbuser = "postgres"
-var dbpswd = "ftT6A4MrF6hPt"
+var dbhost = os.Getenv("DB_HOST")
+var dbuser = os.Getenv("DB_USER")
+var dbbase = os.Getenv("DB_BASE")
+var dbpswd = os.Getenv("DB_PASS")
+var dbport = os.Getenv("DB_PORT")
 
-//var dbhost = "127.0.0.1"
-var dbport = "5432"
+var SupportLink = os.Getenv("SUPPORT_LINK")
+var Botcolor = getEnvInt("BOT_COLOR")
 
-//var dbuser = "postgres"
-//var dbpswd = "admin"
-
-var SupportLink = "https://discord.gg/adJGyVxv7H"
-var Botcolor = 3859607
-
-var AppID = "375700234120200194"
-var DiscordSecret = "P6KOz6Uvl8PWhY-hfx5IXo_posPDBu7D"
-var Token = "Mzc1NzAwMjM0MTIwMjAwMTk0.WftYGw.7Dpvcfk1sBR2QksWuV-x4IbpziI"
-var ReportChannel = "844999025119199285"
+var AppID = os.Getenv("APP_ID")
+var DiscordSecret = os.Getenv("DISCORD_SECRET")
+var Token = os.Getenv("DISCORD_TOKEN")
+var ReportChannel = os.Getenv("REPORT_CHANNEL_ID")
 
 // All characters
 var BaseCharacters []chars.CharacterStruct

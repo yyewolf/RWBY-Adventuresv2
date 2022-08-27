@@ -1,56 +1,28 @@
 package config
 
-var TestMode = true
+import "os"
 
 var (
-	TradePort        = ":50"
-	TradeTestPort    = ":50000"
-	TradeWebsocket   = 9000
-	ArenaPort        = ":51"
-	ArenaTestPort    = ":50001"
-	ArenaWebsocket   = 9001
-	DungeonPort      = ":52"
-	DungeonTestPort  = ":50002"
-	DungeonWebsocket = 9002
-	MarketPort       = ":53"
-	MarketTestPort   = ":50003"
-	MarketWebsocket  = 9003
-	TopGGPort        = ":54"
-	TopGGTestPort    = ":50004"
+	TradePort      = os.Getenv("TRADE_PORT")
+	TradeWebsocket = getEnvInt("TRADE_WEBSOCKET")
+	TradeHost      = os.Getenv("TRADE_HOST")
 
-	// RPC
-	ArenaRPC   = 8001
-	DungeonRPC = 8002
-	MarketRPC  = 8003
-	TopGGRPC   = 8004
+	ArenaPort      = os.Getenv("ARENA_PORT")
+	ArenaWebsocket = getEnvInt("ARENA_WEBSOCKET")
+	ArenaRPC       = getEnvInt("ARENA_RPC")
+	ArenaHost      = os.Getenv("ARENA_HOST")
 
-	TradeHost       = "194.163.142.107"
-	TradeTestHost   = "localhost"
-	ArenaHost       = "194.163.142.107"
-	ArenaTestHost   = "localhost"
-	DungeonHost     = "194.163.142.107"
-	DungeonTestHost = "localhost"
-	MarketHost      = "194.163.142.107"
-	MarketTestHost  = "localhost"
-	TopGGHost       = "194.163.142.107"
-	TopGGTestHost   = "localhost"
+	DungeonPort      = os.Getenv("DUNGEON_PORT")
+	DungeonWebsocket = getEnvInt("DUNGEON_WEBSOCKET")
+	DungeonRPC       = getEnvInt("DUNGEON_RPC")
+	DungeonHost      = os.Getenv("DUNGEON_HOST")
+
+	MarketPort      = os.Getenv("MARKET_PORT")
+	MarketWebsocket = getEnvInt("MARKET_WEBSOCKET")
+	MarketRPC       = getEnvInt("MARKET_RPC")
+	MarketHost      = os.Getenv("MARKET_HOST")
+
+	TopGGPort = os.Getenv("TOPGG_PORT")
+	TopGGRPC  = getEnvInt("TOPGG_RPC")
+	TopGGHost = os.Getenv("TOPGG_HOST")
 )
-
-func init() {
-	if TestMode {
-		TradePort = TradeTestPort
-		TradeHost = TradeTestHost
-
-		ArenaPort = ArenaTestPort
-		ArenaHost = ArenaTestHost
-
-		DungeonPort = DungeonTestPort
-		DungeonHost = DungeonTestHost
-
-		MarketPort = MarketTestPort
-		MarketHost = MarketTestHost
-
-		TopGGPort = TopGGTestPort
-		TopGGHost = TopGGTestHost
-	}
-}

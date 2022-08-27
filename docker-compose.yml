@@ -1,22 +1,41 @@
 version: '3'
 services:
+  database:
+    image: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    restart: always
   arenas:
     image: rwbyadventures:latest
     network_mode: host
     entrypoint: /app/arenas
+    restart: always
   dungeons:
     image: rwbyadventures:latest
     network_mode: host
     entrypoint: /app/dungeons
+    restart: always
   market_back:
     image: rwbyadventures:latest
     network_mode: host
     entrypoint: /app/market
+    restart: always
   market_frontend:
     image: rwbyadventures:latest
     network_mode: host
     entrypoint: http-server /app/market_front/dist
+    restart: always
+  topgg:
+    image: rwbyadventures:latest
+    network_mode: host
+    entrypoint: /app/topgg
+    restart: always
   main:
     image: rwbyadventures:latest
     network_mode: host
     entrypoint: /app/main
+    restart: always

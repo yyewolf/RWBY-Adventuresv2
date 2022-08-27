@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"rwby-adventures/config"
 	"rwby-adventures/microservices"
@@ -33,6 +34,8 @@ func index(w http.ResponseWriter, r *http.Request) {
 	if p.IsNew {
 		return
 	}
+
+	fmt.Println("[TOPGG] Received vote from : " + info.User)
 
 	microservice.SendMessageToBot(&microservices.TopGGMessage{
 		UserID: info.User,
