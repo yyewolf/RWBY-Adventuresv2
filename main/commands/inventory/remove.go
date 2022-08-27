@@ -272,12 +272,14 @@ func removeMenu(ctx *discord.CmdContext) {
 				}
 			}
 		}
+		ctx.Player.Jar += xpjar
 		reply += fmt.Sprintf("\nYou also earned **%dXP** that have been added to your **XP Jar** (`/jar`) !", xpjar)
 		ctx.Reply(discord.ReplyParams{
 			Content:   reply,
 			FollowUp:  true,
 			Ephemeral: true,
 		})
+		config.Database.Save(ctx.Player)
 	case "notcorrect":
 		ctx.Reply(discord.ReplyParams{
 			Content:   "You did not click the correct emoji.",

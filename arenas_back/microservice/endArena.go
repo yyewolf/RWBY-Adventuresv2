@@ -32,10 +32,10 @@ func EndClassicArena(arena *cache.Arena) (loots string) {
 		config.Database.Save(p.Status)
 		p.Balance += int64(money)
 		config.Database.Save(p.Balance)
-		if p.SelectedChar != nil {
+		if p.SelectedChar.Valid() {
 			config.Database.Save(p.SelectedChar)
 		}
-		if p.SelectedGrimm != nil {
+		if p.SelectedGrimm.Valid() {
 			config.Database.Save(p.SelectedGrimm)
 		}
 		p.Stats.ArenasCompleted++

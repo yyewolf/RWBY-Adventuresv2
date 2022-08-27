@@ -33,10 +33,10 @@ func UnixNanoFormatter(timestamp int64) string {
 func (ctx *CmdContext) GiveSelectionXP(add int64, notif bool) {
 	ctx.Player.Status.LastXP = time.Now().Unix()
 	config.Database.Save(ctx.Player.Status)
-	if ctx.Player.SelectedChar != nil {
+	if ctx.Player.SelectedChar.Valid() {
 		ctx.GiveCharXP(ctx.Player.SelectedChar, add, notif)
 	}
-	if ctx.Player.SelectedGrimm != nil {
+	if ctx.Player.SelectedGrimm.Valid() {
 		ctx.GiveGrimmXP(ctx.Player.SelectedGrimm, add, notif)
 	}
 }
@@ -44,10 +44,10 @@ func (ctx *CmdContext) GiveSelectionXP(add int64, notif bool) {
 func (ctx *CmdContext) GiveXP(char *models.Character, grimm *models.Grimm, add int64, notif bool) {
 	ctx.Player.Status.LastXP = time.Now().Unix()
 	config.Database.Save(ctx.Player.Status)
-	if char != nil {
+	if char.Valid() {
 		ctx.GiveCharXP(char, add, notif)
 	}
-	if grimm != nil {
+	if grimm.Valid() {
 		ctx.GiveGrimmXP(grimm, add, notif)
 	}
 }

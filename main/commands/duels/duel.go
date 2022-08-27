@@ -267,6 +267,6 @@ func duelXP(ctx *discord.CmdContext, player *BattlePlayer, winner bool) (XP stri
 	}
 	p.Stats.Save()
 
-	p.GiveSelectedXP(WillAdd)
+	ctx.GiveSelectionXP(WillAdd, false)
 	return strconv.FormatInt(WillAdd, 10)
 }
