@@ -48,6 +48,8 @@ func StartDiscord() {
 	discord.AddCmd(commands_inventory.InventoryCommand)
 	discord.AddCmd(commands_inventory.PackCommand)
 	discord.AddCmd(commands_inventory.BalanceCommand)
+	discord.AddCmd(commands_inventory.JarCommand)
+	discord.AddCmd(commands_inventory.CompCommand)
 	discord.AddCmd(commands_boxes.BoxesCommand)
 	discord.AddCmd(commands_trade.TradesCommand)
 	discord.AddCmd(commands_roleplay.RPCommand)
