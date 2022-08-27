@@ -10,7 +10,7 @@ import (
 var InviteCommand = &discord.Command{
 	Name:        "invite",
 	Description: "Invite me somewhere else.",
-	Menu:        discord.ConfigurationMenu,
+	Menu:        discord.MiscMenu,
 	Call:        invite,
 }
 

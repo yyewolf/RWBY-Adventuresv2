@@ -10,7 +10,7 @@ import (
 var Eventcommand = &discord.Command{
 	Name:        "event",
 	Description: "Subscribe to notifications for future events.",
-	Menu:        discord.ConfigurationMenu,
+	Menu:        discord.MiscMenu,
 	Call:        event,
 }
 

@@ -1,5 +1,7 @@
 package models
 
+import "rwby-adventures/config"
+
 type PlayerStatus struct {
 	DiscordID string `gorm:"primary_key;column:discord_id"`
 
@@ -15,4 +17,8 @@ type PlayerStatus struct {
 	LastDungeon int64 `gorm:"column:last_dungeon;not null"`
 
 	OrderBy string `gorm:"column:order_by;not null;default:''"`
+}
+
+func (s *PlayerStatus) Save() {
+	config.Database.Save(s)
 }

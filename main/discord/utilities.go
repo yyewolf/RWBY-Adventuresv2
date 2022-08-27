@@ -108,7 +108,7 @@ func (ctx *CmdContext) GiveGrimmXP(grimm *models.Grimm, add int64, notif bool) {
 	config.Database.Save(grimm)
 }
 
-func (ctx *CmdContext) GiveCP(CP int64, notif bool) {
+func (ctx *CmdContext) GiveCP(CP int64, notif bool) *discordgo.MessageEmbed {
 	if ctx.Player.Shop.XPBoost && ctx.Player.Shop.XPBoostTime > 0 {
 		// ctx.Player.sendXPNotice(s)
 		ctx.Player.Shop.XPBoostTime--
@@ -117,7 +117,7 @@ func (ctx *CmdContext) GiveCP(CP int64, notif bool) {
 	before := ctx.Player.Level
 	levelUp := ctx.Player.GiveCP(CP)
 	levelEarned := ctx.Player.Level - before
-	if levelUp && notif {
+	if levelUp {
 		var lootboxes int
 		var grimmboxes int
 		var money int64
@@ -192,14 +192,23 @@ func (ctx *CmdContext) GiveCP(CP int64, notif bool) {
 			content.Description += fmt.Sprintf("=> %s\n", earning)
 		}
 
-		ctx.Reply(ReplyParams{
-			FollowUp: true,
-		})
+		// Save everything to database
+		config.Database.Save(ctx.Player)
+		config.Database.Save(ctx.Player.Shop)
+		config.Database.Save(ctx.Player.Boxes)
+
+		if notif {
+			ctx.Reply(ReplyParams{
+				Content:  content,
+				FollowUp: true,
+			})
+		} else {
+			return content
+		}
 	}
 
-	// Save everything to database
 	config.Database.Save(ctx.Player)
-	config.Database.Save(ctx.Player.Shop)
+	return nil
 }
 
 func (ctx *CmdContext) GetUnix() (i int64, err error) {
