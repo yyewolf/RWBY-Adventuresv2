@@ -18,7 +18,7 @@ import (
 	"github.com/yyewolf/goth/providers/discord"
 )
 
-var provider = discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("http://%s%s/auth/discord/callback", config.MarketHost, config.MarketPort), discord.ScopeIdentify)
+var provider = discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("%sauth/discord/callback", config.MarketHost), discord.ScopeIdentify)
 var stateToken = make(map[string]*websocket.Token)
 
 func startMarketService() {
@@ -28,7 +28,7 @@ func startMarketService() {
 
 	store := sessions.NewCookieStore(key)
 	store.MaxAge(maxAge)
-	store.Options.Domain = config.DungeonHost
+	store.Options.Domain = config.MarketDomain
 	store.Options.Path = "/"
 
 	gothic.Store = store
@@ -52,7 +52,7 @@ func startMarketService() {
 			token.UserID = usr.UserID
 			token.Secret = usr.AccessTokenSecret
 		}
-		http.Redirect(res, req, "http://localhost:8080", http.StatusTemporaryRedirect)
+		http.Redirect(res, req, config.MarketFront, http.StatusTemporaryRedirect)
 		res.Write([]byte(""))
 	})
 

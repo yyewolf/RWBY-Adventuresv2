@@ -18,8 +18,6 @@ type User struct {
 	Arena *Arena
 	User  *WebUser
 	Token string
-	Host  string
-	Port  int
 }
 
 type Player struct {

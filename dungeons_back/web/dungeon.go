@@ -19,7 +19,7 @@ import (
 	"github.com/yyewolf/goth/providers/discord"
 )
 
-var provider = discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("http://%s%s/auth/discord/callback", config.DungeonHost, config.DungeonPort), discord.ScopeIdentify)
+var provider = discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("%sauth/discord/callback", config.DungeonHost), discord.ScopeIdentify)
 var redirections = make(map[string]string)
 
 func startDungeonService() {
@@ -29,7 +29,7 @@ func startDungeonService() {
 
 	store := sessions.NewCookieStore(key)
 	store.MaxAge(maxAge)
-	store.Options.Domain = config.DungeonHost
+	store.Options.Domain = config.DungeonDomain
 	store.Options.Path = "/"
 
 	gothic.Store = store

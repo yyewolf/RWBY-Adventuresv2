@@ -11,7 +11,7 @@ import (
 var ArenaMicroservice *gosf.Microservice
 
 func init() {
-	gosf.RegisterMicroservice("arenas", "127.0.0.1", config.ArenaRPC, false)
+	gosf.RegisterMicroservice("arenas", config.ArenaRPCHost, config.ArenaRPC, false)
 	ArenaMicroservice = gosf.GetMicroservice("arenas")
 	go watchdog()
 	fmt.Println("[ARENAS] Initialized microservice.")

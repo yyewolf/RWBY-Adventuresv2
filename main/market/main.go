@@ -11,7 +11,7 @@ import (
 var MarketMicroservice *gosf.Microservice
 
 func init() {
-	gosf.RegisterMicroservice("market", "127.0.0.1", config.MarketRPC, false)
+	gosf.RegisterMicroservice("market", config.MarketRPCHost, config.MarketRPC, false)
 	MarketMicroservice = gosf.GetMicroservice("market")
 	MarketMicroservice.Listen("sendMessage", sendMessage)
 	go watchdog()

@@ -11,7 +11,7 @@ import (
 var DungeonsMicroservice *gosf.Microservice
 
 func init() {
-	gosf.RegisterMicroservice("dungeons", "127.0.0.1", config.DungeonRPC, false)
+	gosf.RegisterMicroservice("dungeons", config.DungeonRPCHost, config.DungeonRPC, false)
 	DungeonsMicroservice = gosf.GetMicroservice("dungeons")
 	go watchdog()
 	fmt.Println("[DUNGEONS] Initialized microservice.")

@@ -20,8 +20,6 @@
 <script>
 import io from 'socket.io-client'
 const token = localStorage.getItem('token') || "test"
-const host = localStorage.getItem('host') || "localhost"
-const port = localStorage.getItem('port') || "9002"
 
 export default {
   name: 'ArenaPage',
@@ -38,7 +36,7 @@ export default {
   },
   methods: {
     connectToWS() {
-      this.socket = io(`ws://${host}:${port}`, { transports: ['websocket'] });
+      this.socket = io(process.env.VUE_APP_BACKEND_WS_URL, { transports: ['websocket'] });
       this.socket.on('connect', () => {
         this.sendTokenToWS();
       })

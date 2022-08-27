@@ -11,7 +11,7 @@ import (
 var TopggMicroservice *gosf.Microservice
 
 func StartTopGG() {
-	gosf.RegisterMicroservice("topgg", "127.0.0.1", config.TopGGRPC, false)
+	gosf.RegisterMicroservice("topgg", config.TopGGRPCHost, config.TopGGRPC, false)
 	TopggMicroservice = gosf.GetMicroservice("topgg")
 	TopggMicroservice.Listen("sendMessage", sendMessage)
 	go watchdog()

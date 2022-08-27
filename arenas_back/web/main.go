@@ -18,7 +18,7 @@ func StartWeb() {
 	templates, _ = template.ParseFS(static.WebFS, "*.html")
 
 	goth.UseProviders(
-		discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("http://%s%s/auth/discord/callback", config.ArenaHost, config.ArenaPort), discord.ScopeIdentify),
+		discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("%sauth/discord/callback", config.ArenaHost), discord.ScopeIdentify),
 	)
 
 	startArenaService()
