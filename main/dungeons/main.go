@@ -13,6 +13,7 @@ var DungeonsMicroservice *gosf.Microservice
 func init() {
 	gosf.RegisterMicroservice("dungeons", config.DungeonRPCHost, config.DungeonRPC, false)
 	DungeonsMicroservice = gosf.GetMicroservice("dungeons")
+	DungeonsMicroservice.Listen("sendMessage", sendMessage)
 	go watchdog()
 	fmt.Println("[DUNGEONS] Initialized microservice.")
 }

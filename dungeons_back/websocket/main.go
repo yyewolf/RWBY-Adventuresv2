@@ -15,7 +15,7 @@ func StartWebsocket() {
 	gosf.Listen("dungeonMove", DungeonMove)
 	gosf.Listen("ambrosiusChoice", AmbrosiusChoice)
 
-	go gosf.Startup(map[string]interface{}{"port": config.DungeonWebsocket, "enableCORS": "http://localhost:8080"})
+	go gosf.Startup(map[string]interface{}{"port": config.DungeonWebsocket, "enableCORS": config.DungeonHost})
 }
 
 func GetString(request *gosf.Request, key string) (string, bool) {

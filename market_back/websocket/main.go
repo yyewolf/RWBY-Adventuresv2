@@ -29,7 +29,7 @@ func StartWebsocket() {
 
 	fmt.Println("[MARKET] WS server started on port", config.MarketWebsocket)
 
-	go gosf.Startup(map[string]interface{}{"port": config.MarketWebsocket, "enableCORS": "http://localhost:8080"})
+	go gosf.Startup(map[string]interface{}{"port": config.MarketWebsocket, "enableCORS": config.MarketFront})
 }
 
 func GetString(request *gosf.Request, key string) (string, bool) {

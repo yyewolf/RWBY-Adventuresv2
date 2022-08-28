@@ -1,4 +1,4 @@
-var socket = io.connect(`ws://${host}:9999`, { transports: ['websocket'] });
+var socket = io.connect(host, { transports: ['websocket'] });
 
 var data = {
     elems: {

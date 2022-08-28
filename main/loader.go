@@ -22,23 +22,7 @@ import (
 func StartDiscord() {
 	discord.Start()
 
-	addchar := &discord.Command{
-		Name:        "addchar",
-		Description: "Test.",
-		Aliases:     discord.CmdAlias{"ac"},
-		Menu:        discord.GeneralMenu,
-		Call:        commands_temporary.Addchar,
-	}
-	del := &discord.Command{
-		Name:        "delete",
-		Description: "Delete all your informations.",
-		Aliases:     discord.CmdAlias{"del"},
-		Menu:        discord.GeneralMenu,
-		Call:        commands_temporary.Delete,
-	}
-	discord.AddCmd(addchar)
-	discord.AddCmd(del)
-	discord.AddCmd(commands_temporary.ArenaCommand)
+	discord.AddCmd(commands_temporary.TemporaryCommand)
 	discord.AddCmd(commands.HelpCommand)
 	discord.AddCmd(commands_inventory.PlayerInfoCommand)
 	discord.AddCmd(commands_inventory.InfoCommand)

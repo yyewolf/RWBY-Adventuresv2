@@ -20,6 +20,7 @@ type Player struct {
 
 type DungeonStruct struct {
 	ID     string
+	UserID string
 	Game   *game.Dungeon
 	Ticker *time.Ticker
 	Ended  bool

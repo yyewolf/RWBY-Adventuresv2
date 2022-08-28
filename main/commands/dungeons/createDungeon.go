@@ -10,11 +10,10 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	uuid "github.com/satori/go.uuid"
-	"github.com/yyewolf/gosf"
 )
 
 func createDungeon(ctx *discord.CmdContext) {
-	if ctx.Player.CanDungeon() {
+	if !ctx.Player.CanDungeon() {
 		t := ctx.Player.DungeonCooldown()
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("Sorry but you still have to wait **%dh %dm and %ds** before you can join in on a dungeon.", int(t.Hours()), int(t.Minutes())%60, int(t.Seconds())%60),
@@ -39,7 +38,13 @@ func createDungeon(ctx *discord.CmdContext) {
 
 	ID := uuid.NewV4().String()
 	req := &microservices.DungeonCreateRequest{
-		ID: ID,
+		ID:     ID,
+		UserID: ctx.Author.ID,
+	}
+
+	_, err := dungeons.CreateDungeon(req)
+	if err != nil {
+		return
 	}
 
 	ctx.Reply(discord.ReplyParams{
@@ -55,19 +60,5 @@ func createDungeon(ctx *discord.CmdContext) {
 				},
 			},
 		},
-	})
-
-	response, err := dungeons.CreateDungeon(req)
-	if err != nil {
-		return
-	}
-
-	resp := &microservices.DungeonEndResponse{}
-	gosf.MapToStruct(response.Body, resp)
-
-	// HERE THE DUNGEON FINISHED
-
-	ctx.Reply(discord.ReplyParams{
-		Content: "It finished !",
 	})
 }

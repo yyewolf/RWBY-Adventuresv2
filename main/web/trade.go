@@ -125,7 +125,7 @@ func TradeIndex(w http.ResponseWriter, r *http.Request) {
 		},
 		Token:   token,
 		OtherID: OtherID,
-		Host:    config.TradeHost,
+		Host:    config.TradeWebsocketURL,
 	}
 	websocket.Tokens.Add(token, data, 0)
 	templates.ExecuteTemplate(w, "trade.html", data)

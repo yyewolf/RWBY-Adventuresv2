@@ -11,13 +11,6 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-var ArenaCommand = &discord.Command{
-	Name:        "arena",
-	Description: "Create arenas.",
-	Menu:        discord.GeneralMenu,
-	Call:        createArena,
-}
-
 func createArena(ctx *discord.CmdContext) {
 	if !arenas.ArenaMicroservice.Connected() {
 		_, err := arenas.ArenaMicroservice.Connect()

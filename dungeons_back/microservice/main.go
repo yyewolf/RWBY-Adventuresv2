@@ -10,6 +10,7 @@ import (
 func init() {
 	// Listen on an endpoint
 	gosf.Listen("createDungeon", createDungeon)
+	gosf.OnConnect(joinRoom)
 
 	// d := game.NewDungeon(15, 15)
 	// dungeon := &websocket.DungeonStruct{

@@ -15,7 +15,7 @@ func StartWebsocket() {
 	gosf.Listen("tradeConnect", TradeConnect)
 	gosf.Listen("tradeInfos", TradeInfos)
 	gosf.Listen("tradeValidate", TradeValidate)
-	go gosf.Startup(map[string]interface{}{"port": config.TradeWebsocket})
+	go gosf.Startup(map[string]interface{}{"port": config.TradeWebsocketPort, "enableCORS": config.TradeHost})
 	fmt.Println("[WS] Started.")
 }
 

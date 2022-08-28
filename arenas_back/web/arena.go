@@ -73,8 +73,8 @@ func startArenaService() {
 		}
 	})
 
-	mux.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", DirectoryListing(http.FileServer(http.FS(static.Assets)))))
 	mux.HandleFunc("/a/{id}", http.HandlerFunc(ArenaIndex))
+	mux.PathPrefix("/").Handler(http.StripPrefix("/", DirectoryListing(http.FileServer(http.FS(static.Assets)))))
 	go srv.ListenAndServe()
 }
 

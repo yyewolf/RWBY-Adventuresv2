@@ -3,10 +3,11 @@ package config
 import "os"
 
 var (
-	TradePort      = os.Getenv("TRADE_PORT")
-	TradeWebsocket = getEnvInt("TRADE_WEBSOCKET")
-	TradeHost      = os.Getenv("TRADE_HOST")
-	TradeDomain    = os.Getenv("TRADE_DOMAIN")
+	TradePort          = os.Getenv("TRADE_PORT")
+	TradeWebsocketPort = getEnvInt("TRADE_WEBSOCKET_PORT")
+	TradeWebsocketURL  = os.Getenv("TRADE_WEBSOCKET_URL")
+	TradeHost          = os.Getenv("TRADE_HOST")
+	TradeDomain        = os.Getenv("TRADE_DOMAIN")
 
 	ArenaPort      = os.Getenv("ARENA_PORT")
 	ArenaWebsocket = getEnvInt("ARENA_WEBSOCKET")

@@ -25,6 +25,7 @@ func endArena(channel *gosocketio.Channel, request *gosf.Message) {
 			Title:       "Arena rewards",
 			Color:       config.Botcolor,
 			Description: req.Message,
+			Footer:      DefaultFooter,
 		})
 	}
 }

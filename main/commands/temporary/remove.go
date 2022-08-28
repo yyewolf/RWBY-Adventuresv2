@@ -15,6 +15,8 @@ func Delete(ctx *discord.CmdContext) {
 	config.Database.Delete(ctx.Player.LimitedBoxes, ctx.Author.ID)
 	config.Database.Delete(ctx.Player.SpecialBoxes, ctx.Author.ID)
 	config.Database.Delete(ctx.Player.Boxes, ctx.Author.ID)
+	config.Database.Delete(ctx.Player.Stats, ctx.Author.ID)
+	config.Database.Delete(ctx.Player.Badges, ctx.Author.ID)
 
 	for _, a := range ctx.Player.Market.Auctions {
 		config.Database.Select("Stats").Where("user_id=?", a.ID).Delete(ctx.Player.Characters)

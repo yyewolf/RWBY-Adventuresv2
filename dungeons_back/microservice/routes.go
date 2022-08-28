@@ -7,6 +7,7 @@ import (
 	"rwby-adventures/microservices"
 	"time"
 
+	"github.com/bwmarrin/discordgo"
 	"github.com/yyewolf/gosf"
 )
 
@@ -23,23 +24,28 @@ func createDungeon(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	}
 	d := game.NewDungeon(15, 15)
 	dungeon := &websocket.DungeonStruct{
-		ID:    ID,
-		Game:  d,
-		EndIt: make(chan int),
+		ID:     ID,
+		UserID: req.UserID,
+		Game:   d,
+		EndIt:  make(chan int),
 	}
 	websocket.DungeonCache.Set(ID, dungeon, 0)
 
 	fmt.Println("[DUNGEONS] Created dungeon with ID:", ID)
 
-	data := dungeonLoop(dungeon)
+	go func() {
+		data := dungeonLoop(dungeon)
 
-	msg := gosf.NewSuccessMessage("finished")
-	msg.Body = gosf.StructToMap(data)
+		SendMessageToBot(&microservices.DungeonsMessage{
+			UserID:  req.UserID,
+			Message: data,
+		})
+	}()
 
-	return msg
+	return gosf.NewSuccessMessage("created")
 }
 
-func dungeonLoop(dungeon *websocket.DungeonStruct) *microservices.DungeonEndResponse {
+func dungeonLoop(dungeon *websocket.DungeonStruct) *discordgo.MessageEmbed {
 	//Sends data to players
 	t := time.NewTicker(time.Millisecond * 100)
 	dungeon.Ticker = t
