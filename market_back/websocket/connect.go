@@ -16,7 +16,7 @@ func connect(client *gosf.Client, request *gosf.Request) *gosf.Message {
 
 	msg := gosf.NewSuccessMessage()
 	if t.Empty {
-		link := fmt.Sprintf("http://%s%s/login/%s", config.MarketHost, config.MarketPort, t.Token)
+		link := fmt.Sprintf("%slogin/%s", config.MarketHost, t.Token)
 		msg.Body = map[string]interface{}{
 			"link":      link,
 			"connected": false,
