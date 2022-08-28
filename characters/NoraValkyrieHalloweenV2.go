@@ -8,6 +8,8 @@ var noraValkyrieHalloweenV2 = CharacterStruct{
 	Rarity:       5,
 	ImageAuthors: "icons-for-everyone",
 	Category:     "Team JNPR (Halloween)",
+	Limited:      true,
+	NotLootable:  true,
 	Stats: CharacterStatsStruct{
 		Health:      185,
 		Armor:       32,

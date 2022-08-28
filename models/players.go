@@ -111,6 +111,25 @@ func GetPlayer(id string) *Player {
 	e = config.Database.Find(&Trade{}, "receiver_id = ?", p.DiscordID)
 	p.TradeReceived = int(e.RowsAffected)
 
+	if p.Characters == nil {
+		p.Characters = make([]*Character, 0)
+	}
+	if p.Grimms == nil {
+		p.Grimms = make([]*Grimm, 0)
+	}
+	if p.SelectedChar == nil {
+		p.SelectedChar = &Character{}
+	}
+	if p.SelectedGrimm == nil {
+		p.SelectedGrimm = &Grimm{}
+	}
+	if p.CharInMission == nil {
+		p.CharInMission = &Character{}
+	}
+	if p.GrimmInHunt == nil {
+		p.GrimmInHunt = &Grimm{}
+	}
+
 	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.Characters, "user_id = ? and not in_mission", p.DiscordID)
 	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.Grimms, "user_id = ? and not in_hunt", p.DiscordID)
 	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.CharInMission, "user_id = ? and in_mission", p.DiscordID)

@@ -8,6 +8,8 @@ var yangXiaoLongHalloweenV2 = CharacterStruct{
 	Rarity:       5,
 	ImageAuthors: "Rooster Teeth Anim.\nLavenderRare#3812",
 	Category:     "Team RWBY (Halloween)",
+	Limited:      true,
+	NotLootable:  true,
 	Stats: CharacterStatsStruct{
 		Health:      170,
 		Armor:       30,

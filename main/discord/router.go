@@ -173,7 +173,9 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if !strings.HasPrefix(m.Content, CommandRouter.Prefix) {
 		if !strings.HasPrefix(m.Content, CommandRouter.ListenerPrefix) {
 			for _, callPassive := range RegisteredPassives {
-				callPassive(ctx)
+				if !ctx.Player.IsNew {
+					callPassive(ctx)
+				}
 			}
 			return
 		}

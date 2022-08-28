@@ -8,6 +8,8 @@ var rubyRoseHalloweenV2 = CharacterStruct{
 	Rarity:       5,
 	ImageAuthors: "@Hentaking",
 	Category:     "Team RWBY (Halloween)",
+	Limited:      true,
+	NotLootable:  true,
 	Stats: CharacterStatsStruct{
 		Health:      175,
 		Armor:       15,

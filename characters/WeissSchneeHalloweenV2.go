@@ -8,6 +8,8 @@ var weissSchneeHalloweenV2 = CharacterStruct{
 	Rarity:       5,
 	ImageAuthors: "kyoukohorimiya\nLavenderRare#3812",
 	Category:     "Team RWBY (Halloween)",
+	Limited:      true,
+	NotLootable:  true,
 	Stats: CharacterStatsStruct{
 		Health:      150,
 		Armor:       13,

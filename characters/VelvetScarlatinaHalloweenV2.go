@@ -8,6 +8,8 @@ var velvetScarlatinaHalloweenV2 = CharacterStruct{
 	Rarity:       5,
 	ImageAuthors: "Rooster Teeth Anim.\nいえすぱ",
 	Category:     "Team CFVY (Halloween)",
+	Limited:      true,
+	NotLootable:  true,
 	Stats: CharacterStatsStruct{
 		Health:      160,
 		Armor:       12,

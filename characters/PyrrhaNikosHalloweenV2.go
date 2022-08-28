@@ -8,6 +8,8 @@ var pyrrhaNikosHalloweenV2 = CharacterStruct{
 	Rarity:       5,
 	ImageAuthors: "Rooster Teeth Anim.",
 	Category:     "Team JNPR (Halloween)",
+	Limited:      true,
+	NotLootable:  true,
 	Stats: CharacterStatsStruct{
 		Health:      200,
 		Armor:       28,

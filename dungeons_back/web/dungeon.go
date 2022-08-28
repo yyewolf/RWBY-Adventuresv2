@@ -113,6 +113,10 @@ func DungeonIndex(w http.ResponseWriter, r *http.Request) {
 		gothic.BeginAuthHandler(w, r)
 		return
 	}
+	if u.UserID != dungeon.UserID {
+		fmt.Fprint(w, "not your dungeon")
+		return
+	}
 
 	h := sha256.Sum256([]byte(dungeon.ID + u.UserID))
 	token := fmt.Sprintf("%x", h)

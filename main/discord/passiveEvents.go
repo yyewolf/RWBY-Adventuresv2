@@ -74,7 +74,7 @@ func TrainCharacter(ctx *CmdContext) {
 	XP := ctx.Player.CalcSelectedXP(3, ctx.Player.Shop.XPBoost)
 	ctx.GiveSelectionXP(XP, true)
 
-	CP := ctx.Player.CalcCP(0.3)
+	CP := ctx.Player.CalcCP(0.1)
 	ctx.GiveCP(CP, true)
 }
 

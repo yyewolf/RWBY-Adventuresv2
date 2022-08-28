@@ -8,6 +8,8 @@ var neopolitanHalloweenV2 = CharacterStruct{
 	Rarity:       5,
 	ImageAuthors: "いえすぱ",
 	Category:     "Cinder's Faction (Limited Halloween)",
+	Limited:      true,
+	NotLootable:  true,
 	Stats: CharacterStatsStruct{
 		Health:      187,
 		Armor:       15,

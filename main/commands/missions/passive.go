@@ -17,22 +17,21 @@ import (
 func PassiveMissions(ctx *discord.CmdContext) {
 	if ctx.Player.Missions.IsInMission {
 		continueMission(ctx)
-	} else {
-		newMission(ctx)
 	}
 	if ctx.Player.Missions.IsInHunt {
 		continueHunt(ctx)
-	} else {
+	}
+
+	if !ctx.Player.Missions.IsInMission && !ctx.Player.Missions.IsInHunt {
 		newMission(ctx)
 	}
 }
 
 func newMission(ctx *discord.CmdContext) {
 	//Rolls the dice now to save computing power
-	randfloat := rand.Float64()
+	rng := rand.Float64() * 100
 	//0.20% chance
-	willSpawn := randfloat < 1
-	if !willSpawn {
+	if rng > 10 {
 		return
 	}
 

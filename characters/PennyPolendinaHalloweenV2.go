@@ -8,6 +8,8 @@ var pennyPolendinaHalloweenV2 = CharacterStruct{
 	Rarity:       5,
 	ImageAuthors: "Rooster Teeth Anim.",
 	Category:     "Team Penny (Halloween)",
+	Limited:      true,
+	NotLootable:  true,
 	Stats: CharacterStatsStruct{
 		Health:      180,
 		Armor:       30,
