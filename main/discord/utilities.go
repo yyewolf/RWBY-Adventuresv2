@@ -128,26 +128,26 @@ func (ctx *CmdContext) GiveCP(CP int64, notif bool) *discordgo.MessageEmbed {
 		for i := int64(0); i < levelEarned; i++ {
 			// Lootboxes
 			rng := rand.Float64() * 100
-			if rng < 5 {
+			if rng < 12.5 {
 				amount := rand.Intn(int(math.Sqrt(float64(ctx.Player.Level)))) + 1
 				lootboxes += amount
 			}
 
 			// Grimmboxes
 			rng = rand.Float64() * 100
-			if rng < 5 {
+			if rng < 12.5 {
 				amount := rand.Intn(int(math.Sqrt(float64(ctx.Player.Level)))) + 1
 				grimmboxes += amount
 			}
 
 			// Liens
-			money += rand.Int63n(128+(ctx.Player.Level-i+1)*6) + 21
+			money += rand.Int63n(153+(ctx.Player.Level-i+1)*6) + 54
 
 			// Every 10 levels
 			if (ctx.Player.Level-i+1)%10 == 0 {
-				//10% chance
+				// 17.5% chance
 				rng = rand.Float64() * 100
-				if rng < 10 {
+				if rng < 17.5 {
 					if rng < 5 {
 						arms++
 					} else {
@@ -155,9 +155,9 @@ func (ctx *CmdContext) GiveCP(CP int64, notif bool) *discordgo.MessageEmbed {
 					}
 				}
 
-				//1% chance
+				// 10% chance
 				rng = rand.Float64() * 100
-				if rng < 1 {
+				if rng < 10 {
 					backpacks++
 				}
 			}

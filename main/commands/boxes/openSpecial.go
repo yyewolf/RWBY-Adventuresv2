@@ -48,8 +48,13 @@ func GiveChar(ctx *discord.CmdContext, b *BoxFilter, Loot *chars.CharacterStruct
 	for i := 0; float64(i) < rdm; i++ {
 		if float64(i+1) > rdm {
 			Rarity = i
-			return
+			break
 		}
+	}
+	if Rarity <= 0 {
+		Rarity = 0
+	} else if Rarity >= 5 {
+		Rarity = 5
 	}
 
 	// Level finder
@@ -109,8 +114,13 @@ func GiveGrimm(ctx *discord.CmdContext, b *BoxFilter, Loot *grimms.GrimmStruct) 
 	for i := 0; float64(i) < rdm; i++ {
 		if float64(i+1) > rdm {
 			Rarity = i
-			return
+			break
 		}
+	}
+	if Rarity <= 0 {
+		Rarity = 0
+	} else if Rarity >= 5 {
+		Rarity = 5
 	}
 
 	// Level finder
@@ -158,7 +168,7 @@ func OpenSpecial(ctx *discord.CmdContext, index int) {
 		Box:            "Special Box",
 		ValStd:         15,
 		ValMean:        58,
-		RarityRate:     1.125,
+		RarityRate:     1.175,
 	}
 
 	Box := ctx.Player.SpecialBoxes[index]
@@ -294,25 +304,18 @@ func HandleSpecialMenu(ctx *discord.CmdContext) {
 	case "next":
 		data.Page++
 		OpenSpecialCmd(ctx)
-		break
 	case "1":
 		OpenSpecial(ctx, 1*data.Page-1)
-		break
 	case "2":
 		OpenSpecial(ctx, 2*data.Page-1)
-		break
 	case "3":
 		OpenSpecial(ctx, 3*data.Page-1)
-		break
 	case "4":
 		OpenSpecial(ctx, 4*data.Page-1)
-		break
 	case "5":
 		OpenSpecial(ctx, 5*data.Page-1)
-		break
 	case "prev":
 		OpenSpecialCmd(ctx)
-		break
 	default:
 		return
 	}

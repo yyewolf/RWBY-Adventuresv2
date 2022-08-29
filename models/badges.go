@@ -7,7 +7,7 @@ type Badges struct {
 	Name        string             `gorm:"column:name;not null"`
 	Emoji       string             `gorm:"column:emoji;not null"`
 	Description string             `gorm:"column:description;not null"`
-	Check       func(*Player) bool `gorm:"-"`
+	Check       func(*Player) bool `gorm:"-" json:"-"`
 }
 
 func (b *Badges) Save() {

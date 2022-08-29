@@ -20,7 +20,7 @@ func OpenLimited(ctx *discord.CmdContext) {
 		Box:            "Limited Box",
 		ValStd:         15,
 		ValMean:        58,
-		RarityRate:     1,
+		RarityRate:     1.1,
 	}
 	if ctx.Player.LimitedBoxes[0].Type == models.CharType {
 		if OpenChar(ctx, b) {

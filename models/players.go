@@ -117,17 +117,53 @@ func GetPlayer(id string) *Player {
 	if p.Grimms == nil {
 		p.Grimms = make([]*Grimm, 0)
 	}
-	if p.SelectedChar == nil {
-		p.SelectedChar = &Character{}
+	if p.Status == nil {
+		p.Status = &PlayerStatus{
+			DiscordID: id,
+		}
+		p.Status.Save()
 	}
-	if p.SelectedGrimm == nil {
-		p.SelectedGrimm = &Grimm{}
+	if p.Stats == nil {
+		p.Stats = &PlayerStats{
+			DiscordID: id,
+		}
+		p.Stats.Save()
 	}
-	if p.CharInMission == nil {
-		p.CharInMission = &Character{}
+	if p.Settings == nil {
+		p.Settings = &PlayerSettings{
+			DiscordID: id,
+		}
+		p.Settings.Save()
 	}
-	if p.GrimmInHunt == nil {
-		p.GrimmInHunt = &Grimm{}
+	if p.Missions == nil {
+		p.Missions = &PlayerMission{
+			DiscordID: id,
+		}
+		p.Missions.Save()
+	}
+	if p.Shop == nil {
+		p.Shop = &PlayerShop{
+			DiscordID: id,
+		}
+		p.Shop.Save()
+	}
+	if p.LastBoxes == nil {
+		p.LastBoxes = &PlayerLootTime{
+			DiscordID: id,
+		}
+		p.LastBoxes.Save()
+	}
+	if p.Gamble == nil {
+		p.Gamble = &PlayerGamble{
+			DiscordID: id,
+		}
+		p.Gamble.Save()
+	}
+	if p.Boxes == nil {
+		p.Boxes = &PlayerBoxes{
+			DiscordID: id,
+		}
+		p.Boxes.Save()
 	}
 
 	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.Characters, "user_id = ? and not in_mission", p.DiscordID)
@@ -138,19 +174,12 @@ func GetPlayer(id string) *Player {
 		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedChar, "user_id = ? and \"characters\".id = ?", p.DiscordID, p.SelectedID)
 		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedGrimm, "user_id = ? and \"grimms\".id = ?", p.DiscordID, p.SelectedID)
 	}
-	if p.Stats == nil {
-		p.Stats = &PlayerStats{
-			DiscordID: id,
-		}
-		p.Stats.Save()
-	}
 
 	if p.SelectedChar == nil && p.SelectedGrimm == nil {
 		if len(p.Characters) != 0 {
 			p.SelectedID = p.Characters[0].CharID
 			p.SelectedType = CharType
-		}
-		if len(p.Grimms) != 0 {
+		} else if len(p.Grimms) != 0 {
 			p.SelectedID = p.Grimms[0].GrimmID
 			p.SelectedType = GrimmType
 		}

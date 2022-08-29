@@ -17,6 +17,12 @@ var TemporaryCommand = &discord.Command{
 			Call:        createArena,
 		},
 		{
+			Name:        "debug",
+			Description: "Debugging commands.",
+			Menu:        discord.GeneralMenu,
+			Call:        Debug,
+		},
+		{
 			Name:        "addchar",
 			Description: "Adds a character to your inventory.",
 			Aliases:     discord.CmdAlias{"ac"},

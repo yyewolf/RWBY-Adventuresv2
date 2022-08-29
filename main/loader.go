@@ -12,6 +12,7 @@ import (
 	commands_missions "rwby-adventures/main/commands/missions"
 	commands_roleplay "rwby-adventures/main/commands/roleplay"
 	commands_settings "rwby-adventures/main/commands/settings"
+	commands_shop "rwby-adventures/main/commands/shop"
 	commands_temporary "rwby-adventures/main/commands/temporary"
 	commands_trade "rwby-adventures/main/commands/trade"
 	"rwby-adventures/main/discord"
@@ -48,6 +49,7 @@ func StartDiscord() {
 	discord.AddCmd(commands_market.MarketCommand)
 	discord.AddCmd(commands_duel.DuelCommand)
 	discord.AddCmd(commands_badges.BadgesCommand)
+	discord.AddCmd(commands_shop.ShopCommand)
 
 	discord.MakeEmbed()
 

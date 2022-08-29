@@ -109,6 +109,11 @@ func OpenChar(ctx *discord.CmdContext, b *BoxFilter) (success bool) {
 			break
 		}
 	}
+	if Rarity <= 0 {
+		Rarity = 0
+	} else if Rarity >= 5 {
+		Rarity = 5
+	}
 
 	// Level finder
 	Rate := 0.4
@@ -188,6 +193,11 @@ func OpenGrimm(ctx *discord.CmdContext, b *BoxFilter) (success bool) {
 			Rarity = i
 			break
 		}
+	}
+	if Rarity <= 0 {
+		Rarity = 0
+	} else if Rarity >= 5 {
+		Rarity = 5
 	}
 
 	// Level finder

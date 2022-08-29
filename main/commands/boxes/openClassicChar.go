@@ -19,7 +19,7 @@ func OpenClassicChar(ctx *discord.CmdContext) {
 		Box:        "Classic Character Box",
 		ValStd:     15,
 		ValMean:    48.5,
-		RarityRate: 1.25,
+		RarityRate: 1.30,
 	}
 	if OpenChar(ctx, b) {
 		config.Database.Model(ctx.Player.Boxes).Update("classic_char_boxes", gorm.Expr("classic_char_boxes - ?", 1))

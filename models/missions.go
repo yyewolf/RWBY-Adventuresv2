@@ -1,5 +1,7 @@
 package models
 
+import "rwby-adventures/config"
+
 type PlayerMission struct {
 	DiscordID string `gorm:"primary_key;column:discord_id"`
 
@@ -14,4 +16,8 @@ type PlayerMission struct {
 	IsInHunt    bool `gorm:"column:hunt_in;not null"`
 	HuntType    int  `gorm:"column:hunt_type;not null"`
 	HuntMsgLeft int  `gorm:"column:hunt_msgleft;not null"`
+}
+
+func (p *PlayerMission) Save() {
+	config.Database.Save(p)
 }
