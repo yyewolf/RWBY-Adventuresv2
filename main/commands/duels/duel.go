@@ -12,12 +12,12 @@ import (
 )
 
 func duelAttack(ctx *discord.CmdContext) {
-	defer func() {
-		if err := recover(); err != nil {
-			// Avoid crashes ?
-			fmt.Println(err)
-		}
-	}()
+	// defer func() {
+	// 	if err := recover(); err != nil {
+	// 		// Avoid crashes ?
+	// 		fmt.Println("attack :", err)
+	// 	}
+	// }()
 
 	d := ctx.Menu.Data.(*BattleStruct)
 
@@ -58,12 +58,12 @@ func duelAttack(ctx *discord.CmdContext) {
 }
 
 func (d *BattleStruct) UseSemblance(ctx *discord.CmdContext) {
-	defer func() {
-		if r := recover(); r != nil {
-			// Avoid crashes ?
-			fmt.Println(r)
-		}
-	}()
+	// defer func() {
+	// 	if r := recover(); r != nil {
+	// 		// Avoid crashes ?
+	// 		fmt.Println(r)
+	// 	}
+	// }()
 
 	pIndex := d.PlayersID[ctx.Author.ID]
 	if d.Chars[pIndex].priority != 0 {
@@ -183,7 +183,8 @@ func (d *BattleStruct) battleNextTurn(ctx *discord.CmdContext) {
 		LatestEvent.Value += "This was the last turn, congrats !"
 	}
 
-	d.Original.Reply(discord.ReplyParams{
+	ctx.IsInteraction = false
+	ctx.Reply(discord.ReplyParams{
 		Content: &discordgo.MessageEmbed{
 			Title:       p1.User.Username + " VS " + p2.User.Username,
 			Description: "Turn : " + strconv.Itoa(d.TurnNumber),
@@ -205,8 +206,17 @@ func (d *BattleStruct) battleNextTurn(ctx *discord.CmdContext) {
 			},
 			Color: config.Botcolor,
 		},
-		Edit: true,
+		ID:        d.BattleMessage.ID,
+		ChannelID: d.BattleMessage.ChannelID,
+		Edit:      true,
 	})
+
+	discord.ActiveMenus.Set(ctx.ID, &discord.Menus{
+		MenuID:        d.Original.ID,
+		SourceContext: ctx,
+		Call:          duelAttack,
+		Data:          d,
+	}, 0)
 
 	if d.Finished {
 		d.End(ctx)

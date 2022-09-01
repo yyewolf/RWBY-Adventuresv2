@@ -21,9 +21,10 @@ var ShopCommand = &discord.Command{
 			Call:        Buy,
 			Args: []discord.Arg{
 				{
-					Name: "item",
-					Type: discordgo.ApplicationCommandOptionInteger,
-					Size: 1,
+					Name:        "item",
+					Description: "The item to buy.",
+					Type:        discordgo.ApplicationCommandOptionInteger,
+					Size:        1,
 					Choices: []*discord.Choice{
 						{
 							Name:  "XP Boost",

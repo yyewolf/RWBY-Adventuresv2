@@ -17,6 +17,12 @@ var TemporaryCommand = &discord.Command{
 			Call:        createArena,
 		},
 		{
+			Name:        "addliens",
+			Description: "Add liens.",
+			Menu:        discord.GeneralMenu,
+			Call:        Addliens,
+		},
+		{
 			Name:        "debug",
 			Description: "Debugging commands.",
 			Menu:        discord.GeneralMenu,

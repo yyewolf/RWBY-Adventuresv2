@@ -27,7 +27,12 @@ func ArenaConnect(client *gosf.Client, request *gosf.Request) *gosf.Message {
 		LastClick: time.Now(),
 	}
 	//fmt.Println("[WS] Arena connected!")
-	return gosf.NewSuccessMessage()
+	msg := gosf.NewSuccessMessage()
+	msg.Body = map[string]interface{}{
+		"username": d.User.Name,
+		"arena":    d.Arena,
+	}
+	return msg
 }
 
 func ArenaHit(client *gosf.Client, request *gosf.Request) *gosf.Message {

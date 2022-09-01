@@ -40,9 +40,11 @@ RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o market
 WORKDIR /app/topgg
 RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o topgg
 
+WORKDIR /app/gambles
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o gambles
+
 WORKDIR /app/main
 RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o main
-
 
 
 ### FINAL IMAGE
@@ -72,6 +74,9 @@ RUN chmod +x /app/market
 
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/topgg/topgg /app/topgg
 RUN chmod +x /app/topgg
+
+COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/gambles/gambles /app/gambles
+RUN chmod +x /app/gambles
 
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/main/main /app/main
 RUN chmod +x /app/main

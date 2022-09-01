@@ -49,13 +49,13 @@ func Shop(ctx *discord.CmdContext) {
 				Inline: true,
 			},
 			{
-				Name:   "Rare Grimm box (N°7)",
-				Value:  "1 Rare grimm box.\nPrice : 10 Grimm Boxes",
+				Name:   "Rare loot box (N°7)",
+				Value:  "1 Rare loot box.\nPrice : 10 Loot Boxes",
 				Inline: true,
 			},
 			{
-				Name:   "Rare loot box (N°8)",
-				Value:  "1 Rare loot box.\nPrice : 10 Loot Boxes",
+				Name:   "Rare Grimm box (N°8)",
+				Value:  "1 Rare grimm box.\nPrice : 10 Grimm Boxes",
 				Inline: true,
 			},
 			{

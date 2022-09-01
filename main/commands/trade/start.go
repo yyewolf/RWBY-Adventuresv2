@@ -93,15 +93,14 @@ func StartTrade(ctx *discord.CmdContext) {
 		return
 	}
 	ctx.Reply(discord.ReplyParams{
-		Content:   "Click this to continue !",
-		Ephemeral: true,
+		Content: "Click this to continue !",
 		Components: []discordgo.MessageComponent{
 			discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{
 					discordgo.Button{
 						Label: "Here.",
 						Style: discordgo.LinkButton,
-						URL:   fmt.Sprintf("http://%s%s/t/%s", config.TradeHost, config.TradePort, TargetID),
+						URL:   fmt.Sprintf("%st/%s", config.TradeHost, TargetID),
 					},
 				},
 			},

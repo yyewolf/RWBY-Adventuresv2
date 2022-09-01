@@ -221,6 +221,23 @@ func (p *Player) AddBadge(b *Badges) {
 	bp.Save()
 }
 
+func (p *Player) AddBadgeName(name string) {
+	bp := &PlayerBadges{
+		DiscordID: p.DiscordID,
+	}
+
+	for _, b := range DefaultBadges {
+		if b.Name == name {
+			bp.BadgeID = b.BadgeID
+			bp.Badge = b
+		}
+	}
+
+	p.Badges = append(p.Badges, bp)
+
+	bp.Save()
+}
+
 func (p *Player) CanDropLootBox() (canHe bool, reset bool) {
 	lastTime := time.Unix(p.LastBoxes.Time, 0)
 	if p.LastBoxes.Amount < p.Maxlootbox {
@@ -235,18 +252,15 @@ func (p *Player) CanDropLootBox() (canHe bool, reset bool) {
 	return
 }
 
-func (p *Player) CanGamble() (canHe, reset bool) {
-	lastTime := time.Unix(p.Gamble.Time, 0)
+func (p *Player) CanGamble() bool {
 	if p.Gamble.Amount < 3 {
-		canHe = true
-		reset = false
-		return
-	} else if time.Since(lastTime).Hours() > 24 && p.Gamble.Amount >= 3 {
-		canHe = true
-		reset = true
-		return
+		return true
 	}
-	return
+	if p.GambleCooldown() < 0 && p.Gamble.Amount >= 3 {
+		p.Gamble.Amount = 0
+		return true
+	}
+	return false
 }
 
 func (p *Player) CanDungeon() bool {
@@ -449,6 +463,11 @@ func (p *Player) GiveCP(CP int64) (levelUp bool) {
 
 func (p *Player) DungeonCooldown() time.Duration {
 	t := p.Status.LastDungeon + int64(config.DungeonCooldown)
+	return time.Until(time.Unix(t, 0))
+}
+
+func (p *Player) GambleCooldown() time.Duration {
+	t := p.Gamble.Time + int64(config.GambleCooldown)
 	return time.Until(time.Unix(t, 0))
 }
 

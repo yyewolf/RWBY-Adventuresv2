@@ -12,6 +12,8 @@ var dbbase = os.Getenv("DB_BASE")
 var dbpswd = os.Getenv("DB_PASS")
 var dbport = os.Getenv("DB_PORT")
 
+var CookieKey = []byte(os.Getenv("COO_KEY"))
+
 var SupportLink = os.Getenv("SUPPORT_LINK")
 var Botcolor = getEnvInt("BOT_COLOR")
 

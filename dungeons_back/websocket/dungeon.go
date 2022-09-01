@@ -131,12 +131,18 @@ func DungeonMove(client *gosf.Client, request *gosf.Request) *gosf.Message {
 }
 
 func AmbrosiusChoice(client *gosf.Client, request *gosf.Request) *gosf.Message {
-	data, found := DungeonCache.Get("test")
+	token, found := GetString(request, "token")
 	if !found {
 		return gosf.NewFailureMessage("f")
 	}
-	dungeon := data.(*DungeonStruct)
-	if dungeon.Ended {
+
+	data, found := Tokens.Get(token)
+	if !found {
+		client.Disconnect()
+		return gosf.NewFailureMessage("f")
+	}
+	d := data.(*DungeonUserData)
+	if d.Dungeon.Ended {
 		return gosf.NewFailureMessage("f")
 	}
 
@@ -145,5 +151,5 @@ func AmbrosiusChoice(client *gosf.Client, request *gosf.Request) *gosf.Message {
 		return gosf.NewFailureMessage("no choice found")
 	}
 
-	return dungeon.Game.MakeChoice(choice)
+	return d.Dungeon.Game.MakeChoice(choice)
 }

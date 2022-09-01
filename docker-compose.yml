@@ -4,14 +4,14 @@ services:
     image: postgres
     network_mode: host
     env_file:
-      - prod.env
+      - dev.env
     restart: always
   arenas:
     image: rwbyadventures:latest
     network_mode: host
     entrypoint: /app/arenas
     env_file:
-      - prod.env
+      - dev.env
     restart: always
     depends_on:
       - database
@@ -21,7 +21,7 @@ services:
     entrypoint: /app/dungeons
     restart: always
     env_file:
-      - prod.env
+      - dev.env
     depends_on:
       - database
   market_back:
@@ -30,7 +30,7 @@ services:
     entrypoint: /app/market
     restart: always
     env_file:
-      - prod.env
+      - dev.env
     depends_on:
       - database
   market_frontend:
@@ -39,7 +39,7 @@ services:
     entrypoint: http-server /app/market_front/dist
     restart: always
     env_file:
-      - prod.env
+      - dev.env
     depends_on:
       - database
   topgg:
@@ -48,7 +48,16 @@ services:
     entrypoint: /app/topgg
     restart: always
     env_file:
-      - prod.env
+      - dev.env
+    depends_on:
+      - database
+  gambles:
+    image: rwbyadventures:latest
+    network_mode: host
+    entrypoint: /app/gambles
+    restart: always
+    env_file:
+      - dev.env
     depends_on:
       - database
   main:
@@ -57,6 +66,6 @@ services:
     entrypoint: /app/main
     restart: always
     env_file:
-      - prod.env
+      - dev.env
     depends_on:
       - database

@@ -240,7 +240,7 @@ function createPersona(perso) {
 
     span = document.createElement('span');
     span.setAttribute('class', 'align-middle');
-    span.innerText = `${perso.rarity} ${perso.name} (${perso.value}%)`;
+    span.innerText = `${perso.rarity} ${perso.name} (${perso.value.toFixed(2)}%)`;
 
     li.appendChild(img);
     li.appendChild(span);

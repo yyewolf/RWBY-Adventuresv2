@@ -56,7 +56,7 @@ func (ctx *CmdContext) GiveCharXP(char *models.Character, add int64, notif bool)
 	if ctx.Player.Shop.XPBoost && ctx.Player.Shop.XPBoostTime > 0 {
 		// ctx.Player.sendXPNotice(s)
 		ctx.Player.Shop.XPBoostTime--
-		config.Database.Save(ctx.Player.Shop)
+		ctx.Player.Shop.Save()
 	}
 	levelUp := char.GiveXP(add)
 	if levelUp && notif {
@@ -77,7 +77,7 @@ func (ctx *CmdContext) GiveCharXP(char *models.Character, add int64, notif bool)
 	}
 
 	//Adds XP to char
-	config.Database.Save(char)
+	char.Save()
 }
 
 func (ctx *CmdContext) GiveGrimmXP(grimm *models.Grimm, add int64, notif bool) {

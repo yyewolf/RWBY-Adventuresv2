@@ -61,13 +61,13 @@ func Me(ctx *discord.CmdContext) {
 	if !canLootBox {
 		resetStringBox = fmt.Sprintf("🕓 - `Loots` (%s)", TimeLeftString(p.LastBoxes.Time, 86400))
 	}
-	canGamble, _ := p.CanGamble()
+	canGamble := p.CanGamble()
 	if !canGamble {
-		resetStringGamble = fmt.Sprintf("🕓 - `Gamble` (%s)", TimeLeftString(p.Gamble.Time, 86400))
+		resetStringGamble = fmt.Sprintf("🕓 - `Gamble` (%s)", TimeLeftString(p.Gamble.Time, int64(config.GambleCooldown)))
 	}
 	canDungeon := p.CanDungeon()
 	if !canDungeon {
-		resetStringDungeon = fmt.Sprintf("🕓 - `Dungeon` (%s)", TimeLeftString(p.Status.LastDungeon, 18000)) //5*60*60
+		resetStringDungeon = fmt.Sprintf("🕓 - `Dungeon` (%s)", TimeLeftString(p.Status.LastDungeon, int64(config.DungeonCooldown))) //5*60*60
 	}
 	if p.Missions.IsInMission {
 		days := int(math.Ceil(float64(p.Missions.MissionMsgLeft) / 24))

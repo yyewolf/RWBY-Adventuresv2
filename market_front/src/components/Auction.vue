@@ -197,7 +197,7 @@ export default {
             }, 1000)
         },
         calcTime() {
-            let t = new Date(new Date(this.ends_at * 10000) - Date.now())
+            let t = new Date(new Date(this.ends_at * 1000) - Date.now())
             this.time = "Ends in " + t.getHours()*t.getDay() + "h " + t.getMinutes() + "m " + t.getSeconds() + "s"
             if (t < 0) {
                 this.time = "This auction is over."

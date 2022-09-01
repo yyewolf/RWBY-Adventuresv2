@@ -13,7 +13,6 @@ import (
 
 	"github.com/gorilla/pat"
 	"github.com/gorilla/sessions"
-	uuid "github.com/satori/go.uuid"
 	"github.com/yyewolf/goth"
 	"github.com/yyewolf/goth/gothic"
 	"github.com/yyewolf/goth/providers/discord"
@@ -24,12 +23,13 @@ var redirections = make(map[string]string)
 
 func startDungeonService() {
 
-	key := uuid.NewV5(uuid.NewV4(), "cookies").Bytes() // Replace with your SESSION_SECRET or similar
-	maxAge := 86400 * 30                               // 30 days
+	maxAge := 86400 * 30 // 30 days
 
-	store := sessions.NewCookieStore(key)
+	store := sessions.NewCookieStore(config.CookieKey)
 	store.MaxAge(maxAge)
 	store.Options.Domain = config.DungeonDomain
+	store.Options.Secure = true
+	store.Options.SameSite = http.SameSiteNoneMode
 	store.Options.Path = "/"
 
 	gothic.Store = store
@@ -43,7 +43,7 @@ func startDungeonService() {
 
 	mux.Get("/auth/{provider}/callback", func(res http.ResponseWriter, req *http.Request) {
 		goth.UseProviders(provider)
-		gothic.CompleteUserAuth(res, req)
+		UserLogged(res, req)
 		state := gothic.SetState(req)
 		redir, found := redirections[state]
 		if !found {
@@ -68,7 +68,34 @@ func startDungeonService() {
 			t, _ := template.New("foo").Parse(`<p>UserID: {{.UserID}}</p>`)
 			t.Execute(res, gothUser)
 		} else {
-			gothic.BeginAuthHandler(res, req)
+			providerName := "discord"
+
+			provider, err := goth.GetProvider(providerName)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			sess, err := provider.BeginAuth(gothic.SetState(req))
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			url, err := sess.GetAuthURL()
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			fmt.Println(sess)
+			err = gothic.StoreInSession(providerName, sess.Marshal(), req, res)
+
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			http.Redirect(res, req, url, http.StatusTemporaryRedirect)
 		}
 	})
 
@@ -114,7 +141,6 @@ func DungeonIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if u.UserID != dungeon.UserID {
-		fmt.Fprint(w, "not your dungeon")
 		return
 	}
 

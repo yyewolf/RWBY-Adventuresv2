@@ -30,16 +30,16 @@ type Player struct {
 }
 
 type Arena struct {
-	Players map[string]*Player
-	ID      string
+	Players map[string]*Player `json:"-"`
+	ID      string             `json:"-"`
 
-	Name      string
-	Img       string
-	MaxHealth int
-	CurHealth int
-	Channel   chan int
-	End       func(*Arena) string
-	Ticker    *time.Ticker
+	Name      string              `json:"title"`
+	Img       string              `json:"image"`
+	MaxHealth int                 `json:"-"`
+	CurHealth int                 `json:"-"`
+	Channel   chan int            `json:"-"`
+	End       func(*Arena) string `json:"-"`
+	Ticker    *time.Ticker        `json:"-"`
 }
 
 var Arenas *cache.Cache

@@ -19,17 +19,18 @@ import (
 	"github.com/yyewolf/goth/providers/discord"
 )
 
-var tradeProvider = discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("http://%s%s/auth/discord/callback", config.TradeHost, config.TradePort), discord.ScopeIdentify)
+var tradeProvider = discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("%sauth/discord/callback", config.TradeHost), discord.ScopeIdentify)
 var tradeRedirections = make(map[string]string)
 
 func startTradeService() {
 
-	key := uuid.NewV5(uuid.NewV4(), "cookies").Bytes() // Replace with your SESSION_SECRET or similar
-	maxAge := 86400 * 30                               // 30 days
+	maxAge := 86400 * 30 // 30 days
 
-	store := sessions.NewCookieStore(key)
+	store := sessions.NewCookieStore(config.CookieKey)
 	store.MaxAge(maxAge)
-	store.Options.Domain = config.TradeHost
+	store.Options.Domain = config.TradeDomain
+	store.Options.Secure = true
+	store.Options.SameSite = http.SameSiteNoneMode
 	store.Options.Path = "/"
 
 	gothic.Store = store

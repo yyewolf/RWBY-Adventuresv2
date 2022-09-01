@@ -272,7 +272,7 @@ func getBattleAtks(in interface{}) []*BattleAtks {
 
 func getBattlesStats(in interface{}) *BattleStats {
 	switch v := in.(type) {
-	case chars.CharacterStatsStruct:
+	case models.CharacterStats:
 		ob2 := &BattleStats{
 			PersonaID:   v.CharID,
 			Health:      v.Health,
@@ -282,7 +282,7 @@ func getBattlesStats(in interface{}) *BattleStats {
 			DodgeChance: v.DodgeChance,
 		}
 		return ob2
-	case grimms.GrimmStatsStruct:
+	case models.GrimmStat:
 		ob2 := &BattleStats{
 			PersonaID:   v.GrimmID,
 			Health:      v.Health,
@@ -330,6 +330,7 @@ func getBattlesSemblance(in interface{}) *BattleSemblance {
 			}, b, &v)
 		}
 		newPassive := func(a *BattleStats, b *BattleSemblance) {
+			fmt.Println(a)
 			v.Passive(&chars.CharacterStatsStruct{
 				CharID:      a.PersonaID,
 				Health:      a.Health,
@@ -413,7 +414,7 @@ func getBattlesSemblance(in interface{}) *BattleSemblance {
 func (s *BattleSemblance) callMain(stats *BattleStats) BattleSemblanceUsed {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println(r)
+			//
 		}
 	}()
 	r := s.Main(stats, s)
@@ -423,7 +424,7 @@ func (s *BattleSemblance) callMain(stats *BattleStats) BattleSemblanceUsed {
 func (s *BattleSemblance) callAttacked(stats *BattleStats, damageDealt int) {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println(r)
+			//
 		}
 	}()
 	s.Attacked(stats, damageDealt, s)
@@ -432,7 +433,7 @@ func (s *BattleSemblance) callAttacked(stats *BattleStats, damageDealt int) {
 func (s *BattleSemblance) callGotAttacked(stats *BattleStats, damageReceived int) {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println(r)
+			//
 		}
 	}()
 	s.GotAttacked(stats, damageReceived, s)
@@ -441,7 +442,7 @@ func (s *BattleSemblance) callGotAttacked(stats *BattleStats, damageReceived int
 func (s *BattleSemblance) callPassive(stats *BattleStats) {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println(r)
+			//
 		}
 	}()
 	s.Passive(stats, s)

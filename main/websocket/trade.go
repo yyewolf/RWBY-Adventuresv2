@@ -89,6 +89,7 @@ func TradeInfos(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	switch content.Action {
 	case "grimms":
 		var list []Persona
+		fmt.Println("grimms: ", p.Grimms)
 		for _, grimm := range p.Grimms {
 			list = append(list, Persona{
 				ID:       grimm.GrimmID,

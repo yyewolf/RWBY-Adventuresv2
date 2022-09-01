@@ -18,7 +18,7 @@ func StartWeb() {
 	templates, _ = template.ParseFS(static.WebFS, "*.html")
 
 	goth.UseProviders(
-		discord.New("375700234120200194", "P6KOz6Uvl8PWhY-hfx5IXo_posPDBu7D", fmt.Sprintf("http://%s%s/auth/discord/callback", config.TradeHost, config.TradePort), discord.ScopeIdentify),
+		discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("%sauth/discord/callback", config.TradeHost), discord.ScopeIdentify),
 	)
 
 	startTradeService()

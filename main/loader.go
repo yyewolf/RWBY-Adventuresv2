@@ -6,6 +6,7 @@ import (
 	commands_boxes "rwby-adventures/main/commands/boxes"
 	commands_duel "rwby-adventures/main/commands/duels"
 	commands_dungeon "rwby-adventures/main/commands/dungeons"
+	commands_gamble "rwby-adventures/main/commands/gambles"
 	commands_inventory "rwby-adventures/main/commands/inventory"
 	commands_market "rwby-adventures/main/commands/market"
 	commands_misc "rwby-adventures/main/commands/misc"
@@ -50,6 +51,7 @@ func StartDiscord() {
 	discord.AddCmd(commands_duel.DuelCommand)
 	discord.AddCmd(commands_badges.BadgesCommand)
 	discord.AddCmd(commands_shop.ShopCommand)
+	discord.AddCmd(commands_gamble.GambleCommand)
 
 	discord.MakeEmbed()
 

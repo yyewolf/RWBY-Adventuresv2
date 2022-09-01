@@ -74,7 +74,7 @@ func TrainCharacter(ctx *CmdContext) {
 	XP := ctx.Player.CalcSelectedXP(3, ctx.Player.Shop.XPBoost)
 	ctx.GiveSelectionXP(XP, true)
 
-	CP := ctx.Player.CalcCP(0.05)
+	CP := ctx.Player.CalcCP(0) / 2
 	ctx.GiveCP(CP, true)
 }
 
@@ -117,21 +117,21 @@ func DropBoxes(ctx *CmdContext) {
 	if isClassic {
 		if isRare {
 			resp.Description = strings.ReplaceAll(resp.Description, "{{TYPE}}", "Rare Char Box")
-			resp.Description = strings.ReplaceAll(resp.Description, "{{CMD}}", "rarechar")
+			resp.Description = strings.ReplaceAll(resp.Description, "{{CMD}}", "char rare")
 			ctx.Player.Boxes.RareBoxes++
 		} else {
 			resp.Description = strings.ReplaceAll(resp.Description, "{{TYPE}}", "Normal Char Box")
-			resp.Description = strings.ReplaceAll(resp.Description, "{{CMD}}", "normalchar")
+			resp.Description = strings.ReplaceAll(resp.Description, "{{CMD}}", "char normal")
 			ctx.Player.Boxes.Boxes++
 		}
 	} else {
 		if isRare {
 			resp.Description = strings.ReplaceAll(resp.Description, "{{TYPE}}", "Rare Grimm Box")
-			resp.Description = strings.ReplaceAll(resp.Description, "{{CMD}}", "raregrimm")
+			resp.Description = strings.ReplaceAll(resp.Description, "{{CMD}}", "grimm rare")
 			ctx.Player.Boxes.RareGrimmBoxes++
 		} else {
 			resp.Description = strings.ReplaceAll(resp.Description, "{{TYPE}}", "Normal Grimm Box")
-			resp.Description = strings.ReplaceAll(resp.Description, "{{CMD}}", "normalgrimm")
+			resp.Description = strings.ReplaceAll(resp.Description, "{{CMD}}", "grimm normal")
 			ctx.Player.Boxes.GrimmBoxes++
 		}
 	}

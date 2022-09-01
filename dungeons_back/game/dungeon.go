@@ -93,12 +93,14 @@ func (d *Dungeon) MovePlayer(direction int) (end bool) {
 	d.Position.X += dx[direction]
 
 	if newCell.Type == tileEnnemy {
-		newCell.Amount -= 1
-		d.Health -= newCell.Damages
-		if d.Health <= 0 {
-			d.Health = 0
-			d.Win = false
-			return true
+		if newCell.Amount > 0 {
+			newCell.Amount -= 1
+			d.Health -= newCell.Damages
+			if d.Health <= 0 {
+				d.Health = 0
+				d.Win = false
+				return true
+			}
 		}
 	}
 

@@ -36,9 +36,9 @@ func Buy(ctx *discord.CmdContext) {
 	case 6:
 		embed.Title, err = buyRareGrimmbox(ctx.Player)
 	case 7:
-		embed.Title, err = exchangeRareGrimmbox(ctx.Player)
-	case 8:
 		embed.Title, err = exchangeRareLootbox(ctx.Player)
+	case 8:
+		embed.Title, err = exchangeRareGrimmbox(ctx.Player)
 	case 9:
 		embed.Title, err = buyBackpack(ctx.Player)
 	default:

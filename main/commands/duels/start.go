@@ -36,8 +36,10 @@ func DuelCreate(ctx *discord.CmdContext) {
 
 	var persona *BattlePersona
 	if ctx.Player.SelectedType == models.CharType {
+		ctx.Player.SelectedChar.CalcStats()
 		persona = CharToPersona(ctx.Player.SelectedChar)
 	} else {
+		ctx.Player.SelectedGrimm.CalcStats()
 		persona = GrimmToPersona(ctx.Player.SelectedGrimm)
 	}
 
@@ -121,8 +123,10 @@ func AcceptDuel(ctx *discord.CmdContext) {
 
 	var persona *BattlePersona
 	if ctx.Player.SelectedChar.Valid() {
+		ctx.Player.SelectedChar.CalcStats()
 		persona = CharToPersona(ctx.Player.SelectedChar)
 	} else {
+		ctx.Player.SelectedGrimm.CalcStats()
 		persona = GrimmToPersona(ctx.Player.SelectedGrimm)
 	}
 	battle.Players[1].User = ctx.Author
@@ -137,7 +141,7 @@ func AcceptDuel(ctx *discord.CmdContext) {
 
 	ctx.IsInteraction = false
 	ctx.Reply(discord.ReplyParams{
-		Content: duelEmbed(battle, 0, 1),
+		Content: duelEmbed(battle, 1, 0),
 		ID:      ctx.Author.ID,
 		DM:      true,
 	})
@@ -155,7 +159,7 @@ func AcceptDuel(ctx *discord.CmdContext) {
 		Data:          battle,
 	}, 0)
 
-	ctx.Reply(discord.ReplyParams{
+	msg, _ := ctx.Reply(discord.ReplyParams{
 		Content: &discordgo.MessageSend{
 			Files: []*discordgo.File{
 				{
@@ -194,6 +198,7 @@ func AcceptDuel(ctx *discord.CmdContext) {
 		},
 		FollowUp: true,
 	})
+	battle.BattleMessage = msg
 }
 
 func AcceptComponent(menuID string) []discordgo.MessageComponent {
