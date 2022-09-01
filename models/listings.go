@@ -71,11 +71,26 @@ func (p *Player) FillPlayerMarket() {
 		config.Database.Joins("Stats").Find(&m.Listings[i].Char, "user_id = ?", m.Listings[i].ID)
 		config.Database.Joins("Stats").Find(&m.Listings[i].Grimm, "user_id = ?", m.Listings[i].ID)
 	}
+
+	// Auction created by the player
 	config.Database.Find(&m.Auctions, "seller_id = ?", m.DiscordID)
 	for i := range m.Auctions {
 		config.Database.Joins("Stats").Find(&m.Auctions[i].Char, "user_id = ?", m.Auctions[i].ID)
-		config.Database.Joins("Stats").Find(&m.Auctions[i].Char, "user_id = ?", m.Auctions[i].ID)
+		config.Database.Joins("Stats").Find(&m.Auctions[i].Grimm, "user_id = ?", m.Auctions[i].ID)
 		config.Database.Find(&m.Auctions[i].Bidders, "auction_id = ?", m.Auctions[i].ID)
+	}
+
+	// Auction where player bids on
+	var bids []*AuctionBidders
+	config.Database.Find(&bids, "user_id = ?", m.DiscordID)
+	for _, b := range bids {
+		a, err := GetAuction(b.AuctionID)
+		if err != nil {
+			continue
+		}
+		if a.Bidders[0].UserID == m.DiscordID {
+			m.Auctions = append(m.Auctions, a)
+		}
 	}
 
 	p.Market = m

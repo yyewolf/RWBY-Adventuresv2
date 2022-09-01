@@ -128,7 +128,7 @@ func (g *Grimm) RarityString() (x string) {
 }
 
 func (g *Grimm) FullString() string {
-	return fmt.Sprintf("`%s level %d (%d/%dXP) %s (%.2f%%)`", g.RarityString(), g.Level, g.XP, g.XPCap, g.Name, g.Value)
+	return fmt.Sprintf("%s level %d (%d/%dXP) %s (%.2f%%)", g.RarityString(), g.Level, g.XP, g.XPCap, g.Name, g.Value)
 }
 
 func (g *Grimm) MiniString() string {

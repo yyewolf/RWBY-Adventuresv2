@@ -15,6 +15,36 @@ var MarketCommand = &discord.Command{
 			Description: "All listings commands.",
 			SubCommands: []*discord.Command{
 				{
+					Name:        "view",
+					Description: "View all listings.",
+					Menu:        discord.MarketMenu,
+					Call:        ViewListings,
+					Args: []discord.Arg{
+						{
+							Name:        "page",
+							Description: "Page.",
+							Size:        1,
+							Required:    false,
+							Type:        discordgo.ApplicationCommandOptionInteger,
+						},
+					},
+				},
+				{
+					Name:        "remove",
+					Description: "To remove listings.",
+					Menu:        discord.MarketMenu,
+					Call:        RemoveListing,
+					Args: []discord.Arg{
+						{
+							Name:        "id",
+							Description: "ID of the listing.",
+							Size:        1,
+							Required:    true,
+							Type:        discordgo.ApplicationCommandOptionString,
+						},
+					},
+				},
+				{
 					Name:        "create",
 					Description: "Create a listing.",
 					Menu:        discord.MarketMenu,
@@ -49,6 +79,21 @@ var MarketCommand = &discord.Command{
 			Name:        "auctions",
 			Description: "All auctions commands.",
 			SubCommands: []*discord.Command{
+				{
+					Name:        "view",
+					Description: "View all auctions.",
+					Menu:        discord.MarketMenu,
+					Call:        ViewAuctions,
+					Args: []discord.Arg{
+						{
+							Name:        "page",
+							Description: "Page.",
+							Size:        1,
+							Required:    false,
+							Type:        discordgo.ApplicationCommandOptionInteger,
+						},
+					},
+				},
 				{
 					Name:        "create",
 					Description: "Create an auction.",

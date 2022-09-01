@@ -20,7 +20,7 @@ func Balance(ctx *discord.CmdContext) {
 	biddedMoney := ctx.Player.Balance - ctx.Player.TotalBalance()
 	embed := &discordgo.MessageEmbed{
 		Title:       fmt.Sprintf("%s's balance", ctx.Author.Username),
-		Description: fmt.Sprintf("You currently have : %dⱠ (Lien).", ctx.Player.Balance),
+		Description: fmt.Sprintf("You currently have : %dⱠ (Lien).\nYou also have **%d** Arms and **%d** Minions.", ctx.Player.Balance, ctx.Player.Arms, ctx.Player.Minions),
 		Color:       config.Botcolor,
 		Thumbnail: &discordgo.MessageEmbedThumbnail{
 			URL: ctx.Author.AvatarURL("512"),

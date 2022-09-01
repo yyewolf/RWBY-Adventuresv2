@@ -129,10 +129,8 @@ func Select(ctx *discord.CmdContext, data *SelectData) {
 	config.Database.Save(ctx.Player)
 
 	ctx.Reply(discord.ReplyParams{
-		Content: &discordgo.MessageSend{
-			Content: reply,
-		},
-		FollowUp:  data.FollowUp,
+		Content:   reply,
 		Ephemeral: true,
+		FollowUp:  data.FollowUp,
 	})
 }

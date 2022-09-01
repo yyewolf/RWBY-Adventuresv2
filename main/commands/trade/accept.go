@@ -30,8 +30,8 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		return
 	}
 
-	player := models.GetPlayer(trade.SenderID)
-	target := ctx.Player
+	sender := models.GetPlayer(trade.SenderID)
+	receiver := ctx.Player
 
 	SenderDM, _ := discord.Session.UserChannelCreate(trade.SenderID)
 
@@ -56,7 +56,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		return
 	}
 	// We check that the player has what he claims to
-	if !player.VerifyChars(trade.UserSends.Characters) || !player.VerifyGrimms(trade.UserSends.Grimms) {
+	if !sender.VerifyChars(trade.UserSends.Characters) || !sender.VerifyGrimms(trade.UserSends.Grimms) {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s there is an issue with their personas.", errStr),
 			Ephemeral: true,
@@ -67,7 +67,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 	}
 
 	// We check that the target has what the player claims he has
-	if !target.VerifyChars(trade.TargetSends.Characters) || !target.VerifyGrimms(trade.TargetSends.Grimms) {
+	if !receiver.VerifyChars(trade.TargetSends.Characters) || !receiver.VerifyGrimms(trade.TargetSends.Grimms) {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s there is an issue with your personas.", errStr),
 			Ephemeral: true,
@@ -77,7 +77,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		return
 	}
 
-	if player.TotalBalance() < int64(trade.UserSends.Money) {
+	if sender.TotalBalance() < int64(trade.UserSends.Money) {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s they don't have enough balance.", errStr),
 			Ephemeral: true,
@@ -86,7 +86,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		trade.Delete()
 		return
 	}
-	if target.TotalBalance() < int64(trade.TargetSends.Money) {
+	if receiver.TotalBalance() < int64(trade.TargetSends.Money) {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s you don't have enough balance.", errStr),
 			Ephemeral: true,
@@ -97,19 +97,19 @@ func AcceptTrade(ctx *discord.CmdContext) {
 	}
 
 	PlayerResult := &models.TradeContent{
-		Money:          int64(player.TotalBalance()) + trade.TargetSends.Money - trade.UserSends.Money,
-		Boxes:          int64(player.Boxes.Boxes) + trade.TargetSends.Boxes - trade.UserSends.Boxes,
-		RareBoxes:      int64(player.Boxes.RareBoxes) + trade.TargetSends.RareBoxes - trade.UserSends.RareBoxes,
-		GrimmBoxes:     int64(player.Boxes.GrimmBoxes) + trade.TargetSends.GrimmBoxes - trade.UserSends.GrimmBoxes,
-		RareGrimmBoxes: int64(player.Boxes.RareGrimmBoxes) + trade.TargetSends.RareGrimmBoxes - trade.UserSends.RareGrimmBoxes,
+		Money:          int64(sender.TotalBalance()) + trade.TargetSends.Money - trade.UserSends.Money,
+		Boxes:          int64(sender.Boxes.Boxes) + trade.TargetSends.Boxes - trade.UserSends.Boxes,
+		RareBoxes:      int64(sender.Boxes.RareBoxes) + trade.TargetSends.RareBoxes - trade.UserSends.RareBoxes,
+		GrimmBoxes:     int64(sender.Boxes.GrimmBoxes) + trade.TargetSends.GrimmBoxes - trade.UserSends.GrimmBoxes,
+		RareGrimmBoxes: int64(sender.Boxes.RareGrimmBoxes) + trade.TargetSends.RareGrimmBoxes - trade.UserSends.RareGrimmBoxes,
 	}
 
 	TargetResult := &models.TradeContent{
-		Money:          int64(target.TotalBalance()) - trade.TargetSends.Money + trade.UserSends.Money,
-		Boxes:          int64(target.Boxes.Boxes) - trade.TargetSends.Boxes + trade.UserSends.Boxes,
-		RareBoxes:      int64(target.Boxes.RareBoxes) - trade.TargetSends.RareBoxes + trade.UserSends.RareBoxes,
-		GrimmBoxes:     int64(target.Boxes.GrimmBoxes) - trade.TargetSends.GrimmBoxes + trade.UserSends.GrimmBoxes,
-		RareGrimmBoxes: int64(target.Boxes.RareGrimmBoxes) - trade.TargetSends.RareGrimmBoxes + trade.UserSends.RareGrimmBoxes,
+		Money:          int64(receiver.TotalBalance()) - trade.TargetSends.Money + trade.UserSends.Money,
+		Boxes:          int64(receiver.Boxes.Boxes) - trade.TargetSends.Boxes + trade.UserSends.Boxes,
+		RareBoxes:      int64(receiver.Boxes.RareBoxes) - trade.TargetSends.RareBoxes + trade.UserSends.RareBoxes,
+		GrimmBoxes:     int64(receiver.Boxes.GrimmBoxes) - trade.TargetSends.GrimmBoxes + trade.UserSends.GrimmBoxes,
+		RareGrimmBoxes: int64(receiver.Boxes.RareGrimmBoxes) - trade.TargetSends.RareGrimmBoxes + trade.UserSends.RareGrimmBoxes,
 	}
 
 	if PlayerResult.Boxes < 0 {
@@ -148,7 +148,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		trade.Delete()
 		return
 	}
-	if PlayerResult.Boxes+PlayerResult.RareBoxes > int64(player.MaxChar()) {
+	if PlayerResult.Boxes+PlayerResult.RareBoxes > int64(sender.MaxChar()) {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s they would receive too much boxes.", errStr),
 			Ephemeral: true,
@@ -157,7 +157,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		trade.Delete()
 		return
 	}
-	if PlayerResult.RareGrimmBoxes+PlayerResult.GrimmBoxes > int64(player.MaxChar()) {
+	if PlayerResult.RareGrimmBoxes+PlayerResult.GrimmBoxes > int64(sender.MaxChar()) {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s they would receive too much grimm boxes.", errStr),
 			Ephemeral: true,
@@ -203,7 +203,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		trade.Delete()
 		return
 	}
-	if TargetResult.Boxes+TargetResult.RareBoxes > int64(player.MaxChar()) {
+	if TargetResult.Boxes+TargetResult.RareBoxes > int64(sender.MaxChar()) {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s you would receive too much boxes.", errStr),
 			Ephemeral: true,
@@ -212,7 +212,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		trade.Delete()
 		return
 	}
-	if TargetResult.RareGrimmBoxes+TargetResult.GrimmBoxes > int64(player.MaxChar()) {
+	if TargetResult.RareGrimmBoxes+TargetResult.GrimmBoxes > int64(sender.MaxChar()) {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s you would receive too much grimm boxes.", errStr),
 			Ephemeral: true,
@@ -222,7 +222,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		return
 	}
 
-	if len(player.Characters)+len(trade.TargetSends.Characters)-len(trade.UserSends.Characters) > player.CharLimit {
+	if len(sender.Characters)+len(trade.TargetSends.Characters)-len(trade.UserSends.Characters) > sender.CharLimit {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s they would receive too much characters.", errStr),
 			Ephemeral: true,
@@ -231,7 +231,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		trade.Delete()
 		return
 	}
-	if len(player.Grimms)+len(trade.TargetSends.Grimms)-len(trade.UserSends.Grimms) > player.CharLimit {
+	if len(sender.Grimms)+len(trade.TargetSends.Grimms)-len(trade.UserSends.Grimms) > sender.CharLimit {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s they would receive too much grimms.", errStr),
 			Ephemeral: true,
@@ -240,7 +240,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		trade.Delete()
 		return
 	}
-	if len(player.Characters)+len(trade.TargetSends.Characters)-len(trade.UserSends.Characters) < 0 {
+	if len(sender.Characters)+len(trade.TargetSends.Characters)-len(trade.UserSends.Characters) < 0 {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s they would be left without any characters.", errStr),
 			Ephemeral: true,
@@ -249,7 +249,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		trade.Delete()
 		return
 	}
-	if len(player.Grimms)+len(trade.TargetSends.Grimms)-len(trade.UserSends.Grimms) < 0 {
+	if len(sender.Grimms)+len(trade.TargetSends.Grimms)-len(trade.UserSends.Grimms) < 0 {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s they would be left without any grimms.", errStr),
 			Ephemeral: true,
@@ -259,7 +259,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		return
 	}
 
-	if len(target.Characters)-len(trade.TargetSends.Characters)+len(trade.UserSends.Characters) > target.CharLimit {
+	if len(receiver.Characters)-len(trade.TargetSends.Characters)+len(trade.UserSends.Characters) > receiver.CharLimit {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s you would receive too much characters.", errStr),
 			Ephemeral: true,
@@ -268,7 +268,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		trade.Delete()
 		return
 	}
-	if len(target.Grimms)-len(trade.TargetSends.Grimms)+len(trade.UserSends.Grimms) > target.CharLimit {
+	if len(receiver.Grimms)-len(trade.TargetSends.Grimms)+len(trade.UserSends.Grimms) > receiver.CharLimit {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s you would receive too much grimms.", errStr),
 			Ephemeral: true,
@@ -277,7 +277,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		trade.Delete()
 		return
 	}
-	if len(target.Characters)-len(trade.TargetSends.Characters)+len(trade.UserSends.Characters) < 0 {
+	if len(receiver.Characters)-len(trade.TargetSends.Characters)+len(trade.UserSends.Characters) < 0 {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s you would be left without any characters.", errStr),
 			Ephemeral: true,
@@ -286,7 +286,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		trade.Delete()
 		return
 	}
-	if len(target.Grimms)-len(trade.TargetSends.Grimms)+len(trade.UserSends.Grimms) < 0 {
+	if len(receiver.Grimms)-len(trade.TargetSends.Grimms)+len(trade.UserSends.Grimms) < 0 {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s you would be left without any grimms.", errStr),
 			Ephemeral: true,
@@ -298,8 +298,8 @@ func AcceptTrade(ctx *discord.CmdContext) {
 
 	for _, CharID := range trade.UserSends.Characters {
 		// Switch selected if we need to (RUNS ONLY ONCE)
-		if CharID == player.SelectedID {
-			for _, char := range player.Characters {
+		if CharID == sender.SelectedID {
+			for _, char := range sender.Characters {
 				var nope = false
 				for _, nopeID := range trade.UserSends.Characters {
 					if char.CharID == nopeID {
@@ -307,14 +307,14 @@ func AcceptTrade(ctx *discord.CmdContext) {
 					}
 				}
 				if !nope {
-					player.SelectedID = char.CharID
+					sender.SelectedID = char.CharID
 					break
 				}
 			}
 		}
-		for _, char := range player.Characters {
+		for _, char := range sender.Characters {
 			if CharID == char.CharID {
-				char.UserID = target.DiscordID
+				char.UserID = receiver.DiscordID
 				config.Database.Save(&char)
 				break
 			}
@@ -323,8 +323,8 @@ func AcceptTrade(ctx *discord.CmdContext) {
 
 	for _, GrimmID := range trade.UserSends.Grimms {
 		// Switch selected if we need to (RUNS ONLY ONCE)
-		if GrimmID == player.SelectedID {
-			for _, grimm := range player.Grimms {
+		if GrimmID == sender.SelectedID {
+			for _, grimm := range sender.Grimms {
 				var nope = false
 				for _, nopeID := range trade.UserSends.Grimms {
 					if grimm.GrimmID == nopeID {
@@ -332,14 +332,14 @@ func AcceptTrade(ctx *discord.CmdContext) {
 					}
 				}
 				if !nope {
-					player.SelectedID = grimm.GrimmID
+					sender.SelectedID = grimm.GrimmID
 					break
 				}
 			}
 		}
-		for _, grimm := range player.Grimms {
+		for _, grimm := range sender.Grimms {
 			if GrimmID == grimm.GrimmID {
-				grimm.UserID = target.DiscordID
+				grimm.UserID = receiver.DiscordID
 				config.Database.Save(&grimm)
 				break
 			}
@@ -348,8 +348,8 @@ func AcceptTrade(ctx *discord.CmdContext) {
 
 	for _, CharID := range trade.TargetSends.Characters {
 		// Switch selected if we need to (RUNS ONLY ONCE)
-		if CharID == target.SelectedID {
-			for _, char := range target.Characters {
+		if CharID == receiver.SelectedID {
+			for _, char := range receiver.Characters {
 				var nope = false
 				for _, nopeID := range trade.TargetSends.Characters {
 					if char.CharID == nopeID {
@@ -357,14 +357,14 @@ func AcceptTrade(ctx *discord.CmdContext) {
 					}
 				}
 				if !nope {
-					target.SelectedID = char.CharID
+					receiver.SelectedID = char.CharID
 					break
 				}
 			}
 		}
-		for _, char := range target.Characters {
+		for _, char := range receiver.Characters {
 			if CharID == char.CharID {
-				char.UserID = player.DiscordID
+				char.UserID = sender.DiscordID
 				config.Database.Save(&char)
 				break
 			}
@@ -373,8 +373,8 @@ func AcceptTrade(ctx *discord.CmdContext) {
 
 	for _, GrimmID := range trade.TargetSends.Grimms {
 		// Switch selected if we need to (RUNS ONLY ONCE)
-		if GrimmID == target.SelectedID {
-			for _, grimm := range target.Grimms {
+		if GrimmID == receiver.SelectedID {
+			for _, grimm := range receiver.Grimms {
 				var nope = false
 				for _, nopeID := range trade.TargetSends.Grimms {
 					if grimm.GrimmID == nopeID {
@@ -382,36 +382,36 @@ func AcceptTrade(ctx *discord.CmdContext) {
 					}
 				}
 				if !nope {
-					target.SelectedID = grimm.GrimmID
+					receiver.SelectedID = grimm.GrimmID
 					break
 				}
 			}
 		}
-		for _, grimm := range target.Grimms {
+		for _, grimm := range receiver.Grimms {
 			if GrimmID == grimm.GrimmID {
-				grimm.UserID = player.DiscordID
+				grimm.UserID = sender.DiscordID
 				config.Database.Save(&grimm)
 				break
 			}
 		}
 	}
 
-	player.Balance += trade.TargetSends.Money - trade.UserSends.Money
-	player.Boxes.Boxes += int(trade.TargetSends.Boxes) - int(trade.UserSends.Boxes)
-	player.Boxes.RareBoxes += int(trade.TargetSends.RareBoxes) - int(trade.UserSends.RareBoxes)
-	player.Boxes.GrimmBoxes += int(trade.TargetSends.GrimmBoxes) - int(trade.UserSends.GrimmBoxes)
-	player.Boxes.RareGrimmBoxes += int(trade.TargetSends.RareGrimmBoxes) - int(trade.UserSends.RareGrimmBoxes)
+	sender.Balance += trade.TargetSends.Money - trade.UserSends.Money
+	sender.Boxes.Boxes += int(trade.TargetSends.Boxes) - int(trade.UserSends.Boxes)
+	sender.Boxes.RareBoxes += int(trade.TargetSends.RareBoxes) - int(trade.UserSends.RareBoxes)
+	sender.Boxes.GrimmBoxes += int(trade.TargetSends.GrimmBoxes) - int(trade.UserSends.GrimmBoxes)
+	sender.Boxes.RareGrimmBoxes += int(trade.TargetSends.RareGrimmBoxes) - int(trade.UserSends.RareGrimmBoxes)
 
-	target.Balance -= trade.TargetSends.Money - trade.UserSends.Money
-	target.Boxes.Boxes -= int(trade.TargetSends.Boxes) - int(trade.UserSends.Boxes)
-	target.Boxes.RareBoxes -= int(trade.TargetSends.RareBoxes) - int(trade.UserSends.RareBoxes)
-	target.Boxes.GrimmBoxes -= int(trade.TargetSends.GrimmBoxes) - int(trade.UserSends.GrimmBoxes)
-	target.Boxes.RareGrimmBoxes -= int(trade.TargetSends.RareGrimmBoxes) - int(trade.UserSends.RareGrimmBoxes)
+	receiver.Balance -= trade.TargetSends.Money - trade.UserSends.Money
+	receiver.Boxes.Boxes -= int(trade.TargetSends.Boxes) - int(trade.UserSends.Boxes)
+	receiver.Boxes.RareBoxes -= int(trade.TargetSends.RareBoxes) - int(trade.UserSends.RareBoxes)
+	receiver.Boxes.GrimmBoxes -= int(trade.TargetSends.GrimmBoxes) - int(trade.UserSends.GrimmBoxes)
+	receiver.Boxes.RareGrimmBoxes -= int(trade.TargetSends.RareGrimmBoxes) - int(trade.UserSends.RareGrimmBoxes)
 
-	config.Database.Save(player.Boxes)
-	config.Database.Save(target.Boxes)
-	config.Database.Save(player)
-	config.Database.Save(target)
+	config.Database.Save(sender.Boxes)
+	config.Database.Save(receiver.Boxes)
+	config.Database.Save(sender)
+	config.Database.Save(receiver)
 	trade.Delete()
 
 	ctx.Reply(discord.ReplyParams{

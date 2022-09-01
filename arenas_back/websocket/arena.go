@@ -9,7 +9,6 @@ import (
 )
 
 func ArenaConnect(client *gosf.Client, request *gosf.Request) *gosf.Message {
-	fmt.Println("[WS] Client connected!")
 	data, found := GetToken(request)
 	if !found {
 		client.Disconnect()
@@ -17,6 +16,7 @@ func ArenaConnect(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	}
 	d := data.(*cache.User)
 	client.Join(d.Arena.ID)
+	fmt.Println("[WS] Client connected!")
 
 	// if val, ok := d.Arena.Players[d.User.ID]; ok {
 	// 	val.Client.Disconnect()
