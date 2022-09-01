@@ -166,13 +166,13 @@ func GetPlayer(id string) *Player {
 		p.Boxes.Save()
 	}
 
-	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.Characters, "user_id = ? and not in_mission", p.DiscordID)
-	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.Grimms, "user_id = ? and not in_hunt", p.DiscordID)
-	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.CharInMission, "user_id = ? and in_mission", p.DiscordID)
-	config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.GrimmInHunt, "user_id = ? and in_hunt", p.DiscordID)
+	config.Database.Joins("Stats").Order(p.Settings.OrderBy).Find(&p.Characters, "user_id = ? and not in_mission", p.DiscordID)
+	config.Database.Joins("Stats").Order(p.Settings.OrderBy).Find(&p.Grimms, "user_id = ? and not in_hunt", p.DiscordID)
+	config.Database.Joins("Stats").Order(p.Settings.OrderBy).Find(&p.CharInMission, "user_id = ? and in_mission", p.DiscordID)
+	config.Database.Joins("Stats").Order(p.Settings.OrderBy).Find(&p.GrimmInHunt, "user_id = ? and in_hunt", p.DiscordID)
 	if p.SelectedID != "" {
-		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedChar, "user_id = ? and \"characters\".id = ?", p.DiscordID, p.SelectedID)
-		config.Database.Joins("Stats").Order(p.Status.OrderBy).Find(&p.SelectedGrimm, "user_id = ? and \"grimms\".id = ?", p.DiscordID, p.SelectedID)
+		config.Database.Joins("Stats").Order(p.Settings.OrderBy).Find(&p.SelectedChar, "user_id = ? and \"characters\".id = ?", p.DiscordID, p.SelectedID)
+		config.Database.Joins("Stats").Order(p.Settings.OrderBy).Find(&p.SelectedGrimm, "user_id = ? and \"grimms\".id = ?", p.DiscordID, p.SelectedID)
 	}
 
 	if p.SelectedChar == nil && p.SelectedGrimm == nil {

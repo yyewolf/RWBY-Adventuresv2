@@ -7,6 +7,10 @@ type PlayerSettings struct {
 
 	SubscribedToEvent bool `gorm:"column:event;not null"`
 	DMable            bool `gorm:"column:dmable;not null"`
+
+	MarketPublic  bool   `gorm:"column:market_public;not null;default:true"`
+	ProfilePublic bool   `gorm:"column:profile_public;not null;default:true"`
+	OrderBy       string `gorm:"column:order_by;not null;default:''"`
 }
 
 func (p *PlayerSettings) Save() {

@@ -24,6 +24,10 @@ type GrimmStat struct {
 	DodgeChance int    `gorm:"column:dodge_chance;not null"`
 }
 
+func (g *GrimmStat) Save() {
+	config.Database.Save(g)
+}
+
 type Grimm struct {
 	GrimmID       string    `gorm:"primary_key;column:id"`
 	UserID        string    `gorm:"column:user_id;not null"`

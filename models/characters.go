@@ -41,6 +41,10 @@ type CharacterStats struct {
 	DodgeChance int    `gorm:"column:dodge_chance;not null"`
 }
 
+func (c *CharacterStats) Save() {
+	config.Database.Save(c)
+}
+
 type Character struct {
 	CharID        string    `gorm:"primary_key;column:id"`
 	UserID        string    `gorm:"column:user_id;not null" json:"-"`

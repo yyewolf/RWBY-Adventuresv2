@@ -24,7 +24,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	RLBData, err := static.DatabaseFS.ReadFile("Database/Gamble/rarelootbox.png")
+	RLBData, err := static.DatabaseFS.ReadFile("database/gamble/rarelootbox.png")
 	if err != nil {
 		panic(err)
 	}
@@ -32,7 +32,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	LBData, err := static.DatabaseFS.ReadFile("Database/Gamble/lootbox.png")
+	LBData, err := static.DatabaseFS.ReadFile("database/gamble/lootbox.png")
 	if err != nil {
 		panic(err)
 	}
@@ -40,7 +40,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	ARMData, err := static.DatabaseFS.ReadFile("Database/Gamble/arm.png")
+	ARMData, err := static.DatabaseFS.ReadFile("database/gamble/arm.png")
 	if err != nil {
 		panic(err)
 	}
@@ -48,7 +48,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	CHARData, err := static.DatabaseFS.ReadFile("Database/Gamble/character.png")
+	CHARData, err := static.DatabaseFS.ReadFile("database/gamble/character.png")
 	if err != nil {
 		panic(err)
 	}
@@ -56,7 +56,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	MONEYData, err := static.DatabaseFS.ReadFile("Database/Gamble/money.png")
+	MONEYData, err := static.DatabaseFS.ReadFile("database/gamble/money.png")
 	if err != nil {
 		panic(err)
 	}
@@ -64,7 +64,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	XPData, err := static.DatabaseFS.ReadFile("Database/Gamble/xp.png")
+	XPData, err := static.DatabaseFS.ReadFile("database/gamble/xp.png")
 	if err != nil {
 		panic(err)
 	}
@@ -72,7 +72,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	LOSEData, err := static.DatabaseFS.ReadFile("Database/Gamble/lose.png")
+	LOSEData, err := static.DatabaseFS.ReadFile("database/gamble/lose.png")
 	if err != nil {
 		panic(err)
 	}

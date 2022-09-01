@@ -17,12 +17,15 @@ require (
 	github.com/yyewolf/Name-Generator v0.0.0-20210307172340-4b6d95263d9c
 	github.com/yyewolf/gosf v0.0.0-20220827180053-d6bebd1fce4e
 	github.com/yyewolf/goth v1.66.2-0.20220830232043-6e46aef069d4
+	gopkg.in/mgutz/dat.v2 v2.0.0-20171004160617-d76e4f81c4ef
 	gorm.io/driver/postgres v1.3.6
 	gorm.io/gorm v1.23.5
 )
 
 require (
 	github.com/ambelovsky/go-structs v1.1.0 // indirect
+	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
+	github.com/garyburd/redigo v1.6.4 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
@@ -44,9 +47,16 @@ require (
 	github.com/jackc/pgx/v4 v4.16.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/mattn/go-colorable v0.1.6 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
+	github.com/mgutz/jo v1.1.0 // indirect
+	github.com/mgutz/logxi v0.0.0-20161027140823-aebf8a7d67ab // indirect
+	github.com/mgutz/str v1.2.0 // indirect
+	github.com/mgutz/to v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
@@ -60,5 +70,6 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
+	gopkg.in/stretchr/testify.v1 v1.2.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
