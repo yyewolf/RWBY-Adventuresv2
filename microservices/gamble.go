@@ -2,5 +2,5 @@ package microservices
 
 type GambleUpload struct {
 	UUID  string
-	Image []byte
+	Image string
 }

@@ -11,7 +11,6 @@ func UploadImage(req *microservices.GambleUpload) (*gosf.Message, error) {
 	message := &gosf.Message{
 		Body: body,
 	}
-
 	if response, err := GambleMicroservice.Call("addImage", message); err != nil {
 		return nil, err
 	} else {

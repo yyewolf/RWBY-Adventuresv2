@@ -12,9 +12,8 @@ import (
 )
 
 func gamble(ctx *discord.CmdContext) {
-	rand.Seed(time.Now().UTC().UnixNano())
 	if !ctx.Player.CanGamble() {
-		t := ctx.Player.DungeonCooldown()
+		t := ctx.Player.GambleCooldown()
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("Sorry but you still have to wait **%dh %dm and %ds** before you can gamble again", int(t.Hours()), int(t.Minutes())%60, int(t.Seconds())%60),
 			Ephemeral: true,
@@ -29,11 +28,14 @@ func gamble(ctx *discord.CmdContext) {
 		return
 	}
 
+	ctx.Player.Gamble.Amount++
+	ctx.Player.Gamble.Time = time.Now().Unix()
+	ctx.Player.Gamble.Save()
+
 	canLootChar := ctx.Player.CharAmount() < ctx.Player.MaxChar()
-	rand.Seed(time.Now().UnixNano())
 
 	var lucky bool
-	//Luck Booster
+	//Luck Boosterreturn
 	if ctx.Player.Shop.LuckBoost {
 		lucky = true
 		ctx.Player.Shop.LuckBoostTime--
@@ -192,10 +194,10 @@ func gamble(ctx *discord.CmdContext) {
 		},
 		Footer: discord.DefaultFooter,
 	}
-
-	ctx.Reply(discord.ReplyParams{
+	_, err := ctx.Reply(discord.ReplyParams{
 		Content: embed,
 	})
+	fmt.Println(err)
 
 	time.Sleep(5 * time.Second)
 	//ANIMATION
@@ -213,5 +215,4 @@ func gamble(ctx *discord.CmdContext) {
 		Content: embed,
 		Edit:    true,
 	})
-	time.Sleep(6 * time.Second)
 }

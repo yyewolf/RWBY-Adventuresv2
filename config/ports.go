@@ -31,7 +31,7 @@ var (
 	MarketDomain    = os.Getenv("MARKET_DOMAIN")
 	MarketFront     = os.Getenv("MARKET_FRONT")
 
-	GamblePort    = os.Getenv("GAMBLE_Port")
+	GamblePort    = os.Getenv("GAMBLE_PORT")
 	GambleRPC     = getEnvInt("GAMBLE_RPC")
 	GambleRPCHost = os.Getenv("GAMBLE_RPC_HOST")
 	GambleHost    = os.Getenv("GAMBLE_HOST")

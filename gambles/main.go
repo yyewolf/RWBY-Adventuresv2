@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
 	"rwby-adventures/config"
+	"rwby-adventures/microservices"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -24,6 +26,8 @@ func init() {
 }
 
 func main() {
+	CreateMicroservice()
+
 	r := gin.Default()
 	r.GET("/:id", func(c *gin.Context) {
 		id := c.Param("id")
@@ -32,7 +36,13 @@ func main() {
 			c.String(404, "Image not found.")
 			return
 		}
-		c.Data(200, "image/png", img.([]byte))
+		b := img.(*microservices.GambleUpload)
+		data, err := base64.StdEncoding.DecodeString(b.Image)
+		if err != nil {
+			c.String(500, "Error decoding image.")
+			return
+		}
+		c.Data(200, "image/png", data)
 	})
 	r.Run(config.GamblePort)
 }

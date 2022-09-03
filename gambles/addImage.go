@@ -13,8 +13,8 @@ func addImage(client *gosf.Client, request *gosf.Request) *gosf.Message {
 
 	_, found := images.Get(req.UUID)
 
-	if found {
-		images.Set(req.UUID, req.Image, cache.DefaultExpiration)
+	if !found {
+		images.Set(req.UUID, &req, cache.DefaultExpiration)
 	}
 
 	return gosf.NewSuccessMessage()

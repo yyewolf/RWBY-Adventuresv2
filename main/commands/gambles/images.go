@@ -8,6 +8,8 @@ import (
 	"rwby-adventures/main/static"
 	"rwby-adventures/microservices"
 
+	b64 "encoding/base64"
+
 	"github.com/fogleman/gg"
 	uuid "github.com/satori/go.uuid"
 )
@@ -104,7 +106,7 @@ func createGambleImage(loots ...string) (r []string) {
 	UUID := uuid.NewV4().String()
 	_, err = gambles.UploadImage(&microservices.GambleUpload{
 		UUID:  UUID,
-		Image: buffer.Bytes(),
+		Image: b64.StdEncoding.EncodeToString(buffer.Bytes()),
 	})
 	if err != nil {
 		return nil
@@ -122,7 +124,7 @@ func createGambleImage(loots ...string) (r []string) {
 	UUID = uuid.NewV4().String()
 	_, err = gambles.UploadImage(&microservices.GambleUpload{
 		UUID:  UUID,
-		Image: buffer.Bytes(),
+		Image: b64.StdEncoding.EncodeToString(buffer.Bytes()),
 	})
 	if err != nil {
 		return nil
@@ -140,7 +142,7 @@ func createGambleImage(loots ...string) (r []string) {
 	UUID = uuid.NewV4().String()
 	_, err = gambles.UploadImage(&microservices.GambleUpload{
 		UUID:  UUID,
-		Image: buffer.Bytes(),
+		Image: b64.StdEncoding.EncodeToString(buffer.Bytes()),
 	})
 	if err != nil {
 		return nil
@@ -158,7 +160,7 @@ func createGambleImage(loots ...string) (r []string) {
 	UUID = uuid.NewV4().String()
 	_, err = gambles.UploadImage(&microservices.GambleUpload{
 		UUID:  UUID,
-		Image: buffer.Bytes(),
+		Image: b64.StdEncoding.EncodeToString(buffer.Bytes()),
 	})
 	if err != nil {
 		return nil
