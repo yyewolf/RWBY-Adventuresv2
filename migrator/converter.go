@@ -64,6 +64,12 @@ func playerConverter(p *player) *models.Player {
 		Minions:       p.MinionsLeft,
 		Jar:           p.XPJar,
 	}
+	player.Save()
+
+	player.Settings = &models.PlayerSettings{
+		DiscordID: p.ID,
+	}
+	player.Settings.Save()
 
 	player.Missions = &models.PlayerMission{
 		DiscordID:      p.ID,
@@ -137,14 +143,6 @@ func playerConverter(p *player) *models.Player {
 		MarketBought:    p.Counter.MarketBought,
 	}
 	player.Stats.Save()
-
-	if player.SelectedType == models.CharType {
-		player.SelectedChar = charConverter(p.SelectedChar)
-		config.Database.Create(player.SelectedChar)
-	} else {
-		player.SelectedGrimm = grimmConverter(p.SelectedGrimm)
-		config.Database.Create(player.SelectedGrimm)
-	}
 
 	if p.IsInMission {
 		player.CharInMission = charConverter(p.CharInMission)
@@ -228,14 +226,42 @@ func playerConverter(p *player) *models.Player {
 	}
 
 	for _, c := range p.Characters {
-		fmt.Println("Characters")
-		char := charConverter(c)
-		config.Database.Create(char)
+		if c.CustomID == p.SelectedID {
+			char := charConverter(c)
+			player.SelectedID = char.CharID
+			player.Save()
+			config.Database.Create(char)
+		} else {
+			char := charConverter(c)
+			config.Database.Create(char)
+		}
 	}
 
 	for _, g := range p.Grimms {
-		grimm := grimmConverter(g)
-		config.Database.Create(grimm)
+		if g.CustomID == p.SelectedID {
+			grimm := grimmConverter(g)
+			player.SelectedID = grimm.GrimmID
+			player.Save()
+			config.Database.Create(grimm)
+		} else {
+			grimm := grimmConverter(g)
+			config.Database.Create(grimm)
+		}
+	}
+
+	for _, b := range badges {
+		if p.hasBadge(b.value) {
+			for _, badge := range models.DefaultBadges {
+				if badge.Name == b.name {
+					playerBadge := &models.PlayerBadges{
+						DiscordID: player.DiscordID,
+						BadgeID:   badge.BadgeID,
+						Badge:     badge,
+					}
+					playerBadge.Save()
+				}
+			}
+		}
 	}
 
 	return player

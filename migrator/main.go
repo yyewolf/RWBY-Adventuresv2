@@ -8,9 +8,6 @@ func main() {
 	for r.Next() {
 		var id string
 		r.Scan(&id)
-		if id != "144472011924570113" {
-			continue
-		}
 
 		p := getPlayerInv(id)
 

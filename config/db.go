@@ -15,7 +15,7 @@ func init() {
 	var err error
 	Database, err = gorm.Open(
 		postgres.Open(
-			fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable", dbhost, dbport, dbuser, dbbase, dbpswd),
+			fmt.Sprintf("host=192.168.1.145 port=51234 user=postgres dbname=postgres password=postgres sslmode=disable"),
 		),
 		&gorm.Config{},
 	)
