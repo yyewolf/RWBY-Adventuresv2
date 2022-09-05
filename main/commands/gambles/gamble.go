@@ -73,10 +73,11 @@ func gamble(ctx *discord.CmdContext) {
 		} else {
 			XP = ctx.Player.CalcSelectedXP(4, false)
 		}
+		lootText += fmt.Sprintf("Good job, you earned **%d**XP !", XP)
 		ctx.GiveSelectionXP(XP, true)
-	} else if counts["liens"] >= 2 {
+	} else if counts["money"] >= 2 {
 		var liens int64
-		if counts["liens"] == 3 {
+		if counts["money"] == 3 {
 			liens = rand.Int63n(100) + 680
 		} else {
 			liens = rand.Int63n(70) + 340

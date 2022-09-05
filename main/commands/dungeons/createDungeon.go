@@ -48,7 +48,14 @@ func createDungeon(ctx *discord.CmdContext) {
 	}
 
 	ctx.Reply(discord.ReplyParams{
-		Content: "Here you go",
+		Content: &discordgo.MessageEmbed{
+			Title:       "Dungeon",
+			Description: "You have created a dungeon, click the button below to join.",
+			Color:       config.Botcolor,
+			Footer: &discordgo.MessageEmbedFooter{
+				Text: "And special thanks to @Sonya#2665 for the player's sprites!",
+			},
+		},
 		Components: []discordgo.MessageComponent{
 			discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{
@@ -60,5 +67,6 @@ func createDungeon(ctx *discord.CmdContext) {
 				},
 			},
 		},
+		Ephemeral: true,
 	})
 }

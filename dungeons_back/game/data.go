@@ -21,7 +21,7 @@ const (
 
 const (
 	findMoney  = "You found %dⱠ (Liens) !"
-	findEnnemy = "You found an ennemy and lost %d HP !"
+	findEnnemy = "You encountered enemies and lost %d HP !"
 	findArm    = "You found an arm !"
 	findMinion = "You found a minion !"
 	findWall   = "What the ?"

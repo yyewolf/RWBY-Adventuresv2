@@ -75,6 +75,9 @@ func DuelCreate(ctx *discord.CmdContext) {
 		Thumbnail: &discordgo.MessageEmbedThumbnail{
 			URL: persona.iconURL,
 		},
+		Footer: &discordgo.MessageEmbedFooter{
+			Text: "And special thanks to @Sonya#2665 for the background!",
+		},
 		Color: persona.RarityToColor(),
 	}
 

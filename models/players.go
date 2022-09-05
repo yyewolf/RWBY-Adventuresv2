@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"math/rand"
 	"rwby-adventures/config"
@@ -71,6 +72,7 @@ func GetPlayer(id string) *Player {
 		Preload("SpecialBoxes").
 		Find(p, id)
 	if e.Error != nil || e.RowsAffected == 0 {
+		fmt.Println("[AUTH] Player not found : ", e.Error.Error())
 		p = &Player{
 			DiscordID:  id,
 			IsNew:      true,
@@ -253,7 +255,7 @@ func (p *Player) CanDropLootBox() (canHe bool, reset bool) {
 }
 
 func (p *Player) CanGamble() bool {
-	if p.Gamble.Amount < 3 {
+	if p.Gamble.Amount < 2 {
 		return true
 	}
 	if p.GambleCooldown() < 0 && p.Gamble.Amount >= 3 {

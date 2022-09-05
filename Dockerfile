@@ -29,25 +29,25 @@ COPY --from=DUNGEON_FRONT_IMAGE /app/dist /app/dungeons_back/static/www/
 
 #### BACKS
 WORKDIR /app/arenas_back
-RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o arenas
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o arenas -buildvcs=false
 
 WORKDIR /app/dungeons_back
-RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o dungeons
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o dungeons -buildvcs=false
 
 WORKDIR /app/market_back
-RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o market
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o market -buildvcs=false
 
 WORKDIR /app/topgg
-RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o topgg
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o topgg -buildvcs=false
 
 WORKDIR /app/gambles
-RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o gambles
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o gambles -buildvcs=false
 
 WORKDIR /app/cdn
-RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o cdn
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o cdn -buildvcs=false
 
 WORKDIR /app/main
-RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o main
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o main -buildvcs=false
 
 
 ### FINAL IMAGE

@@ -40,6 +40,8 @@ func createDungeon(client *gosf.Client, request *gosf.Request) *gosf.Message {
 			UserID:  req.UserID,
 			Message: data,
 		})
+
+		fmt.Println("[DUNGEONS] Dungeons left :", websocket.DungeonCache.ItemCount())
 	}()
 
 	return gosf.NewSuccessMessage("created")
