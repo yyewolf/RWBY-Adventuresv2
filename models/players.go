@@ -72,7 +72,9 @@ func GetPlayer(id string) *Player {
 		Preload("SpecialBoxes").
 		Find(p, id)
 	if e.Error != nil || e.RowsAffected == 0 {
-		fmt.Println("[AUTH] Player not found : ", e.Error.Error())
+		if e.Error != nil {
+			fmt.Println("[AUTH] Player not found : ", e.Error.Error())
+		}
 		p = &Player{
 			DiscordID:  id,
 			IsNew:      true,

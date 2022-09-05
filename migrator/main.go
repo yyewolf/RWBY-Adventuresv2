@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"rwby-adventures/models"
 )
 
@@ -12,7 +11,9 @@ func main() {
 	for r.Next() {
 		var id string
 		r.Scan(&id)
-		fmt.Println(i)
+		if id != "374018098673614860" {
+			continue
+		}
 		p := getPlayerInv(id)
 		if p.IsNew {
 			continue

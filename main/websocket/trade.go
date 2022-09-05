@@ -277,10 +277,10 @@ func TradeValidate(client *gosf.Client, request *gosf.Request) *gosf.Message {
 		return gosf.NewFailureMessage("They would receive too much grimm boxes.")
 	}
 
-	if len(sender.Characters)+len(content.TargetSends.Characters)-len(content.UserSends.Characters) > sender.CharLimit {
+	if len(sender.Characters)+len(content.TargetSends.Characters)-len(content.UserSends.Characters) > sender.MaxChar() {
 		return gosf.NewFailureMessage("You would receive too much characters.")
 	}
-	if len(sender.Grimms)+len(content.TargetSends.Grimms)-len(content.UserSends.Grimms) > sender.CharLimit {
+	if len(sender.Grimms)+len(content.TargetSends.Grimms)-len(content.UserSends.Grimms) > sender.MaxChar() {
 		return gosf.NewFailureMessage("You would receive too much grimms.")
 	}
 	if len(sender.Characters)+len(content.TargetSends.Characters)-len(content.UserSends.Characters) < 0 {
@@ -290,10 +290,10 @@ func TradeValidate(client *gosf.Client, request *gosf.Request) *gosf.Message {
 		return gosf.NewFailureMessage("You would be left without any grimms.")
 	}
 
-	if len(receiver.Characters)-len(content.TargetSends.Characters)+len(content.UserSends.Characters) > receiver.CharLimit {
+	if len(receiver.Characters)-len(content.TargetSends.Characters)+len(content.UserSends.Characters) > receiver.MaxChar() {
 		return gosf.NewFailureMessage("They would receive too much characters.")
 	}
-	if len(receiver.Grimms)-len(content.TargetSends.Grimms)+len(content.UserSends.Grimms) > receiver.CharLimit {
+	if len(receiver.Grimms)-len(content.TargetSends.Grimms)+len(content.UserSends.Grimms) > receiver.MaxChar() {
 		return gosf.NewFailureMessage("They would receive too much grimms.")
 	}
 	if len(receiver.Characters)-len(content.TargetSends.Characters)+len(content.UserSends.Characters) < 0 {
