@@ -14,7 +14,6 @@ import (
 	commands_roleplay "rwby-adventures/main/commands/roleplay"
 	commands_settings "rwby-adventures/main/commands/settings"
 	commands_shop "rwby-adventures/main/commands/shop"
-	commands_temporary "rwby-adventures/main/commands/temporary"
 	commands_trade "rwby-adventures/main/commands/trade"
 	"rwby-adventures/main/discord"
 
@@ -24,7 +23,7 @@ import (
 func StartDiscord() {
 	discord.Start()
 
-	discord.AddCmd(commands_temporary.TemporaryCommand)
+	//discord.AddCmd(commands_temporary.TemporaryCommand)
 	discord.AddCmd(commands.HelpCommand)
 	discord.AddCmd(commands_inventory.PlayerInfoCommand)
 	discord.AddCmd(commands_inventory.InfoCommand)

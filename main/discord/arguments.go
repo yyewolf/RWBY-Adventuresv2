@@ -50,6 +50,12 @@ func (a *CommandArg) CharGrimmParse() (grimm bool, index int, err error) {
 	if a == nil {
 		return false, 0, errors.New("nil pointer")
 	}
+	switch a.Value.(type) {
+	case string:
+		break
+	default:
+		return false, 0, errors.New("not a string")
+	}
 	txt := a.Value.(string)
 	txt = strings.ToLower(txt)
 	if strings.Contains(txt, "g") {

@@ -305,11 +305,11 @@ func InventoryPages(ctx *discord.CmdContext) {
 
 	switch strings.Split(ctx.ComponentData.CustomID, "-")[1] {
 	case "prev":
-		d.Page++
+		d.Page--
 	case "refresh":
 		break
 	case "next":
-		d.Page--
+		d.Page++
 	default:
 		return
 	}

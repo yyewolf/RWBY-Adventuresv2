@@ -13,6 +13,6 @@ func StartWeb() {
 		Handler: mux,
 	}
 	mux.HandleFunc("/", index)
-	fmt.Println("[TOPGG] Starting web server.")
+	fmt.Printf("[TOPGG] Starting web server with bearer '%s'.\n", config.TopGG)
 	go srv.ListenAndServe()
 }

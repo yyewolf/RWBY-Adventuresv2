@@ -39,4 +39,7 @@ var (
 	TopGGPort    = os.Getenv("TOPGG_PORT")
 	TopGGRPC     = getEnvInt("TOPGG_RPC")
 	TopGGRPCHost = os.Getenv("TOPGG_RPC_HOST")
+
+	IMGPort = os.Getenv("IMG_PORT")
+	IMGHost = os.Getenv("IMG_HOST")
 )
