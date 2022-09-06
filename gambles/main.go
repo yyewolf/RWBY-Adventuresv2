@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"io"
 	"rwby-adventures/config"
 	"rwby-adventures/microservices"
 	"time"
@@ -33,13 +34,17 @@ func main() {
 		id := c.Param("id")
 		img, found := images.Get(id)
 		if !found {
-			c.String(404, "Image not found.")
+			notFound, _ := emptyImage.Open("static/404.png")
+			data, _ := io.ReadAll(notFound)
+			c.Data(200, "image/png", data)
 			return
 		}
 		b := img.(*microservices.GambleUpload)
 		data, err := base64.StdEncoding.DecodeString(b.Image)
 		if err != nil {
-			c.String(500, "Error decoding image.")
+			notFound, _ := emptyImage.Open("static/404.png")
+			data, _ := io.ReadAll(notFound)
+			c.Data(200, "image/png", data)
 			return
 		}
 		c.Data(200, "image/png", data)
