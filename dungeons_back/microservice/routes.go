@@ -11,6 +11,8 @@ import (
 	"github.com/yyewolf/gosf"
 )
 
+var dungeonAmount int
+
 func createDungeon(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	// Convert to our nicer format
 	var req microservices.DungeonCreateRequest
@@ -32,7 +34,7 @@ func createDungeon(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	websocket.DungeonCache.Set(ID, dungeon, 0)
 
 	fmt.Println("[DUNGEONS] Created dungeon with ID:", ID)
-
+	dungeonAmount++
 	go func() {
 		data := dungeonLoop(dungeon)
 
@@ -41,7 +43,8 @@ func createDungeon(client *gosf.Client, request *gosf.Request) *gosf.Message {
 			Message: data,
 		})
 
-		fmt.Println("[DUNGEONS] Dungeons left :", websocket.DungeonCache.ItemCount())
+		dungeonAmount--
+		fmt.Println("[DUNGEONS] Dungeons left :", dungeonAmount)
 	}()
 
 	return gosf.NewSuccessMessage("created")

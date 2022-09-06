@@ -31,6 +31,7 @@ func daily(ctx *discord.CmdContext) {
 	var earnings []string
 
 	ctx.Player.Status.DailyStreak++
+	ctx.Player.Status.Voted = false
 	ctx.Player.Status.Save()
 
 	money := (rand.Intn(225) + 68) * (ctx.Player.Status.DailyStreak%10 + 1)

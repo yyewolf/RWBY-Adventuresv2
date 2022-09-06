@@ -41,7 +41,7 @@ func Me(ctx *discord.CmdContext) {
 
 	// Strings
 	var resetStringBox = fmt.Sprintf("✅ - `Loots` (**%d/%d**)", p.LastBoxes.Amount, p.Maxlootbox)
-	var resetStringGamble = fmt.Sprintf("✅ - `Gamble` (**%d/3**)", p.Gamble.Amount)
+	var resetStringGamble = ""
 	var resetStringDungeon = "✅ - `Dungeon`"
 	var missionTime = ""
 	var huntTime = ""
@@ -64,6 +64,8 @@ func Me(ctx *discord.CmdContext) {
 	canGamble := p.CanGamble()
 	if !canGamble {
 		resetStringGamble = fmt.Sprintf("🕓 - `Gamble` (%s)", TimeLeftString(p.Gamble.Time, int64(config.GambleCooldown)))
+	} else {
+		resetStringGamble = fmt.Sprintf("✅ - `Gamble` (**%d/3**)", p.Gamble.Amount)
 	}
 	canDungeon := p.CanDungeon()
 	if !canDungeon {

@@ -28,10 +28,6 @@ func gamble(ctx *discord.CmdContext) {
 		return
 	}
 
-	ctx.Player.Gamble.Amount++
-	ctx.Player.Gamble.Time = time.Now().Unix()
-	ctx.Player.Gamble.Save()
-
 	canLootChar := ctx.Player.CharAmount() < ctx.Player.MaxChar()
 
 	var lucky bool

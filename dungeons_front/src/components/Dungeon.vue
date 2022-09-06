@@ -339,6 +339,7 @@ export default {
       this.socket.emit(ambrosiusChoice, data, (data) => {
         this.ambrosius = false;
         this.$notify({
+          token: token,
           text:data.text
         });
       })

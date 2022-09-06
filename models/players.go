@@ -257,11 +257,12 @@ func (p *Player) CanDropLootBox() (canHe bool, reset bool) {
 }
 
 func (p *Player) CanGamble() bool {
-	if p.Gamble.Amount < 2 {
+	if p.Gamble.Amount < 3 {
 		return true
 	}
 	if p.GambleCooldown() < 0 && p.Gamble.Amount >= 3 {
 		p.Gamble.Amount = 0
+		p.Gamble.Save()
 		return true
 	}
 	return false

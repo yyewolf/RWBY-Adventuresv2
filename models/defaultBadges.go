@@ -230,10 +230,15 @@ var badgeInventoryFull = &Badges{
 	Check: func(p *Player) bool {
 		char := ""
 		for _, c := range p.Characters {
+			realc := c.ToRealChar()
 			if char == "" {
-				char = c.Name
+				if realc.Parent != "" {
+					char = realc.Parent
+				} else {
+					char = c.Name
+				}
 			}
-			if char != c.Name {
+			if char != c.Name && char != realc.Parent {
 				return false
 			}
 		}
