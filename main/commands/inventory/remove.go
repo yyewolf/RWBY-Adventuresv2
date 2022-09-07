@@ -122,10 +122,10 @@ func remove(ctx *discord.CmdContext, rem *removeData) {
 	var additionalData []string
 
 	if rem.isGrimm {
-		if rem.Char.IsInFavorites {
+		if rem.Grimm.IsInFavorites {
 			additionalData = append(additionalData, "\nThis grimm is in your **favorites**!")
 		}
-		if rem.Char.ToRealChar().Limited {
+		if rem.Grimm.ToRealGrimm().Limited {
 			additionalData = append(additionalData, "\nThis grimm is a **limited edition**, make sure that you really want to delete it!")
 		}
 		reply = fmt.Sprintf("You are trying to remove :\n%s", rem.Grimm.FullString())

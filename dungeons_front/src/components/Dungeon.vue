@@ -333,13 +333,13 @@ export default {
       let data = {
         body : {
           choice: choice,
+          token: token,
         }
       }
       console.log(choice);
       this.socket.emit(ambrosiusChoice, data, (data) => {
         this.ambrosius = false;
         this.$notify({
-          token: token,
           text:data.text
         });
       })

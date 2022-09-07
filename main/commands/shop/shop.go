@@ -11,12 +11,11 @@ import (
 )
 
 func Shop(ctx *discord.CmdContext) {
-	g := ctx.Guild
 	BPrice := int64(12000*(ctx.Player.Shop.Extensions+1) + 5000)
 	embed := &discordgo.MessageEmbed{
 		Title:       "Shop :",
 		Color:       config.Botcolor,
-		Description: "To buy an item use : `" + g.Prefix + "buy {item}`.",
+		Description: "To buy an item use : `/buy {item}`.",
 		Fields: []*discordgo.MessageEmbedField{
 			{
 				Name:   "XP Boost (N°1)",
