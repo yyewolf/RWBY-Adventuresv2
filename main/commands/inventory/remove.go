@@ -221,7 +221,7 @@ func removeMenu(ctx *discord.CmdContext) {
 				return
 			}
 			reply = fmt.Sprintf("You removed :\n%s", d.Grimm.FullString())
-			xpjar = int64(float64(d.Grimm.Level) * float64(d.Grimm.XP) * float64(rand.Intn(4)+3) / 100.0)
+			xpjar = int64(float64(d.Grimm.Level) * float64(d.Grimm.XP+1) * float64(rand.Intn(4)+3) / 100.0)
 
 			config.Database.Select("Stats").Where("user_id=?", ctx.Author.ID).Delete(d.Grimm)
 
@@ -258,7 +258,7 @@ func removeMenu(ctx *discord.CmdContext) {
 				return
 			}
 			reply = fmt.Sprintf("You removed :\n%s", d.Char.FullString())
-			xpjar = int64(float64(d.Char.Level) * float64(d.Char.XP) * float64(rand.Intn(4)+3) / 100.0)
+			xpjar = int64(float64(d.Char.Level) * float64(d.Char.XP+1) * float64(rand.Intn(4)+3) / 100.0)
 
 			config.Database.Select("Stats").Where("user_id=?", ctx.Author.ID).Delete(d.Char)
 
