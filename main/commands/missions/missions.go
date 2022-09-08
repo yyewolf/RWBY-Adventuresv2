@@ -69,11 +69,11 @@ func joinMission(ctx *discord.CmdContext) {
 	}
 
 	//Puts every variable to avoid any glitch (needed if caching)
-	ctx.Player.SelectedChar.InMission = true
 
 	ctx.Player.CharInMission = ctx.Player.SelectedChar
+	ctx.Player.CharInMission.InMission = true
 	for _, char := range ctx.Player.Characters {
-		if char.CharID != ctx.Player.SelectedChar.CharID {
+		if char.CharID != ctx.Player.SelectedID {
 			ctx.Player.SelectedID = char.CharID
 			ctx.Player.SelectedChar = char
 			ctx.Player.SelectedType = models.CharType
@@ -95,7 +95,7 @@ func joinMission(ctx *discord.CmdContext) {
 func endMission(ctx *discord.CmdContext) {
 	if !ctx.Player.Missions.IsInMission {
 		ctx.Reply(discord.ReplyParams{
-			Content:   "Your are not currently on a mission.",
+			Content:   "You are not currently on a mission.",
 			Ephemeral: true,
 		})
 		return

@@ -78,8 +78,7 @@ func TrainCharacter(ctx *CmdContext) {
 }
 
 func DropBoxes(ctx *CmdContext) {
-	canDrop, _ := ctx.Player.CanDropLootBox()
-	if !canDrop || ctx.Player.Lootbox() >= ctx.Player.MaxChar() {
+	if !ctx.Player.CanDropLootBox() {
 		return
 	}
 	randfloat := rand.Float64()

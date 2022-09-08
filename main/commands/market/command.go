@@ -15,6 +15,12 @@ var MarketCommand = &discord.Command{
 			Description: "All listings commands.",
 			SubCommands: []*discord.Command{
 				{
+					Name:        "link",
+					Description: "Go to the market.",
+					Menu:        discord.MarketMenu,
+					Call:        MarketLink,
+				},
+				{
 					Name:        "view",
 					Description: "View all listings.",
 					Menu:        discord.MarketMenu,

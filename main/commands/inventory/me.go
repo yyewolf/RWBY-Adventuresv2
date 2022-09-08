@@ -40,7 +40,7 @@ func Me(ctx *discord.CmdContext) {
 	p := ctx.Player
 
 	// Strings
-	var resetStringBox = fmt.Sprintf("✅ - `Loots` (**%d/%d**)", p.LastBoxes.Amount, p.Maxlootbox)
+	var resetStringBox = ""
 	var resetStringGamble = ""
 	var resetStringDungeon = "✅ - `Dungeon`"
 	var missionTime = ""
@@ -57,9 +57,11 @@ func Me(ctx *discord.CmdContext) {
 		}
 	}
 
-	canLootBox, _ := p.CanDropLootBox()
+	canLootBox := p.CanDropLootBox()
 	if !canLootBox {
 		resetStringBox = fmt.Sprintf("🕓 - `Loots` (%s)", TimeLeftString(p.LastBoxes.Time, 86400))
+	} else {
+		resetStringBox = fmt.Sprintf("✅ - `Loots` (**%d/%d**)", p.LastBoxes.Amount, p.Maxlootbox)
 	}
 	canGamble := p.CanGamble()
 	if !canGamble {

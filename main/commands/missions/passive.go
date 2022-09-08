@@ -78,7 +78,7 @@ func spawnHunt(ctx *discord.CmdContext) {
 	ctx.Player.Missions.HuntType = rand.Intn(6)
 	ctx.Player.Missions.HuntMsgLeft = 150 + rand.Intn(150)
 
-	days := strconv.Itoa(int(math.Ceil(float64(ctx.Player.Missions.MissionMsgLeft) / 24)))
+	days := strconv.Itoa(int(math.Ceil(float64(ctx.Player.Missions.HuntMsgLeft) / 24)))
 	//Prepare the embed
 	g := ctx.Guild
 	embed := &discordgo.MessageEmbed{
@@ -135,25 +135,29 @@ func continueMission(ctx *discord.CmdContext) {
 	winText := fmt.Sprintf("Hey, %s !\n", ctx.Author.Username)
 	winText += missionWinMessages(ctx.Player.Missions.MissionType)
 	winText = strings.ReplaceAll(winText, "{mission.Earned}", earningText)
-	embed := &discordgo.MessageEmbed{
-		Title:       fmt.Sprintf("Your character is back, %s.", ctx.Author.Username),
-		Description: winText,
-		Color:       config.Botcolor,
-		Thumbnail: &discordgo.MessageEmbedThumbnail{
-			URL: ctx.Author.AvatarURL("512"),
-		},
-		Footer: discord.DefaultFooter,
-	}
 
 	ctx.Reply(discord.ReplyParams{
-		Content: embed,
-		DM:      true,
+		Content: &discordgo.MessageEmbed{
+			Title:       fmt.Sprintf("Your character is back, %s.", ctx.Author.Username),
+			Description: winText,
+			Color:       config.Botcolor,
+			Thumbnail: &discordgo.MessageEmbedThumbnail{
+				URL: ctx.Author.AvatarURL("512"),
+			},
+			Footer: discord.DefaultFooter,
+		},
+		DM: true,
 	})
 	ctx.Player.SelectedChar = ctx.Player.CharInMission
 	ctx.Player.SelectedID = ctx.Player.CharInMission.CharID
 	ctx.Player.SelectedType = models.CharType
 	ctx.Player.CharInMission = nil
 	config.Database.Save(ctx.Player)
+
+	for _, v := range ctx.Player.Characters {
+		v.InMission = false
+		config.Database.Save(v)
+	}
 }
 
 func continueHunt(ctx *discord.CmdContext) {
@@ -213,4 +217,9 @@ func continueHunt(ctx *discord.CmdContext) {
 	ctx.Player.SelectedType = models.GrimmType
 	ctx.Player.GrimmInHunt = nil
 	config.Database.Save(ctx.Player)
+
+	for _, v := range ctx.Player.Grimms {
+		v.InHunt = false
+		config.Database.Save(v)
+	}
 }

@@ -69,11 +69,11 @@ func joinHunt(ctx *discord.CmdContext) {
 	}
 
 	//Puts every variable to avoid any glitch (needed if caching)
-	ctx.Player.SelectedGrimm.InHunt = true
 
 	ctx.Player.GrimmInHunt = ctx.Player.SelectedGrimm
+	ctx.Player.GrimmInHunt.InHunt = true
 	for _, grimm := range ctx.Player.Grimms {
-		if grimm.GrimmID != ctx.Player.SelectedGrimm.GrimmID {
+		if grimm.GrimmID != ctx.Player.SelectedID {
 			ctx.Player.SelectedID = grimm.GrimmID
 			ctx.Player.SelectedGrimm = grimm
 			ctx.Player.SelectedType = models.GrimmType

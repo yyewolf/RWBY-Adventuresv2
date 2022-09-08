@@ -242,18 +242,16 @@ func (p *Player) AddBadgeName(name string) {
 	bp.Save()
 }
 
-func (p *Player) CanDropLootBox() (canHe bool, reset bool) {
-	lastTime := time.Unix(p.LastBoxes.Time, 0)
+func (p *Player) CanDropLootBox() bool {
 	if p.LastBoxes.Amount < p.Maxlootbox {
-		canHe = true
-		reset = false
-		return
-	} else if time.Since(lastTime).Hours() > 24 && p.LastBoxes.Amount == p.Maxlootbox {
-		canHe = true
-		reset = true
-		return
+		return true
 	}
-	return
+	if p.LootCooldown() < 0 && p.LastBoxes.Amount >= p.Maxlootbox {
+		p.LastBoxes.Amount = 0
+		p.LastBoxes.Save()
+		return true
+	}
+	return false
 }
 
 func (p *Player) CanGamble() bool {
@@ -473,6 +471,11 @@ func (p *Player) DungeonCooldown() time.Duration {
 
 func (p *Player) GambleCooldown() time.Duration {
 	t := p.Gamble.Time + int64(config.GambleCooldown)
+	return time.Until(time.Unix(t, 0))
+}
+
+func (p *Player) LootCooldown() time.Duration {
+	t := p.LastBoxes.Time + int64(config.GambleCooldown)
 	return time.Until(time.Unix(t, 0))
 }
 
