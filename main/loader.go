@@ -43,6 +43,7 @@ func StartDiscord() {
 	discord.AddCmd(commands_missions.HuntCommand)
 	discord.AddCmd(commands_dungeon.DungeonCommand)
 	discord.AddCmd(commands_settings.ReportCommand)
+	discord.AddCmd(commands_settings.GuildCommand)
 	discord.AddCmd(commands_misc.InviteCommand)
 	discord.AddCmd(commands_misc.Eventcommand)
 	discord.AddCmd(commands_misc.DailyCommand)

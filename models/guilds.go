@@ -23,3 +23,7 @@ func GetGuild(id string) *Guild {
 	}
 	return g
 }
+
+func (g *Guild) Save() {
+	config.Database.Save(g)
+}
