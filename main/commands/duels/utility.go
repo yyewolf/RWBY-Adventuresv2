@@ -76,7 +76,7 @@ func createDuelImage(Personas ...*BattlePersona) *bytes.Reader {
 		return nil
 	}
 
-	positions := [][]int{{80, 60}, {600, 60}}
+	positions := [][]int{{80, 60}, {550, 60}}
 
 	battleImage := gg.NewContext(426*2, 240*2)
 	battleImage.DrawImage(backgroundImage, 0, 0)

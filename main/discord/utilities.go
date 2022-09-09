@@ -72,8 +72,11 @@ func (ctx *CmdContext) GiveCharXP(char *models.Character, add int64, notif bool)
 		}
 		ctx.Reply(ReplyParams{
 			Content:  content,
+			ID:       ctx.Author.ID,
+			DM:       true,
 			FollowUp: true,
 		})
+		char.Stats.Save()
 	}
 
 	//Adds XP to char
@@ -233,6 +236,7 @@ func (ctx *CmdContext) SendLuckBoostNotice() {
 	}
 	ctx.Reply(ReplyParams{
 		Content: embed,
+		ID:      ctx.Author.ID,
 		DM:      true,
 	})
 }

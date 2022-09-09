@@ -146,6 +146,7 @@ func continueMission(ctx *discord.CmdContext) {
 			},
 			Footer: discord.DefaultFooter,
 		},
+		ID: ctx.Author.ID,
 		DM: true,
 	})
 	ctx.Player.SelectedChar = ctx.Player.CharInMission
@@ -198,19 +199,19 @@ func continueHunt(ctx *discord.CmdContext) {
 	winText := fmt.Sprintf("Hey, %s !\n", ctx.Author.Username)
 	winText += huntWinMessages(ctx.Player.Missions.HuntType)
 	winText = strings.ReplaceAll(winText, "{hunt.Earned}", earningText)
-	embed := &discordgo.MessageEmbed{
-		Title:       fmt.Sprintf("Your grimm is back, %s.", ctx.Author.Username),
-		Description: winText,
-		Color:       config.Botcolor,
-		Thumbnail: &discordgo.MessageEmbedThumbnail{
-			URL: ctx.Author.AvatarURL("512"),
-		},
-		Footer: discord.DefaultFooter,
-	}
 
 	ctx.Reply(discord.ReplyParams{
-		Content: embed,
-		DM:      true,
+		Content: &discordgo.MessageEmbed{
+			Title:       fmt.Sprintf("Your grimm is back, %s.", ctx.Author.Username),
+			Description: winText,
+			Color:       config.Botcolor,
+			Thumbnail: &discordgo.MessageEmbedThumbnail{
+				URL: ctx.Author.AvatarURL("512"),
+			},
+			Footer: discord.DefaultFooter,
+		},
+		ID: ctx.Author.ID,
+		DM: true,
 	})
 	ctx.Player.SelectedGrimm = ctx.Player.GrimmInHunt
 	ctx.Player.SelectedID = ctx.Player.GrimmInHunt.GrimmID

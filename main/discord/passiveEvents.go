@@ -191,7 +191,7 @@ func SpawnArena(ctx *CmdContext) {
 					discordgo.Button{
 						Label: "Join!",
 						Style: discordgo.LinkButton,
-						URL:   fmt.Sprintf("http://%s%s/a/%s", config.ArenaHost, config.ArenaPort, ID),
+						URL:   fmt.Sprintf("%s/a/%s", config.ArenaHost, ID),
 					},
 				},
 			},

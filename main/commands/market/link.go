@@ -16,7 +16,7 @@ func MarketLink(ctx *discord.CmdContext) {
 				Components: []discordgo.MessageComponent{
 					discordgo.Button{
 						Label: "Market",
-						Style: discordgo.SuccessButton,
+						Style: discordgo.LinkButton,
 						URL:   config.MarketFront,
 					},
 				},
