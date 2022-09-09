@@ -71,10 +71,11 @@ func (ctx *CmdContext) GiveCharXP(char *models.Character, add int64, notif bool)
 			Color: config.Botcolor,
 		}
 		ctx.Reply(ReplyParams{
-			Content:  content,
-			ID:       ctx.Author.ID,
-			DM:       true,
-			FollowUp: true,
+			Content: content,
+			// ID:       ctx.Author.ID,
+			// DM:       true,
+			Automated: true,
+			FollowUp:  true,
 		})
 		char.Stats.Save()
 	}
@@ -102,8 +103,9 @@ func (ctx *CmdContext) GiveGrimmXP(grimm *models.Grimm, add int64, notif bool) {
 			Color: config.Botcolor,
 		}
 		ctx.Reply(ReplyParams{
-			Content:  content,
-			FollowUp: true,
+			Content:   content,
+			Automated: true,
+			FollowUp:  true,
 		})
 	}
 

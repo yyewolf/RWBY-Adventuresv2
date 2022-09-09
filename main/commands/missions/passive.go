@@ -67,7 +67,8 @@ func spawnMission(ctx *discord.CmdContext) {
 		Color: config.Botcolor,
 	}
 	ctx.Reply(discord.ReplyParams{
-		Content: embed,
+		Content:   embed,
+		Automated: true,
 	})
 
 	config.Database.Save(ctx.Player.Missions)
@@ -91,7 +92,8 @@ func spawnHunt(ctx *discord.CmdContext) {
 		Color: config.Botcolor,
 	}
 	ctx.Reply(discord.ReplyParams{
-		Content: embed,
+		Content:   embed,
+		Automated: true,
 	})
 
 	config.Database.Save(ctx.Player.Missions)

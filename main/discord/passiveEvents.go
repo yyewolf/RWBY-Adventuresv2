@@ -137,7 +137,8 @@ func DropBoxes(ctx *CmdContext) {
 	config.Database.Save(ctx.Player.Boxes)
 
 	ctx.Reply(ReplyParams{
-		Content: resp,
+		Content:   resp,
+		Automated: true,
 	})
 }
 

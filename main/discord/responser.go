@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -38,16 +39,25 @@ func (c *CmdContext) Reply(p ReplyParams) (st *discordgo.Message, err error) {
 	}
 
 	if p.Automated {
+		fmt.Println("[AUTOMATED] Will redirect : " + strconv.FormatBool(c.Guild.AutomatedMessagesEnabled) + ", Where : " + c.Guild.AutomatedMessagesChannelID)
 		if c.Guild.AutomatedMessagesEnabled {
-			_, err := c.Reply(ReplyParams{
+			d, err := c.Reply(ReplyParams{
 				Content:   p.Content,
 				ChannelID: c.Guild.AutomatedMessagesChannelID,
 			})
 			if err != nil {
+				fmt.Println("[ERR] Error sending automated message:", err)
+				c.Reply(ReplyParams{
+					Content:   "Sorry, but I cannot send automated messages to the channel you have set up. Please check if I have the permissions to send messages there. You can send this to the developer if you believe this is a mistake.",
+					Ephemeral: true,
+					FollowUp:  true,
+				})
 				return c.Reply(ReplyParams{
-					Content: p.Content,
+					Content:  p.Content,
+					FollowUp: true,
 				})
 			}
+			return d, err
 		} else {
 			return c.Reply(ReplyParams{
 				Content: p.Content,
