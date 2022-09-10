@@ -2,7 +2,6 @@ package discord
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -39,8 +38,17 @@ func (c *CmdContext) Reply(p ReplyParams) (st *discordgo.Message, err error) {
 	}
 
 	if p.Automated {
-		fmt.Println("[AUTOMATED] Will redirect : " + strconv.FormatBool(c.Guild.AutomatedMessagesEnabled) + ", Where : " + c.Guild.AutomatedMessagesChannelID)
+
 		if c.Guild.AutomatedMessagesEnabled {
+			channel, err := c.Session.Channel(p.ChannelID)
+			if err == nil {
+				if channel.Type == discordgo.ChannelTypeDM {
+					return c.Reply(ReplyParams{
+						Content: p.Content,
+					})
+				}
+			}
+
 			d, err := c.Reply(ReplyParams{
 				Content:   p.Content,
 				ChannelID: c.Guild.AutomatedMessagesChannelID,

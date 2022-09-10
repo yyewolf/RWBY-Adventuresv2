@@ -193,6 +193,18 @@ func GetPlayer(id string) *Player {
 
 	p.FillPlayerMarket()
 
+	if p.Shop.LuckBoostTime < 0 {
+		p.Shop.LuckBoostTime = 0
+		p.Shop.LuckBoost = false
+		p.Shop.Save()
+	}
+
+	if p.Shop.XPBoostTime < 0 {
+		p.Shop.XPBoostTime = 0
+		p.Shop.XPBoost = false
+		p.Shop.Save()
+	}
+
 	return p
 }
 
