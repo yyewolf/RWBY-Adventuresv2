@@ -167,6 +167,11 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 	ctx.Player = models.GetPlayer(ctx.Author.ID)
 	ctx.Guild = models.GetGuild(ctx.GuildID)
+	if ctx.Guild.GuildID == "" {
+		ctx.Guild = &models.Guild{
+			GuildID: ctx.GuildID,
+		}
+	}
 	/*
 		Is Command or for Listener :
 	*/
@@ -298,6 +303,11 @@ func routeInteraction(s *discordgo.Session, interaction *discordgo.InteractionCr
 
 	ctx.Player = models.GetPlayer(ctx.Author.ID)
 	ctx.Guild = models.GetGuild(ctx.GuildID)
+	if ctx.Guild.GuildID == "" {
+		ctx.Guild = &models.Guild{
+			GuildID: ctx.GuildID,
+		}
+	}
 
 	/*
 		Find command & args :

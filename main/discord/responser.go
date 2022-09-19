@@ -40,7 +40,7 @@ func (c *CmdContext) Reply(p ReplyParams) (st *discordgo.Message, err error) {
 	if p.Automated {
 
 		if c.Guild.AutomatedMessagesEnabled {
-			channel, err := c.Session.Channel(p.ChannelID)
+			channel, err := c.Session.Channel(c.ChannelID)
 			if err == nil {
 				if channel.Type == discordgo.ChannelTypeDM {
 					return c.Reply(ReplyParams{
