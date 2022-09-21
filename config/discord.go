@@ -13,6 +13,7 @@ var dbpswd = os.Getenv("DB_PASS")
 var dbport = os.Getenv("DB_PORT")
 
 var CookieKey = []byte(os.Getenv("COO_KEY"))
+var CookieHost = os.Getenv("COOKIE_HOST")
 
 var SupportLink = os.Getenv("SUPPORT_LINK")
 var Botcolor = getEnvInt("BOT_COLOR")

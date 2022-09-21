@@ -1,112 +1,78 @@
 package web
 
 import (
-	"context"
+	"crypto/sha256"
 	"fmt"
-	"html/template"
 	"net/http"
+	"rwby-adventures/auth/export"
 	"rwby-adventures/config"
-	"rwby-adventures/market_back/static"
 	"rwby-adventures/market_back/websocket"
-	"strings"
 
-	"github.com/gorilla/pat"
-	"github.com/gorilla/sessions"
-	"github.com/yyewolf/goth"
-	"github.com/yyewolf/goth/gothic"
-	"github.com/yyewolf/goth/providers/discord"
+	"github.com/gin-gonic/gin"
+	"github.com/pmylund/go-cache"
+	uuid "github.com/satori/go.uuid"
 )
 
-var provider = discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("%sauth/discord/callback", config.MarketHost), discord.ScopeIdentify)
-var stateToken = make(map[string]*websocket.Token)
-
-func startMarketService() {
-
-	maxAge := 86400 * 30 // 30 days
-
-	store := sessions.NewCookieStore(config.CookieKey)
-	store.MaxAge(maxAge)
-	store.Options.Domain = config.MarketDomain
-	store.Options.Secure = true
-	store.Options.SameSite = http.SameSiteNoneMode
-	store.Options.Path = "/"
-
-	gothic.Store = store
-
-	mux := pat.New()
-	port := config.MarketPort
-	srv := http.Server{
-		Addr:    port,
-		Handler: mux,
-	}
-
-	mux.Get("/auth/{provider}/callback", func(res http.ResponseWriter, req *http.Request) {
-		goth.UseProviders(provider)
-		state := gothic.SetState(req)
-		token := stateToken[state]
-		usr, err := UserLogged(res, req)
-		if err != nil {
-			token.Empty = true
-		} else {
-			token.Empty = false
-			token.UserID = usr.UserID
-			token.Secret = usr.AccessTokenSecret
-		}
-		http.Redirect(res, req, config.MarketFront, http.StatusTemporaryRedirect)
-		res.Write([]byte(""))
+func startMarketService(g *gin.RouterGroup) {
+	g.GET("/logout/", func(c *gin.Context) {
+		export.Logout(c, config.MarketFront)
 	})
 
-	mux.Get("/logout/{provider}", func(res http.ResponseWriter, req *http.Request) {
-		goth.UseProviders(provider)
-		gothic.Logout(res, req)
-		http.Redirect(res, req, "/", http.StatusTemporaryRedirect)
-		res.Write([]byte(""))
-	})
+	g.GET("/login/:token", MarketLogin)
+	g.GET("/login/callback/:token", MarketCallback)
 
-	mux.Get("/auth/{provider}", func(res http.ResponseWriter, req *http.Request) {
-		goth.UseProviders(provider)
-		// try to get the user without re-authenticating
-		if gothUser, err := gothic.CompleteUserAuth(res, req); err == nil {
-			t, _ := template.New("foo").Parse(`<p>UserID: {{.UserID}}</p>`)
-			t.Execute(res, gothUser)
-		} else {
-			gothic.BeginAuthHandler(res, req)
-		}
-	})
-
-	mux.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", DirectoryListing(http.FileServer(http.FS(static.Assets)))))
-	mux.HandleFunc("/", http.HandlerFunc(MarketIndex))
-	mux.HandleFunc("/login/{token}", http.HandlerFunc(MarketLogin))
-	go srv.ListenAndServe()
+	g.GET("/token", MarketGetToken)
 }
 
-func DirectoryListing(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasSuffix(r.URL.Path, "/") {
-			http.NotFound(w, r)
-			return
-		}
-
-		next.ServeHTTP(w, r)
-	})
-}
-
-func MarketLogin(w http.ResponseWriter, r *http.Request) {
-	token := r.URL.Query().Get(":token")
+func MarketCallback(c *gin.Context) {
+	token := c.Param("token")
 	t, found := websocket.Tokens.Get(token)
 	if !found {
-		http.Error(w, "Invalid token", http.StatusBadRequest)
+		c.Redirect(http.StatusTemporaryRedirect, config.MarketFront)
 		return
 	}
-	goth.UseProviders(provider)
-	state := gothic.SetState(r)
-	stateToken[state] = t.(*websocket.Token)
-	r.URL.RawQuery += fmt.Sprintf("&state=%s", state)
-	state = gothic.SetState(r)
-	r = r.WithContext(context.WithValue(r.Context(), "provider", "discord"))
-	gothic.BeginAuthHandler(w, r)
+	tk := t.(*websocket.Token)
+
+	u, err := export.Callback(c)
+	if err != nil {
+		tk.Empty = true
+		c.Redirect(http.StatusTemporaryRedirect, config.MarketFront)
+		return
+	}
+
+	tk.Empty = false
+	tk.UserID = u.UserID
+	tk.Secret = u.AccessToken
+	c.Redirect(http.StatusTemporaryRedirect, config.MarketFront)
 }
 
-func MarketIndex(w http.ResponseWriter, r *http.Request) {
-	templates.ExecuteTemplate(w, "market.html", nil)
+func MarketLogin(c *gin.Context) {
+	token := c.Param("token")
+	_, found := websocket.Tokens.Get(token)
+	if !found {
+		c.Redirect(http.StatusTemporaryRedirect, config.MarketFront)
+		return
+	}
+	export.Login(c, fmt.Sprintf("%slogin/callback/%s", config.MarketHost, token))
+}
+
+func MarketGetToken(c *gin.Context) {
+	token := fmt.Sprintf("%x", sha256.Sum256(uuid.NewV4().Bytes()))
+	t := &websocket.Token{
+		Empty: true,
+		Token: token,
+	}
+
+	u, err := export.GetUser(c)
+	if err == nil {
+		t.Empty = false
+		t.UserID = u.UserID
+		t.Secret = u.AccessTokenSecret
+	}
+
+	websocket.Tokens.Set(token, t, cache.DefaultExpiration)
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"token": token,
+	})
 }

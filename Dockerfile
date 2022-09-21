@@ -46,6 +46,9 @@ RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o gambles -build
 WORKDIR /app/cdn
 RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o cdn -buildvcs=false
 
+WORKDIR /app/auth
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o auth -buildvcs=false
+
 WORKDIR /app/main
 RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o main -buildvcs=false
 
@@ -83,6 +86,9 @@ RUN chmod +x /app/gambles
 
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/cdn/cdn /app/cdn
 RUN chmod +x /app/cdn
+
+COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/auth/auth /app/auth
+RUN chmod +x /app/auth
 
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/main/main /app/main
 RUN chmod +x /app/main

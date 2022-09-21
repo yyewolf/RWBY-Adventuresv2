@@ -14,7 +14,7 @@ func main() {
 	cache.Init()
 	websocket.StartWebsocket()
 	microservice.CreateMicroservice()
-	web.StartWeb()
+	web.StartMarket()
 
 	microservice.VerifyAuctions()
 

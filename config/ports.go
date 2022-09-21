@@ -42,4 +42,7 @@ var (
 
 	IMGPort = os.Getenv("IMG_PORT")
 	IMGHost = os.Getenv("IMG_HOST")
+
+	AuthHost = os.Getenv("AUTH_HOST")
+	AuthPort = os.Getenv("AUTH_PORT")
 )

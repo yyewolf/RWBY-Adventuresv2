@@ -36,8 +36,10 @@
 
 <script>
 import socket from '@/plugins/websocket';
+import axios from 'axios';
 import { authStore } from "@/store/authStore";
 import AdvancedSearch from './components/AdvancedSearch.vue';
+import { process } from 'ipaddr.js';
 
 export default {
   name: 'App',
@@ -71,7 +73,7 @@ export default {
 
   mounted() {
     this.waitForConnect();
-    this.connect();
+    this.connect(true);
   },
 
   methods : {
@@ -82,20 +84,16 @@ export default {
         await new Promise(r => setTimeout(r, 1000));
       }
     },
-    getToken: function() {
-      socket.emit("getToken", {}, (data) => {
-        if (data.success) {
-          authStore.commit("setToken", data.body.token);
-        }
-      });
+    getToken: async function() {
+      let data = await axios.get(process.env.VUE_APP_BACKEND + 'token', { withCredentials: true });
+      await authStore.commit("setToken", data.data.token);
     },
-    connect: function() {
+    connect: function(retry) {
       let data = {
         body: {
           token: authStore.getters.token
         }
       }
-      console.log(data);
       socket.emit("marketConnect", data, (data) => {
         if (data.success) {
           authStore.commit("setLogin", data.body.connected);
@@ -104,10 +102,11 @@ export default {
             this.login_link = data.body.link;
             authStore.commit("setLoginLink", data.body.link);
           }
-        } else {
+        } else if (retry){
           this.logged_in = false;
-          this.getToken();
-          this.connect();
+          this.getToken().then(() =>{
+            this.connect(false);
+          });
         }
       });
     },

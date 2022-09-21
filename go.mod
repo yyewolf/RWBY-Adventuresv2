@@ -7,6 +7,7 @@ require (
 	github.com/bwmarrin/discordgo v0.25.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/fogleman/gg v1.3.0
+	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/gorilla/pat v1.0.1
 	github.com/gorilla/sessions v1.2.1
