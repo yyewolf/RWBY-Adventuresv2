@@ -6,6 +6,8 @@ import (
 	"rwby-adventures/auth/store"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pmylund/go-cache"
+	uuid "github.com/satori/go.uuid"
 	"github.com/yyewolf/goth"
 	"github.com/yyewolf/goth/gothic"
 )
@@ -59,11 +61,14 @@ func callback(c *gin.Context) {
 		u = gu
 	}
 
+	// Stores the data in the code
+	code := uuid.NewV4().String()
+	codes.Set(code, u, cache.DefaultExpiration)
 	state := gothic.SetState(c.Request)
 	redir, found := store.Redirections.Get(state)
 	if !found {
 		c.Redirect(http.StatusTemporaryRedirect, "/api/user")
 	} else {
-		c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf("%s?secret=%s&refresh=%s", redir.(string), u.AccessToken, u.RefreshToken))
+		c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf("%s?code=%s", redir.(string), code))
 	}
 }

@@ -22,7 +22,9 @@ func connect(client *gosf.Client, request *gosf.Request) *gosf.Message {
 			"connected": false,
 		}
 	} else {
+		link := fmt.Sprintf("%slogout", config.MarketHost)
 		msg.Body = map[string]interface{}{
+			"link":      link,
 			"connected": true,
 		}
 	}

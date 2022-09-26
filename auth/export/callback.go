@@ -3,36 +3,36 @@ package export
 import (
 	"errors"
 
-	"github.com/yyewolf/goth/providers/discord"
-
 	"github.com/gin-gonic/gin"
 	"github.com/yyewolf/goth"
 	"github.com/yyewolf/goth/gothic"
+	"github.com/yyewolf/goth/providers/discord"
 )
 
 func Callback(c *gin.Context) (u *goth.User, err error) {
-	secret := c.Request.URL.Query().Get("secret")
-	refresh := c.Request.URL.Query().Get("refresh")
-	if secret == "" || refresh == "" {
-		return nil, errors.New("invalid secret or refresh")
+	code := c.Request.URL.Query().Get("code")
+	if code == "" {
+		return nil, errors.New("invalid code")
 	}
 
 	provider, err := goth.GetProvider("discord")
 	if err != nil {
 		return nil, err
 	}
+
 	g, err := provider.BeginAuth("")
 	if err != nil {
 		return nil, err
 	}
 	s := g.(*discord.Session)
-	s.AccessToken = secret
-	s.RefreshToken = refresh
 
-	user, err := provider.FetchUser(s)
+	user, err := Code(code)
 	if err != nil {
 		return nil, err
 	}
+
+	s.AccessToken = user.AccessToken
+	s.RefreshToken = user.RefreshToken
 
 	err = gothic.StoreInSession(provider.Name(), s.Marshal(), c.Request, c.Writer)
 
@@ -40,5 +40,5 @@ func Callback(c *gin.Context) (u *goth.User, err error) {
 		return nil, err
 	}
 
-	return &user, nil
+	return user, nil
 }

@@ -8,6 +8,10 @@ const mutations = {
     setLoginLink(state, value) {
       state.logLink = value;
     },
+    reset(state) {
+      state.loggedIn = false;
+      state.token = "";
+    },
   };
   
   export { mutations };

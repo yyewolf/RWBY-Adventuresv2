@@ -5,12 +5,16 @@ import (
 	"fmt"
 	"net/http"
 	"rwby-adventures/auth/store"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pmylund/go-cache"
+	uuid "github.com/satori/go.uuid"
 	"github.com/yyewolf/goth"
 	"github.com/yyewolf/goth/gothic"
 )
+
+var codes = cache.New(7*24*time.Hour, 1*time.Hour)
 
 func doLogin(c *gin.Context) {
 	redir := c.Request.URL.Query().Get("redir")
@@ -74,9 +78,11 @@ func startLogin(c *gin.Context) {
 		u = gu
 	}
 
+	code := uuid.NewV4().String()
+	codes.Set(code, u, cache.DefaultExpiration)
 	redir := c.Request.URL.Query().Get("redir")
 	if redir == "" {
 		redir = "/api/user"
 	}
-	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf("%s?secret=%s&refresh=%s", redir, u.AccessToken, u.RefreshToken))
+	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf("%s?code=%s", redir, code))
 }

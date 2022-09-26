@@ -25,7 +25,7 @@
 
       <template v-slot:append>
         <v-btn prepend-icon="mdi-discord" v-if="!logged_in" :href="login_link">Log in</v-btn>
-        <v-btn prepend-icon="mdi-discord" v-else>Log out</v-btn>
+        <v-btn prepend-icon="mdi-discord" v-else @click="logout()">Log out</v-btn>
       </template>
     </v-app-bar>
     <v-main>
@@ -84,6 +84,11 @@ export default {
         await new Promise(r => setTimeout(r, 1000));
       }
     },
+    logout: function() {
+      // redirect to logginlink
+      window.location=this.login_link
+      authStore.commit("reset");
+    },
     getToken: async function() {
       let data = await axios.get(process.env.VUE_APP_BACKEND + 'token', { withCredentials: true });
       await authStore.commit("setToken", data.data.token);
@@ -98,8 +103,8 @@ export default {
         if (data.success) {
           authStore.commit("setLogin", data.body.connected);
           this.logged_in = data.body.connected;
+          this.login_link = data.body.link;
           if (!data.body.connected) {
-            this.login_link = data.body.link;
             authStore.commit("setLoginLink", data.body.link);
           }
         } else if (retry){
