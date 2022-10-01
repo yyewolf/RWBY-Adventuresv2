@@ -204,8 +204,9 @@ func (ctx *CmdContext) GiveCP(CP int64, notif bool) *discordgo.MessageEmbed {
 
 		if notif {
 			ctx.Reply(ReplyParams{
-				Content:  content,
-				FollowUp: true,
+				Content:   content,
+				Automated: true,
+				FollowUp:  true,
 			})
 		} else {
 			return content
