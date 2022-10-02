@@ -3,18 +3,12 @@ package main
 import (
 	"os"
 	"os/signal"
-	"rwby-adventures/main/websocket"
-	"rwby-adventures/market_back/cache"
-	"rwby-adventures/market_back/microservice"
-	"rwby-adventures/market_back/web"
+	"rwby-adventures/oc_contest_back/routes"
 	"syscall"
 )
 
 func main() {
-	cache.Init()
-	websocket.StartWebsocket()
-	microservice.CreateMicroservice()
-	web.StartMarket()
+	routes.Serve()
 
 	// Wait here until CTRL-C or other term signal is received.
 	sc := make(chan os.Signal, 1)
