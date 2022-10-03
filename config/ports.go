@@ -45,4 +45,8 @@ var (
 
 	AuthHost = os.Getenv("AUTH_HOST")
 	AuthPort = os.Getenv("AUTH_PORT")
+
+	OCPort  = os.Getenv("OC_PORT")
+	OCHost  = os.Getenv("OC_HOST")
+	OCFront = os.Getenv("OC_FRONT")
 )

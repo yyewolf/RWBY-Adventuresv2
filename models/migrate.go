@@ -43,7 +43,10 @@ func init() {
 		&Badges{},
 		&PlayerBadges{},
 	)
-
+	config.Database.AutoMigrate(
+		&Submission{},
+		&SubmissionFile{},
+	)
 	for i, b := range DefaultBadges {
 		b.BadgeID = i + 1
 		b.Save()

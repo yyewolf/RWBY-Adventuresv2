@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"rwby-adventures/auth/export"
+	"rwby-adventures/config"
 	"strings"
 	"time"
 
@@ -34,7 +35,7 @@ func Serve() {
 	initializeRoutes(basepath)
 
 	s := &http.Server{
-		Addr:           ":5000",
+		Addr:           config.OCPort,
 		Handler:        router,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,

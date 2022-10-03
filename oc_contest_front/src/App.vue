@@ -2,7 +2,13 @@
   <v-app>
     <v-app-bar density="compact">
       <template v-slot:prepend>
-        <v-tab to="/">OC Contest</v-tab>
+        <v-tabs>
+          <v-tab to="/">Home</v-tab>
+          <template v-if="logged">
+            <v-tab to="/self">My submissions</v-tab>
+            <v-tab to="/create">New submission</v-tab>
+          </template>
+        </v-tabs>
       </template>
 
       <template v-slot:append>

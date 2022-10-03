@@ -15,5 +15,6 @@ func Status(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"logged": true,
+		"user":   c.MustGet("User"),
 	})
 }

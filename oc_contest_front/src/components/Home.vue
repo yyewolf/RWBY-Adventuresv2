@@ -10,12 +10,17 @@
       <v-col cols="3" v-for="s in submissions" :key="s">
         <submission :submission="s"/>
       </v-col>
+      <v-col cols="3" v-if="submissions.length == 0">
+        There are no submissions yet...
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
 import submission from '@/components/Submission.vue'
+import {backend} from '@/plugins/axios';
+
 export default {
   name: 'HomePage',
 
@@ -24,24 +29,23 @@ export default {
   },
 
   data: () => ({
-    submissions: [
-      {
-        name: "Submission Name",
-        color: "Color",
-        short_desc: "This is a short description of the submission.",
-        long_desc: "This is a long description of the submission.",
-        icon: "https://img.rwbyadventures.com/Janina_Wolf/Xmas_Icon.webp",
-        author: "@Someone#0000",
-        votes: 51,
-        files:[
-            {
-                name:"Image name.png",
-                uri:"image file.png"
-            }
-        ],
-      },
-    ],
+    submissions: [],
+    pages: 0,
+    page: 0,
   }),
+
+  created() {
+    this.getSubmissions(0);
+  },
+
+  methods: {
+    async getSubmissions(page) {
+      const response = await backend.get('/submissions/all/'+page);
+      console.log(response);
+      this.submissions = response.data.submissions;
+      this.pages = response.data.max_page;
+    },
+  },
   
 }
 </script>

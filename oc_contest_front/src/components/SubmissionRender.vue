@@ -1,6 +1,6 @@
 <template>
     <v-card height="100%" tonal @click="dialog = true" class="d-flex flex-column justify-space-between">
-        <div class="d-flex flex-no-wrap justify-space-between">
+        <div class="d-flex flex-no-wrap justify-space-between fix">
             <div>
                 <v-card-text>
                     <h2>{{submission.name}}</h2>
@@ -13,7 +13,7 @@
                 </v-card-text>
             </div>
             <v-avatar class="ma-3" size="125" rounded="0">
-                <v-img :src="submission.icon"></v-img>
+                <v-img :src="submission.icon.uri"></v-img>
             </v-avatar>
         </div>
 
@@ -34,8 +34,9 @@
                 <v-row align="center" justify="center" style="height:100%">
                     {{submission.long_desc}}
                 </v-row>
+
                 <v-dialog v-model="image_dialog">
-                    <v-card tonal v-if="dialog" width="500px" class="center">
+                    <v-card tonal width="500px" class="center">
                         <v-img :src="image" class="image"/>
                     </v-card>
                 </v-dialog>
@@ -46,16 +47,7 @@
                         <v-col cols="2">
                             <v-tooltip location="top">
                                 <template v-slot:activator="{ props }">
-                                    <template v-if="file.name.split('.').pop() == 'jpeg' || file.name.split('.').pop() == 'jpg' || file.name.split('.').pop() == 'png'">
-                                        <v-img height="50px" :src="file.uri" class="image" @click="image_dialog = true; image = file.uri" v-bind="props"/>
-                                    </template>
-                                    <template v-else>
-                                        <v-btn height="100%" :href="file.uri" v-bind="props" variant="text">
-                                            <v-icon large color="orange darken-2">
-                                                mdi-file
-                                            </v-icon>
-                                        </v-btn>
-                                    </template>
+                                    <v-img height="50px" :src="file.uri" class="image" @click="image_dialog = true; image = file.uri" v-bind="props"/>
                                 </template>
                                 <span>{{file.name}}</span>
                             </v-tooltip>
@@ -63,12 +55,6 @@
                     </template>
                 </v-row>
             </v-card-text>
-            <v-card-actions>
-                <v-btn color="primary">
-                    <v-icon>mdi-thumb-up</v-icon>
-                    <p class="ml-3">{{submission.votes}} Votes</p>
-                </v-btn>
-            </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
@@ -89,6 +75,9 @@ export default {
     image: undefined,
     dialog: false,
   }),
+  
+  methods: {
+  },
 }
 </script>
 
@@ -98,7 +87,7 @@ export default {
 }
 
 .image {
-    background-color: beige;
+    background-color: rgba(245, 245, 220, 0);
     border-radius: 5px;
 }
 
@@ -106,7 +95,6 @@ export default {
     /* higher font size */
     font-size: 1.5em !important;
 }
-
 .center {
     position:absolute;
     top:50%;

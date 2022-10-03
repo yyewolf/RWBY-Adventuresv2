@@ -28,7 +28,6 @@ func Code(code string) (*goth.User, error) {
 	}
 	var res map[string]interface{}
 	json.NewDecoder(resp.Body).Decode(&res)
-	fmt.Println(res)
 	m := res["user"].(map[string]interface{})
 	d, err := json.Marshal(m)
 	if err != nil {
