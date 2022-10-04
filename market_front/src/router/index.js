@@ -6,11 +6,17 @@ const routes = [
   {
     path: "/",
     name: "Home",
+    meta: {
+      title: "RWBY Adventures Market",
+    },
     component: Home,
   },
   {
     path: "/search",
     name: "Search",
+    meta: {
+      title: "Market - Search",
+    },
     component: Search,
   },
 ];
@@ -18,6 +24,10 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.afterEach((to) => {
+  document.title = to.meta.title || "RWBY Adventures Market";
 });
 
 export default router;

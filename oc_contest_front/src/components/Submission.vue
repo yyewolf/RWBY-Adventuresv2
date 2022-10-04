@@ -37,7 +37,7 @@
                 Description
             </v-card-title>
             <v-card-text style="font-size: 1rem;">
-                <v-row align="center" justify="center" style="height:100%">
+                <v-row align="center" justify="center" style="height:100%; white-space:pre-line;">
                     {{submission.long_desc}}
                 </v-row>
                 <v-dialog v-model="image_dialog">
