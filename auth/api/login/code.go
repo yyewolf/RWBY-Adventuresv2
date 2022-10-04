@@ -1,7 +1,6 @@
 package login
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
@@ -35,7 +34,6 @@ func codeGrant(c *gin.Context) {
 
 	u := d.(goth.User)
 
-	fmt.Println(u)
 	c.JSON(200, gin.H{
 		"code": json.Code,
 		"user": u,

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/sessions"
 	"github.com/yyewolf/goth"
+	"github.com/yyewolf/goth/gothic"
 	"github.com/yyewolf/goth/providers/discord"
 )
 
@@ -16,6 +17,8 @@ func Provider() {
 	store.MaxAge(maxAge)
 	store.Options.Domain = config.CookieHost
 	store.Options.Path = "/"
+
+	gothic.Store = store
 
 	goth.UseProviders(
 		discord.New(config.AppID, config.DiscordSecret, fmt.Sprintf("%sapi/login/callback", config.AuthHost), discord.ScopeIdentify, discord.ScopeGuilds),

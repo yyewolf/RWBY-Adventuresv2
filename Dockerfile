@@ -1,26 +1,22 @@
 FROM node:lts-alpine AS ARENA_FRONT_IMAGE
 WORKDIR /app
 COPY ./arenas_front/ .
-RUN npm install
-RUN npm run build
+RUN npm install && npm run build
 
 FROM node:lts-alpine AS DUNGEON_FRONT_IMAGE
 WORKDIR /app
 COPY ./dungeons_front/ .
-RUN npm install
-RUN npm run build
+RUN npm install && npm run build
 
 FROM node:lts-alpine AS MARKET_FRONT_IMAGE
 WORKDIR /app
 COPY ./market_front/ .
-RUN npm install
-RUN npm run build
+RUN npm install && npm run build
 
 FROM node:lts-alpine AS OC_FRONT_IMAGE
 WORKDIR /app
 COPY ./oc_contest_front/ .
-RUN npm install
-RUN npm run build
+RUN npm install && npm run build
 
 FROM golang:1.19 AS BUILD_GO_IMAGE
 WORKDIR /app
@@ -79,41 +75,27 @@ RUN addgroup -S bot -g $GID && \
 USER bot
 
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/arenas_back/arenas /app/arenas
-RUN chmod +x /app/arenas
-
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/dungeons_back/dungeons /app/dungeons
-RUN chmod +x /app/dungeons
-
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/market_back/market /app/market
-RUN chmod +x /app/market
-
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/topgg/topgg /app/topgg
-RUN chmod +x /app/topgg
-
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/gambles/gambles /app/gambles
-RUN chmod +x /app/gambles
-
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/cdn/cdn /app/cdn
-RUN chmod +x /app/cdn
-
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/auth/auth /app/auth
-RUN chmod +x /app/auth
-
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/oc_contest_back/cmd/server/ocback /app/ocback
-RUN chmod +x /app/ocback
-
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/main/main /app/main
-RUN chmod +x /app/main
+
+RUN chmod +x /app/arenas && \
+    chmod +x /app/dungeons && \
+    chmod +x /app/market && \
+    chmod +x /app/topgg && \
+    chmod +x /app/gambles && \
+    chmod +x /app/cdn && \
+    chmod +x /app/auth && \
+    chmod +x /app/ocback && \
+    chmod +x /app/main
 
 COPY --from=MARKET_FRONT_IMAGE --chown=bot:bot /app/dist /app/market_front/dist
 COPY --from=OC_FRONT_IMAGE --chown=bot:bot /app/dist /app/oc_front/dist
 
-# HTTP
-EXPOSE 80 
-# WS
-EXPOSE 81
-# MICROSERVICE
-EXPOSE 82
-
-# MARKET FRONT
-EXPOSE 8080
+# HTTP, WS, MICROSERVICE & FRONTS
+EXPOSE 80 81 82 8080
