@@ -19,8 +19,14 @@
 
         <v-card-actions>
             <v-row justify="center">
-                <v-col cols="6" class="text-center">
+                <v-col cols="1">
+                </v-col>
+                <v-col cols="5" class="text-center">
                     <p class="author">Author : <b>{{submission.author}}</b></p>
+                </v-col>
+                <v-col cols="6" class="text-center">
+                    <v-icon>mdi-thumb-up</v-icon>
+                    <p class="ml-3">{{submission.votes.length}} Votes</p>
                 </v-col>
             </v-row>
         </v-card-actions>
