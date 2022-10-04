@@ -13,7 +13,7 @@
                 </v-card-text>
             </div>
             <v-avatar class="ma-3" size="125" rounded="0">
-                <v-img :src="submission.icon"></v-img>
+                <v-img :src="filepath+submission.icon.uri"></v-img>
             </v-avatar>
         </div>
 
@@ -46,16 +46,7 @@
                         <v-col cols="2">
                             <v-tooltip location="top">
                                 <template v-slot:activator="{ props }">
-                                    <template v-if="file.name.split('.').pop() == 'jpeg' || file.name.split('.').pop() == 'jpg' || file.name.split('.').pop() == 'png'">
-                                        <v-img height="50px" :src="file.uri" class="image" @click="image_dialog = true; image = file.uri" v-bind="props"/>
-                                    </template>
-                                    <template v-else>
-                                        <v-btn height="100%" :href="file.uri" v-bind="props" variant="text">
-                                            <v-icon large color="orange darken-2">
-                                                mdi-file
-                                            </v-icon>
-                                        </v-btn>
-                                    </template>
+                                    <v-img height="50px" :src="filepath+file.uri" class="image" @click="image_dialog = true; image = filepath+file.uri" v-bind="props"/>
                                 </template>
                                 <span>{{file.name}}</span>
                             </v-tooltip>
@@ -64,9 +55,9 @@
                 </v-row>
             </v-card-text>
             <v-card-actions>
-                <v-btn color="primary">
+                <v-btn color="primary" @click="clickVote()">
                     <v-icon>mdi-thumb-up</v-icon>
-                    <p class="ml-3">{{submission.votes}} Votes</p>
+                    <p class="ml-3">{{submission.votes.length}} Votes</p>
                 </v-btn>
             </v-card-actions>
         </v-card>
@@ -83,12 +74,20 @@ export default {
       required: true
     }
   },
+  emits: ['vote'],
 
   data: () => ({
+    filepath: process.env.VUE_APP_BACKEND,
     image_dialog: false,
     image: undefined,
     dialog: false,
   }),
+
+  methods: {
+    clickVote() {
+        this.$emit('vote');
+    }
+  }
 }
 </script>
 
@@ -98,7 +97,7 @@ export default {
 }
 
 .image {
-    background-color: beige;
+    background-color: rgba(245, 245, 220, 0);
     border-radius: 5px;
 }
 

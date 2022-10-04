@@ -2,6 +2,7 @@ package routes
 
 import (
 	"rwby-adventures/oc_contest_back/routes/auth"
+	"rwby-adventures/oc_contest_back/routes/files"
 	"rwby-adventures/oc_contest_back/routes/submissions"
 
 	"github.com/gin-gonic/gin"
@@ -10,4 +11,5 @@ import (
 func initializeRoutes(path *gin.RouterGroup) {
 	auth.ServeAuth(path)
 	submissions.ServeSubmissions(path)
+	files.ServeFiles(path)
 }

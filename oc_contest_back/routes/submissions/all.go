@@ -7,6 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var itemPerPage = 8
+
 func All(c *gin.Context) {
 	data := c.Param("page")
 	page, err := strconv.Atoi(data)
@@ -15,7 +17,7 @@ func All(c *gin.Context) {
 	}
 	count := models.GetAmountOfSubmissions()
 
-	maxPage := count / 10
+	maxPage := count / itemPerPage
 	if page > maxPage {
 		page = maxPage
 	}
@@ -23,7 +25,7 @@ func All(c *gin.Context) {
 		page = 0
 	}
 
-	s := models.GetSubmissions(10, page*10)
+	s := models.GetSubmissions(itemPerPage, page*itemPerPage)
 
 	c.JSON(200, gin.H{
 		"page":        page,

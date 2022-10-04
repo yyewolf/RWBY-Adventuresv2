@@ -1,20 +1,33 @@
 <template>
   <!-- Title -->
   <v-container>
-    <v-row class="mt-5" justify="center">
-      <v-col cols="1">
-        <h1> Submissions </h1>
-      </v-col>
-    </v-row>
+    <h1 class="text-center"> Submissions </h1>
+    <h3 v-if="logged" class="text-center"> You have {{5-votes}} votes left. </h3>
     <v-row class="mt-5">
       <v-col cols="3" v-for="s in submissions" :key="s">
-        <submission :submission="s"/>
+        <submission :submission="s" @vote="submissionVote(s)"/>
       </v-col>
       <v-col cols="3" v-if="submissions.length == 0">
         There are no submissions yet...
       </v-col>
     </v-row>
+    <div class="text-center">
+      <v-pagination
+        v-model="page"
+        :length="pages+1"
+        @click="onPageChange"
+      ></v-pagination>
+    </div>
   </v-container>
+  <v-snackbar v-model="alert.active" :timeout="2000">
+    {{ alert.text }}
+
+    <template v-slot:actions>
+      <v-btn color="blue" variant="text" @click="alert.active = false">
+        Close
+      </v-btn>
+    </template>
+  </v-snackbar>
 </template>
 
 <script>
@@ -29,16 +42,45 @@ export default {
   },
 
   data: () => ({
+    alert: {
+      active:false,
+      text: '',
+    },
     submissions: [],
     pages: 0,
-    page: 0,
+    page: 1,
+
+    votes: 0,
+    logged: false,
   }),
 
-  created() {
-    this.getSubmissions(0);
+  mounted() {
+    this.getSubmissions(this.page-1);
+
+    backend.get("/auth/status").then(data => {
+      data = data.data;
+      this.logged = data.logged;
+      if (this.logged) {
+        this.votes = data.votes;
+      }
+    });
   },
 
   methods: {
+    onPageChange() {
+      this.getSubmissions(this.page-1);
+    },
+    submissionVote(s) {
+      backend.get('/submissions/vote/'+s.SubmissionID).then(() => {
+        this.alert.active = true;
+        this.alert.text = 'Vote successful!';
+        this.votes++;
+        s.votes.push({});
+      }).catch((e) => {
+        this.alert.active = true;
+        this.alert.text = e.response.data.error;
+      });
+    },
     async getSubmissions(page) {
       const response = await backend.get('/submissions/all/'+page);
       console.log(response);

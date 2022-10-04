@@ -46,6 +46,7 @@ func init() {
 	config.Database.AutoMigrate(
 		&Submission{},
 		&SubmissionFile{},
+		&SubmissionVote{},
 	)
 	for i, b := range DefaultBadges {
 		b.BadgeID = i + 1

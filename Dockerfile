@@ -16,6 +16,12 @@ COPY ./market_front/ .
 RUN npm install
 RUN npm run build
 
+FROM node:lts-alpine AS OC_FRONT_IMAGE
+WORKDIR /app
+COPY ./oc_contest_front/ .
+RUN npm install
+RUN npm run build
+
 FROM golang:1.19 AS BUILD_GO_IMAGE
 WORKDIR /app
 COPY ./go.mod .
@@ -48,6 +54,9 @@ RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o cdn -buildvcs=
 
 WORKDIR /app/auth
 RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o auth -buildvcs=false
+
+WORKDIR /app/oc_contest_back/cmd/server
+RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o ocback -buildvcs=false
 
 WORKDIR /app/main
 RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o main -buildvcs=false
@@ -90,10 +99,14 @@ RUN chmod +x /app/cdn
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/auth/auth /app/auth
 RUN chmod +x /app/auth
 
+COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/oc_contest_back/cmd/server/ocback /app/ocback
+RUN chmod +x /app/ocback
+
 COPY --from=BUILD_GO_IMAGE --chown=bot:bot /app/main/main /app/main
 RUN chmod +x /app/main
 
 COPY --from=MARKET_FRONT_IMAGE --chown=bot:bot /app/dist /app/market_front/dist
+COPY --from=OC_FRONT_IMAGE --chown=bot:bot /app/dist /app/oc_front/dist
 
 # HTTP
 EXPOSE 80 

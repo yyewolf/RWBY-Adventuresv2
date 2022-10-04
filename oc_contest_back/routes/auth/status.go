@@ -1,7 +1,10 @@
 package auth
 
 import (
+	"rwby-adventures/models"
+
 	"github.com/gin-gonic/gin"
+	"github.com/yyewolf/goth"
 )
 
 func Status(c *gin.Context) {
@@ -13,8 +16,12 @@ func Status(c *gin.Context) {
 		return
 	}
 
+	u := c.MustGet("User").(*goth.User)
+	voteAmount := models.GetAmountOfVote(u.UserID)
+
 	c.JSON(200, gin.H{
 		"logged": true,
-		"user":   c.MustGet("User"),
+		"user":   u,
+		"votes":  voteAmount,
 	})
 }

@@ -37,7 +37,6 @@ export default {
   created() {
     loggedIn().then(data => {
       this.logged = data;
-      console.log(data);
     });
   },
 }

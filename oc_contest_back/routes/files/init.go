@@ -1,6 +1,10 @@
 package files
 
-import "os"
+import (
+	"os"
+
+	"github.com/gin-gonic/gin"
+)
 
 func init() {
 	// Make sure the upload folder exists
@@ -10,4 +14,10 @@ func init() {
 			panic(err)
 		}
 	}
+}
+
+func ServeFiles(path *gin.RouterGroup) {
+	subpath := path.Group("/files")
+
+	subpath.GET("/get/:file", Get)
 }
