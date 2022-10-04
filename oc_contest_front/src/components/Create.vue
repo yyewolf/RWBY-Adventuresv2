@@ -53,6 +53,10 @@ export default {
     submission
   },
 
+  props: {
+    status: Object,
+  },
+
   data: () => ({
     alert: {
       active:false,
@@ -68,10 +72,8 @@ export default {
   }),
 
   created() {
-    this.getUser().then((d) => {
-      let author = "@" + d.RawData.username + "#" + d.RawData.discriminator;
-      this.s.author = author;
-    });
+    let author = "@" + this.status.user.RawData.username + "#" + this.status.user.RawData.discriminator;
+    this.s.author = author;
   },
 
   methods: {
@@ -89,10 +91,6 @@ export default {
         });
       }
       console.log(this.s.files);
-    },
-    async getUser() {
-      const response = await backend.get('/auth/status');
-      return response.data.user;
     },
     sendForm() {
       let submission = this.s;

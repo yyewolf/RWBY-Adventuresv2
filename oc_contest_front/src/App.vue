@@ -17,7 +17,7 @@
       </template>
     </v-app-bar>
     <v-main>
-      <router-view></router-view>
+      <router-view :status="status"></router-view>
     </v-main>
   </v-app>
 </template>
@@ -30,13 +30,15 @@ export default {
 
   data: () => ({
     logged: false,
+    status: {},
     login: process.env.VUE_APP_BACKEND + 'auth/login',
     logout: process.env.VUE_APP_BACKEND + 'auth/logout',
   }),
 
   created() {
     loggedIn().then(data => {
-      this.logged = data;
+      this.logged = data.logged;
+      this.status = data;
     });
   },
 }
