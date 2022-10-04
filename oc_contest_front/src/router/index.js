@@ -1,5 +1,6 @@
-import { createWebHistory, createRouter } from "vue-router";
+import { createWebHashHistory, createRouter } from "vue-router";
 import Home from "@/components/Home.vue";
+import Top from "@/components/Top.vue";
 import Self from "@/components/Self.vue";
 import Create from "@/components/Create.vue";
 
@@ -11,6 +12,14 @@ const routes = [
       title: "OC Contest - Home",
     },
     component: Home,
+  },
+  {
+    path: "/top",
+    name: "Top",
+    meta: {
+      title: "OC Contest - Top",
+    },
+    component: Top,
   },
   {
     path: "/self",
@@ -31,7 +40,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
 });
 
