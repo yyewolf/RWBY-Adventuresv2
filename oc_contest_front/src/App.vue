@@ -4,6 +4,7 @@
       <template v-slot:prepend>
         <v-tabs>
           <v-tab to="/">Home</v-tab>
+          <v-tab to="/top">Top</v-tab>
           <template v-if="logged">
             <v-tab to="/self">My submissions</v-tab>
             <v-tab to="/create">New submission</v-tab>

@@ -95,10 +95,10 @@ func (c *Character) ToRealChar() chars.CharacterStruct {
 
 	returnChar := config.BaseCharacters[i]
 	returnChar.CustomID = c.CharID
-	returnChar.Stats.Armor = c.Stats.Armor
-	returnChar.Stats.Damage = c.Stats.Damage
-	returnChar.Stats.Healing = c.Stats.Healing
-	returnChar.Stats.Health = c.Stats.Health
+	// returnChar.Stats.Armor = c.Stats.Armor
+	// returnChar.Stats.Damage = c.Stats.Damage
+	// returnChar.Stats.Healing = c.Stats.Healing
+	// returnChar.Stats.Health = c.Stats.Health
 	returnChar.Value = c.Value
 	returnChar.Rarity = c.Rarity
 	returnChar.Level = c.Level

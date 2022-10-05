@@ -19,8 +19,14 @@
 
         <v-card-actions>
             <v-row justify="center">
-                <v-col cols="6" class="text-center">
+                <v-col cols="1">
+                </v-col>
+                <v-col cols="5" class="text-center">
                     <p class="author">Author : <b>{{submission.author}}</b></p>
+                </v-col>
+                <v-col cols="6" class="text-center">
+                    <v-icon>mdi-thumb-up</v-icon>
+                    <p class="ml-3">{{submission.votes.length}} Votes</p>
                 </v-col>
             </v-row>
         </v-card-actions>
@@ -31,7 +37,7 @@
                 Description
             </v-card-title>
             <v-card-text style="font-size: 1rem;">
-                <v-row align="center" justify="center" style="height:100%">
+                <v-row align="center" justify="center" style="height:100%; white-space:pre-line;">
                     {{submission.long_desc}}
                 </v-row>
                 <v-dialog v-model="image_dialog">

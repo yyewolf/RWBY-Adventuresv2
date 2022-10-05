@@ -5,6 +5,7 @@
     <v-row class="mt-5">
       <v-col cols="3" height="100%" class="d-flex flex-column">
           <v-text-field v-model="s.name" label="Name" counter="30" required></v-text-field>
+          <v-text-field v-model="s.color" label="Color" counter="30" required></v-text-field>
           <v-textarea v-model="s.short_desc" counter="150" label="Short Description" required></v-textarea>
       </v-col>
       <v-col cols="9" height="100%" class="d-flex flex-column">
@@ -90,7 +91,6 @@ export default {
           uri: URL.createObjectURL(this.files[i]),
         });
       }
-      console.log(this.s.files);
     },
     sendForm() {
       let submission = this.s;

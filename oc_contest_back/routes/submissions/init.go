@@ -14,4 +14,5 @@ func ServeSubmissions(path *gin.RouterGroup) {
 	subpath.GET("/delete/:id", middlewares.GetStatus(), middlewares.IsLogged(), Delete)
 	subpath.GET("/vote/:id", middlewares.GetStatus(), middlewares.IsLogged(), Vote)
 	subpath.GET("/all/:page", All)
+	subpath.GET("/top", Top)
 }
