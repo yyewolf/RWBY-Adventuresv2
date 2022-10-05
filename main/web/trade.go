@@ -76,6 +76,9 @@ func startTradeService() {
 	mux.PathPrefix("/assets/").Handler(http.StripPrefix("/assets", DirectoryListing(http.FileServer(http.FS(static.Assets)))))
 	mux.Get("/success", http.HandlerFunc(TradeSuccess))
 	mux.HandleFunc("/t/{id}", http.HandlerFunc(TradeIndex))
+
+	// mux.PathPrefix("/debug/pprof/").Handler(http.HandlerFunc(pprof.Index))
+
 	go srv.ListenAndServe()
 }
 
