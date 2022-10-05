@@ -2,7 +2,7 @@
   <!-- Title -->
   <v-container>
     <h1 class="text-center"> Submissions </h1>
-    <h3 v-if="status.logged" class="text-center"> You have {{5-votes}} votes left. </h3>
+    <h3 v-if="status.logged" class="text-center"> You have {{5-status.votes}} votes left. </h3>
     <v-row class="mt-5">
       <v-col cols="3" sm="12" md="6" lg="4" xl="3" v-for="s in submissions" :key="s">
         <submission :submission="s" @vote="submissionVote(s)"/>
@@ -59,10 +59,6 @@ export default {
 
   mounted() {
     this.getSubmissions(this.page-1);
-
-    if (this.status.logged) {
-      this.votes = this.status.votes;
-    }
   },
 
   methods: {
@@ -82,7 +78,6 @@ export default {
     },
     async getSubmissions(page) {
       const response = await backend.get('/submissions/all/'+page);
-      console.log(response);
       this.submissions = response.data.submissions;
       this.pages = response.data.max_page;
     },
