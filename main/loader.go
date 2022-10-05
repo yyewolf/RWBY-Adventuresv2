@@ -47,6 +47,7 @@ func StartDiscord() {
 	discord.AddCmd(commands_misc.InviteCommand)
 	discord.AddCmd(commands_misc.Eventcommand)
 	discord.AddCmd(commands_misc.DailyCommand)
+	discord.AddCmd(commands_misc.StatCommand)
 	discord.AddCmd(commands_market.MarketCommand)
 	discord.AddCmd(commands_duel.DuelCommand)
 	discord.AddCmd(commands_badges.BadgesCommand)

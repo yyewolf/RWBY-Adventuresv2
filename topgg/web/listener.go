@@ -22,16 +22,19 @@ type topggreq struct {
 
 func index(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("Authorization") != config.TopGG {
+		fmt.Println("[TOPGG] Failed authorization from top.gg")
 		return
 	}
 	decoder := json.NewDecoder(r.Body)
 	var info topggreq
 	err := decoder.Decode(&info)
 	if err != nil {
+		fmt.Println("[TOPGG] Failed to decode info from top.gg :", err)
 		return
 	}
 	p := models.GetPlayer(info.User)
 	if p.IsNew {
+		fmt.Println("[TOPGG] Player is new and can't receive daily.")
 		return
 	}
 
