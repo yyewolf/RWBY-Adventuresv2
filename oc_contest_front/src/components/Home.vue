@@ -4,7 +4,7 @@
     <h1 class="text-center"> Submissions </h1>
     <h3 v-if="status.logged" class="text-center"> You have {{5-status.votes}} votes left. </h3>
     <v-row class="mt-5">
-      <v-col cols="3" sm="12" md="6" lg="4" xl="3" v-for="s in submissions" :key="s">
+      <v-col cols="12" xs="12" sm="12" md="6" lg="4" xl="3" v-for="s in submissions" :key="s">
         <submission :submission="s" @vote="submissionVote(s)"/>
       </v-col>
       <v-col cols="3" v-if="submissions.length == 0">
