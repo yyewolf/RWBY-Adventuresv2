@@ -8,7 +8,6 @@ import (
 
 func HandleNewPlayer(ctx *CmdContext) {
 	// Useful stuff
-	g := ctx.Guild
 	p := ctx.Player
 
 	WelcomeFieldBattles := &discordgo.MessageEmbedField{
@@ -17,7 +16,7 @@ func HandleNewPlayer(ctx *CmdContext) {
 	}
 	WelcomeFieldLootboxes := &discordgo.MessageEmbedField{
 		Name:  "**Lootboxes :**",
-		Value: "To find new characters, you will need to open lootboxes, and in order to do so you will be able to find once in a while a lootbox.\nYou received a free one by the way, come on, try it !\nType `" + g.Prefix + "open` to open it.",
+		Value: "To find new characters, you will need to open lootboxes, and in order to do so you will be able to find once in a while a lootbox.\nYou received a free one by the way, come on, try it !\nUse `/open` to open it.",
 	}
 	WelcomeFieldCharacters := &discordgo.MessageEmbedField{
 		Name:  "**Characters :**",
@@ -35,7 +34,7 @@ func HandleNewPlayer(ctx *CmdContext) {
 	WelcomeEmbed := &discordgo.MessageEmbed{
 		Title:       "Welcome to RWBY Adventures, " + ctx.Author.Username + " !",
 		Color:       config.Botcolor,
-		Description: "By typing one of my command, you just began your new adventure, you will need to search ; train ; battle with your characters in order to win more fights. \nType `r!help` to see the help menu.\nType `r!tutorial` to see the tutorial.",
+		Description: "By typing one of my command, you just began your new adventure, you will need to search ; train ; battle with your characters in order to win more fights. \nUse `/help` to see the help menu.\nUse `/tutorial` to see the tutorial.",
 		Footer:      DefaultFooter,
 		Fields:      []*discordgo.MessageEmbedField{WelcomeFieldLootboxes, WelcomeFieldBattles, WelcomeFieldCharacters, WelcomeFieldInfos, WelcomeFieldDisclaimer},
 	}

@@ -131,7 +131,7 @@ func ViewAuctions(ctx *discord.CmdContext) {
 		Content: &discordgo.MessageEmbed{
 			Title:       fmt.Sprintf("%s's auctions (page %d/%d)", ctx.Author.Username, page, maxpage),
 			Color:       config.Botcolor,
-			Description: "These are your market auctions.\nTo view another page type `/market auctions view {page}`.",
+			Description: fmt.Sprintf("These are your market auctions.\nTo view another page use </market auctions view:%s>.", ctx.Command.ID),
 			Fields:      fields,
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
 				URL: ctx.Author.AvatarURL("512"),

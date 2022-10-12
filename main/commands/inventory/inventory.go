@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"rwby-adventures/config"
+	market_commands "rwby-adventures/main/commands/market"
 	"rwby-adventures/main/discord"
 	"rwby-adventures/models"
 	"strconv"
@@ -247,14 +248,14 @@ func Inventory(ctx *discord.CmdContext) {
 	if len(ctx.Player.Market.Listings) > 0 {
 		fields = append(fields, &discordgo.MessageEmbedField{
 			Name:  "Listings :",
-			Value: fmt.Sprintf("You have %d listings on the market.\nType `%slistings` for details.", len(ctx.Player.Market.Listings), ctx.Guild.Prefix),
+			Value: fmt.Sprintf("You have %d listings on the market.\nUse </market listings view:%s> for details.", len(ctx.Player.Market.Listings), market_commands.MarketCommand.ID),
 		})
 	}
 
 	if len(ctx.Player.Market.Auctions) > 0 {
 		fields = append(fields, &discordgo.MessageEmbedField{
 			Name:  "Auctions :",
-			Value: fmt.Sprintf("You have %d auctions on the market.\nType `%sauctions` for details.", len(ctx.Player.Market.Auctions), ctx.Guild.Prefix),
+			Value: fmt.Sprintf("You have %d auctions on the market.\nType </market auctions view:%s> for details.", len(ctx.Player.Market.Auctions), market_commands.MarketCommand.ID),
 		})
 	}
 
@@ -282,7 +283,7 @@ func Inventory(ctx *discord.CmdContext) {
 	reply := &discordgo.MessageSend{
 		Embed: &discordgo.MessageEmbed{
 			Title:       fmt.Sprintf("%s's characters", ctx.Author.Username),
-			Description: fmt.Sprintf("To select a character, please type `%sselect <PersonaID>`.", ctx.Guild.Prefix),
+			Description: fmt.Sprintf("To select a character, please use %s.", SelectCommand.Mention()),
 			Color:       config.Botcolor,
 			Fields:      fields,
 			Footer:      discord.DefaultFooter,

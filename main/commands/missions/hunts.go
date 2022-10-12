@@ -127,10 +127,10 @@ func checkHunt(ctx *discord.CmdContext) {
 
 	ctx.Reply(discord.ReplyParams{
 		Content: "You do have a hunt awaiting !\n" +
-			fmt.Sprintf("Type `%shunt go` to go on a hunt, %s!\n", ctx.Guild.Prefix, ctx.Author.Mention()) +
+			fmt.Sprintf("Use </hunt go:%s> to go on a hunt, %s!\n", ctx.Command.ID, ctx.Author.Mention()) +
 			fmt.Sprintf("**%s**.\n", huntToString(ctx.Player.Missions.HuntType)) +
 			"Your grimm will leave your inventory and come back after a while.\n" +
-			fmt.Sprintf("Your grimm will be gone for : **%d days**.\nTo end a hunt by yourself type `%shunt end`.", days, ctx.Guild.Prefix),
+			fmt.Sprintf("Your grimm will be gone for : **%d days**.\nTo end a hunt by yourself use </hunt end:%s>.", days, ctx.Command.ID),
 		Ephemeral: true,
 	})
 }

@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"fmt"
 	"rwby-adventures/config"
 	"sort"
 
@@ -57,7 +58,7 @@ func MakeEmbed() {
 			if i != 0 {
 				embed.Description += "\n"
 			}
-			embed.Description += "`" + CommandRouter.Prefix + cmd.HelpName + " : " + cmd.Description + "`"
+			embed.Description += fmt.Sprintf("%s ` : %s`", cmd.Mention(), cmd.Description)
 		}
 		MenuEmbed[menuName] = embed
 	}

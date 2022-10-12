@@ -39,7 +39,7 @@ func JarView(ctx *discord.CmdContext) {
 	ctx.Reply(discord.ReplyParams{
 		Content: &discordgo.MessageEmbed{
 			Title:       fmt.Sprintf("%s's XP Jar", ctx.Author.Username),
-			Description: fmt.Sprintf("You have **%d** XP left in your jar!\nType `/jar use *amount*` to use it on your selected character.", ctx.Player.Jar),
+			Description: fmt.Sprintf("You have **%d** XP left in your jar!\nUse </jar use:%s> to use it on your selected character.", ctx.Player.Jar, ctx.Command.ID),
 			Color:       config.Botcolor,
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
 				URL: "https://vignette.wikia.nocookie.net/rwby/images/6/62/Jinn_infobox.png/revision/latest/top-crop/width/320/height/320?cb=20181118074021",

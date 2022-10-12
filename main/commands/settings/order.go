@@ -2,6 +2,7 @@ package commands_settings
 
 import (
 	"fmt"
+	"rwby-adventures/config"
 	"rwby-adventures/main/discord"
 	"strconv"
 	"strings"
@@ -42,6 +43,8 @@ func order(ctx *discord.CmdContext) {
 		Content: &discordgo.MessageEmbed{
 			Title:       "Order",
 			Description: description,
+			Color:       config.Botcolor,
+			Footer:      discord.DefaultFooter,
 		},
 		Components: orderComponent(ctx.ID),
 		Ephemeral:  true,
@@ -86,9 +89,10 @@ func orderComponent(menuID string) []discordgo.MessageComponent {
 		}
 		row.Components = append(row.Components, discordgo.Button{
 			Label:    emoji,
-			Style:    discordgo.SuccessButton,
+			Style:    discordgo.PrimaryButton,
 			CustomID: fmt.Sprintf("%s-%d", menuID, i),
 		})
 	}
+	c = append(c, row)
 	return c
 }

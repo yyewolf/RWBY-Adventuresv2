@@ -104,7 +104,7 @@ func DropBoxes(ctx *CmdContext) {
 
 	resp := &discordgo.MessageEmbed{
 		Title:       "Random Drop",
-		Description: fmt.Sprintf("Congratulations !\n%s earned a {{TYPE}} !\nType `%sopen {{CMD}}` to open it.", ctx.Author.Mention(), "/"),
+		Description: fmt.Sprintf("Congratulations !\n%s earned a {{TYPE}} !\nUse `/open {{CMD}}` to open it.", ctx.Author.Mention()),
 		Color:       config.Botcolor,
 		Thumbnail: &discordgo.MessageEmbedThumbnail{
 			URL: "https://i.redd.it/t2ms587ydsq01.gif",

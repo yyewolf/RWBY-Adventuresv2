@@ -53,6 +53,24 @@ func (c *Command) makeOption() (opts []*discordgo.ApplicationCommandOption) {
 	return
 }
 
+func (c *Command) Mention() string {
+	if c.IsSub {
+		return fmt.Sprintf("</%s:%s>", c.HelpName, c.ID)
+	}
+	return fmt.Sprintf("</%s:%s>", c.Name, c.ID)
+}
+
+func (c *Command) PropagateID() {
+	for _, sub := range c.SubCommands {
+		sub.ID = c.ID
+		sub.PropagateID()
+	}
+	for _, sub := range c.SubCommandsGroup {
+		sub.ID = c.ID
+		sub.PropagateID()
+	}
+}
+
 func (c *Command) make() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Name:        c.Name,
@@ -70,41 +88,46 @@ func (r *router) getSlashCommands() (out []*discordgo.ApplicationCommand) {
 }
 
 func (r *router) LoadSlashCommands(sessions []*discordgo.Session) {
-	cmds := r.getSlashCommands()
 	for _, s := range sessions {
 		dcmds, _ := s.ApplicationCommands(config.AppID, "")
 		for _, dcmd := range dcmds {
 			remove := true
-			for _, botcmd := range cmds {
-				if IsCommandEqual(dcmd, botcmd) {
+			for _, botcmd := range r.Commands {
+				if IsCommandEqual(dcmd, botcmd.make()) {
+					// We found the command, we can now mention it
+					botcmd.ID = dcmd.ID
+					botcmd.PropagateID()
 					remove = false
 					break
 				}
 			}
 			if remove {
 				s.ApplicationCommandDelete(config.AppID, "", dcmd.ID)
-				fmt.Printf("Removed '%v' \n", dcmd.Name)
-
+				fmt.Printf("Replacing '%s' \n", dcmd.Name)
 			}
 		}
-		for _, botcmd := range cmds {
+		for _, botcmd := range r.Commands {
 			add := true
+			made := botcmd.make()
 			for _, dcmd := range dcmds {
-				if IsCommandEqual(dcmd, botcmd) {
+				if IsCommandEqual(dcmd, made) {
 					add = false
 					break
 				}
 			}
 			if add {
-				_, err := s.ApplicationCommandCreate(config.AppID, "", botcmd)
+				c, err := s.ApplicationCommandCreate(config.AppID, "", made)
 				if err != nil {
-					fmt.Printf("Cannot create '%v' : %v\n", botcmd.Name, err.Error())
+					fmt.Printf("Cannot create '%s' : %s\n", botcmd.Name, err.Error())
 				} else {
-					fmt.Printf("Created '%v' \n", botcmd.Name)
+					fmt.Printf("Created '%s' \n", botcmd.Name)
+					botcmd.ID = c.ID
+					botcmd.PropagateID()
 				}
 			}
 		}
 	}
+	MakeEmbed()
 }
 
 func isOptionEqual(c1, c2 *discordgo.ApplicationCommandOption) (b bool) {

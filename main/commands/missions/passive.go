@@ -54,16 +54,14 @@ func spawnMission(ctx *discord.CmdContext) {
 	ctx.Player.Missions.MissionType = rand.Intn(6)
 	ctx.Player.Missions.MissionMsgLeft = 150 + rand.Intn(150)
 
-	days := strconv.Itoa(int(math.Ceil(float64(ctx.Player.Missions.MissionMsgLeft) / 24)))
+	days := int(math.Ceil(float64(ctx.Player.Missions.MissionMsgLeft) / 24))
 	//Prepare the embed
-	g := ctx.Guild
 	embed := &discordgo.MessageEmbed{
 		Title: fmt.Sprintf("A mission is available for you, %s !", ctx.Author.Username),
-		Description: "Type `" + g.Prefix + "mission go` to go on a mission, " + ctx.Author.Mention() + " !\n" +
-			"**" + missionToString(ctx.Player.Missions.MissionType) + "**.\n" +
+		Description: fmt.Sprintf("Use </mission go:%s> to go on a mission, %s!\n", MissionCommand.ID, ctx.Author.Mention()) +
+			fmt.Sprintf("**%s**.\n", missionToString(ctx.Player.Missions.MissionType)) +
 			"Your character will leave your inventory and come back after a while.\n" +
-			"Your character will be gone for : **" + days + " days**.\n" +
-			"To end a mission by yourself type `" + g.Prefix + "mission end`.",
+			fmt.Sprintf("Your character will be gone for : **%d days**.\nTo end a mission by yourself use </mission end:%s>.", days, MissionCommand.ID),
 		Color: config.Botcolor,
 	}
 	ctx.Reply(discord.ReplyParams{
@@ -79,16 +77,14 @@ func spawnHunt(ctx *discord.CmdContext) {
 	ctx.Player.Missions.HuntType = rand.Intn(6)
 	ctx.Player.Missions.HuntMsgLeft = 150 + rand.Intn(150)
 
-	days := strconv.Itoa(int(math.Ceil(float64(ctx.Player.Missions.HuntMsgLeft) / 24)))
+	days := int(math.Ceil(float64(ctx.Player.Missions.HuntMsgLeft) / 24))
 	//Prepare the embed
-	g := ctx.Guild
 	embed := &discordgo.MessageEmbed{
 		Title: fmt.Sprintf("A hunt is available for you, %s !", ctx.Author.Username),
-		Description: "Type `" + g.Prefix + "hunt go` to go on a hunt, " + ctx.Author.Mention() + " !\n" +
-			"**" + huntToString(ctx.Player.Missions.HuntType) + "**.\n" +
+		Description: fmt.Sprintf("Use </hunt go:%s> to go on a hunt, %s!\n", HuntCommand.ID, ctx.Author.Mention()) +
+			fmt.Sprintf("**%s**.\n", huntToString(ctx.Player.Missions.HuntType)) +
 			"Your grimm will leave your inventory and come back after a while.\n" +
-			"Your grimm will be gone for : **" + days + " days**.\n" +
-			"To end a mission by yourself type `" + g.Prefix + "mission end`.",
+			fmt.Sprintf("Your grimm will be gone for : **%d days**.\nTo end a hunt by yourself use </hunt end:%s>.", days, HuntCommand.ID),
 		Color: config.Botcolor,
 	}
 	ctx.Reply(discord.ReplyParams{

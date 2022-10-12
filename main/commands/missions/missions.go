@@ -127,10 +127,10 @@ func checkMission(ctx *discord.CmdContext) {
 
 	ctx.Reply(discord.ReplyParams{
 		Content: "You do have a mission awaiting !\n" +
-			fmt.Sprintf("Type `%smission go` to go on a mission, %s!\n", ctx.Guild.Prefix, ctx.Author.Mention()) +
+			fmt.Sprintf("Use </mission go:%s> to go on a mission, %s!\n", ctx.Command.ID, ctx.Author.Mention()) +
 			fmt.Sprintf("**%s**.\n", missionToString(ctx.Player.Missions.MissionType)) +
 			"Your character will leave your inventory and come back after a while.\n" +
-			fmt.Sprintf("Your character will be gone for : **%d days**.\nTo end a mission by yourself type `%smission end`.", days, ctx.Guild.Prefix),
+			fmt.Sprintf("Your character will be gone for : **%d days**.\nTo end a mission by yourself use </mission end:%s>.", days, ctx.Command.ID),
 		Ephemeral: true,
 	})
 }

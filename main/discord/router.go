@@ -15,6 +15,7 @@ type CmdContext struct {
 	GuildID   string
 
 	Arguments Args
+	Command   *Command
 
 	Author        *discordgo.User
 	Player        *models.Player
@@ -58,6 +59,7 @@ type Command struct {
 	// Not needed when registering a command
 	IsSub    bool
 	HelpName string
+	ID       string
 
 	Call func(*CmdContext)
 }
@@ -272,6 +274,7 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if deepestLink.Call == nil {
 		return
 	}
+	ctx.Command = deepestLink
 	deepestLink.Call(ctx)
 }
 
@@ -356,6 +359,7 @@ func routeInteraction(s *discordgo.Session, interaction *discordgo.InteractionCr
 	if deepestLink.Call == nil {
 		return
 	}
+	ctx.Command = deepestLink
 	deepestLink.Call(ctx)
 }
 

@@ -55,7 +55,5 @@ func StartDiscord() {
 	discord.AddCmd(commands_shop.ShopCommand)
 	discord.AddCmd(commands_gamble.GambleCommand)
 
-	discord.MakeEmbed()
-
 	discord.CommandRouter.LoadSlashCommands([]*discordgo.Session{discord.Session})
 }

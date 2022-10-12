@@ -58,7 +58,7 @@ func ViewListings(ctx *discord.CmdContext) {
 		Content: &discordgo.MessageEmbed{
 			Title:       fmt.Sprintf("%s's listings (page %d/%d)", ctx.Author.Username, page, maxpage),
 			Color:       config.Botcolor,
-			Description: "These are your market listings.\nTo view another page type `/market listings view {page}`.\nTo retrieve a character do `/market remove`.",
+			Description: fmt.Sprintf("These are your market listings.\nTo view another page use </market listings view:%s>.", ctx.Command.ID),
 			Fields:      fields,
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
 				URL: ctx.Author.AvatarURL("512"),
