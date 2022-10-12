@@ -11,16 +11,17 @@ import (
 var JarCommand = &discord.Command{
 	Name:        "jar",
 	Description: "Use and view your XP Jar.",
-	Menu:        discord.InventoryMenu,
 	SubCommands: []*discord.Command{
 		{
 			Name:        "view",
 			Description: "View your XP Jar.",
+			Menu:        discord.InventoryMenu,
 			Call:        JarView,
 		},
 		{
 			Name:        "use",
 			Description: "Use your XP Jar.",
+			Menu:        discord.InventoryMenu,
 			Args: []discord.Arg{
 				{
 					Name:        "amount",
