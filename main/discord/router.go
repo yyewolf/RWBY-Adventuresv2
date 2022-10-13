@@ -48,6 +48,7 @@ func (a CmdAlias) Has(alias string) bool {
 type Command struct {
 	Name        string
 	Description string
+	Restricted  bool
 	Type        discordgo.ApplicationCommandType
 	Aliases     CmdAlias
 	Menu        menuName

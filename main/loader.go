@@ -2,6 +2,7 @@ package main
 
 import (
 	"rwby-adventures/main/commands"
+	commands_admin "rwby-adventures/main/commands/admin"
 	commands_badges "rwby-adventures/main/commands/badges"
 	commands_boxes "rwby-adventures/main/commands/boxes"
 	commands_duel "rwby-adventures/main/commands/duels"
@@ -54,6 +55,8 @@ func StartDiscord() {
 	discord.AddCmd(commands_badges.BadgesCommand)
 	discord.AddCmd(commands_shop.ShopCommand)
 	discord.AddCmd(commands_gamble.GambleCommand)
+
+	discord.AddCmd(commands_admin.UpdateCommand)
 
 	discord.CommandRouter.LoadSlashCommands([]*discordgo.Session{discord.Session})
 }

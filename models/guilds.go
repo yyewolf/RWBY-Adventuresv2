@@ -1,6 +1,9 @@
 package models
 
-import "rwby-adventures/config"
+import (
+	"rwby-adventures/config"
+	"time"
+)
 
 type Guild struct {
 	GuildID                    string `gorm:"primary_key;column:guild_id"`
@@ -9,6 +12,8 @@ type Guild struct {
 	AutomatedMessagesEnabled   bool   `gorm:"column:channel_on;not null"`
 	PingRoles                  string `gorm:"column:pingable;not null"`
 	Prefix                     string `gorm:"column:prefix;not null"`
+
+	LastUpdateMessage time.Time `gorm:"column:last_update_message"`
 }
 
 func GetGuild(id string) *Guild {

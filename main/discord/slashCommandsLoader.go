@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"os"
 	"rwby-adventures/config"
 
 	"github.com/bwmarrin/discordgo"
@@ -88,6 +89,8 @@ func (r *router) getSlashCommands() (out []*discordgo.ApplicationCommand) {
 }
 
 func (r *router) LoadSlashCommands(sessions []*discordgo.Session) {
+	supportGuild := os.Getenv("SUPPORT_GUILD")
+
 	for _, s := range sessions {
 		dcmds, _ := s.ApplicationCommands(config.AppID, "")
 		for _, dcmd := range dcmds {
@@ -102,6 +105,7 @@ func (r *router) LoadSlashCommands(sessions []*discordgo.Session) {
 				}
 			}
 			if remove {
+				s.ApplicationCommandDelete(config.AppID, supportGuild, dcmd.ID)
 				s.ApplicationCommandDelete(config.AppID, "", dcmd.ID)
 				fmt.Printf("Replacing '%s' \n", dcmd.Name)
 			}
@@ -116,7 +120,13 @@ func (r *router) LoadSlashCommands(sessions []*discordgo.Session) {
 				}
 			}
 			if add {
-				c, err := s.ApplicationCommandCreate(config.AppID, "", made)
+				var c *discordgo.ApplicationCommand
+				var err error
+				if botcmd.Restricted {
+					c, err = s.ApplicationCommandCreate(config.AppID, supportGuild, made)
+				} else {
+					c, err = s.ApplicationCommandCreate(config.AppID, "", made)
+				}
 				if err != nil {
 					fmt.Printf("Cannot create '%s' : %s\n", botcmd.Name, err.Error())
 				} else {

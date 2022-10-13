@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"os/signal"
+	commands_admin "rwby-adventures/main/commands/admin"
 	commands_missions "rwby-adventures/main/commands/missions"
 	"rwby-adventures/main/discord"
 	topgg "rwby-adventures/main/topgg"
@@ -28,4 +29,5 @@ func main() {
 
 func loadPassives() {
 	commands_missions.LoadPassives()
+	commands_admin.LoadPassives()
 }

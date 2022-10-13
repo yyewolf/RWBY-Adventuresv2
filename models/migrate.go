@@ -47,6 +47,7 @@ func init() {
 		&Submission{},
 		&SubmissionFile{},
 		&SubmissionVote{},
+		&Update{},
 	)
 	for i, b := range DefaultBadges {
 		b.BadgeID = i + 1
