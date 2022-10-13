@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"fmt"
 	"rwby-adventures/models"
 	"strings"
 
@@ -61,6 +62,7 @@ type Command struct {
 	IsSub    bool
 	HelpName string
 	ID       string
+	Path     string
 
 	Call func(*CmdContext)
 }
@@ -100,6 +102,11 @@ func (c *Command) findDeepestLink(args []string) (*Command, []string) {
 		}
 		for _, sub := range c.SubCommands {
 			if args[0] == sub.Name {
+				if c.Path == "" {
+					sub.Path = c.Name
+				} else {
+					sub.Path = fmt.Sprintf("%s %s", c.Path, c.Name)
+				}
 				test, args := sub.findDeepestLink(args[1:])
 				if test != nil {
 					return test, args
@@ -113,6 +120,11 @@ func (c *Command) findDeepestLink(args []string) (*Command, []string) {
 		}
 		for _, sub := range c.SubCommandsGroup {
 			if args[0] == sub.Name {
+				if c.Path == "" {
+					sub.Path = c.Name
+				} else {
+					sub.Path = fmt.Sprintf("%s %s", c.Path, c.Name)
+				}
 				test, args := sub.findDeepestLink(args[1:])
 				if test != nil {
 					return test, args
@@ -121,6 +133,11 @@ func (c *Command) findDeepestLink(args []string) (*Command, []string) {
 		}
 		return nil, args
 	} else {
+		if c.Path == "" {
+			c.Path = c.Name
+		} else {
+			c.Path = fmt.Sprintf("%s %s", c.Path, c.Name)
+		}
 		return c, args
 	}
 }
@@ -275,7 +292,15 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if deepestLink.Call == nil {
 		return
 	}
+
 	ctx.Command = deepestLink
+	// Logging
+	msg := fmt.Sprintf("[COMMAND] \033[1;36m%s#%s\033[0m (%s) : r!%s ", ctx.Author.Username, ctx.Author.Discriminator, ctx.Author.ID, ctx.Command.Path)
+	for _, arg := range ctx.Arguments {
+		msg += fmt.Sprintf("%s:%v ", arg.Name, arg.Value)
+	}
+	fmt.Println(msg)
+
 	deepestLink.Call(ctx)
 }
 
@@ -360,7 +385,15 @@ func routeInteraction(s *discordgo.Session, interaction *discordgo.InteractionCr
 	if deepestLink.Call == nil {
 		return
 	}
+
 	ctx.Command = deepestLink
+	// Logging
+	msg := fmt.Sprintf("[COMMAND] \033[1;36m%s#%s\033[0m (%s) : r!%s ", ctx.Author.Username, ctx.Author.Discriminator, ctx.Author.ID, ctx.Command.Path)
+	for _, arg := range ctx.Arguments {
+		msg += fmt.Sprintf("%s:%v ", arg.Name, arg.Value)
+	}
+	fmt.Println(msg)
+
 	deepestLink.Call(ctx)
 }
 
