@@ -122,11 +122,11 @@ func Inventory(ctx *discord.CmdContext) {
 	// Arguments
 	pageA := ctx.Arguments.GetArg("page", 0, 1)
 	charNameA := ctx.Arguments.GetArg("name", 1, "")
-	levelA := ctx.Arguments.GetArg("level", 2, 0)
-	valueAboveA := ctx.Arguments.GetArg("value_above", 3, 0)
-	valueBelowA := ctx.Arguments.GetArg("value_below", 4, 0)
-	buffsA := ctx.Arguments.GetArg("buffs", 5, 0)
-	rarityA := ctx.Arguments.GetArg("rarity", 6, 0)
+	levelA := ctx.Arguments.GetArg("level", 2, -1)
+	valueAboveA := ctx.Arguments.GetArg("value_above", 3, -1)
+	valueBelowA := ctx.Arguments.GetArg("value_below", 4, -1)
+	buffsA := ctx.Arguments.GetArg("buffs", 5, -1)
+	rarityA := ctx.Arguments.GetArg("rarity", 6, -1)
 	favoritesA := ctx.Arguments.GetArg("favorites", 7, false)
 	page, _ = strconv.Atoi(fmt.Sprint(pageA.Value))
 	charName = fmt.Sprint(charNameA.Value)
@@ -304,6 +304,14 @@ func Inventory(ctx *discord.CmdContext) {
 func InventoryPages(ctx *discord.CmdContext) {
 	d := ctx.Menu.Data.(*inventoryMenuData)
 
+	ctx.Session.InteractionRespond(ctx.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseDeferredMessageUpdate,
+	})
+
+	if ctx.Author.ID != d.UserID {
+		return
+	}
+
 	switch strings.Split(ctx.ComponentData.CustomID, "-")[1] {
 	case "prev":
 		d.Page--
@@ -314,10 +322,6 @@ func InventoryPages(ctx *discord.CmdContext) {
 	default:
 		return
 	}
-
-	ctx.Session.InteractionRespond(ctx.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseDeferredMessageUpdate,
-	})
 
 	Inventory(ctx)
 }

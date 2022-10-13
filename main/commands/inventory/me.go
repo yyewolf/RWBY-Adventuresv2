@@ -157,14 +157,6 @@ func Me(ctx *discord.CmdContext) {
 			"`Luck Boost : " + BoolStringFormat(p.Shop.LuckBoost) + luckBoostString + "`",
 		Inline: true,
 	}
-	infoMore := &discordgo.MessageEmbedField{
-		Name: "**More :**",
-		Value: fmt.Sprintf(`More infos [here](https://me.rwbyadventures.com/%s).
-			More settings [here](https://settings.rwbyadventures.com/).`,
-			ctx.Author.ID,
-		),
-		Inline: true,
-	}
 	infoReport := &discordgo.MessageEmbedField{
 		Name: "**Other :**",
 		Value: "Found a bug or need help ?\n" +
@@ -179,7 +171,7 @@ func Me(ctx *discord.CmdContext) {
 			URL: ctx.Author.AvatarURL("512"),
 		},
 		Footer: discord.DefaultFooter,
-		Fields: []*discordgo.MessageEmbedField{infoProfile, infoInventory, infoPack, infoMission, infoBoosts, infoMore, infoCoolDown, infoReport},
+		Fields: []*discordgo.MessageEmbedField{infoProfile, infoInventory, infoPack, infoMission, infoBoosts, infoCoolDown, infoReport},
 	}
 
 	ctx.Reply(discord.ReplyParams{

@@ -166,19 +166,19 @@ func (c *Character) CheckConditions(f *InvFilters) bool {
 		if f.Name != "" && !(strings.Contains(strings.ToLower(c.Name), strings.ToLower(f.Name))) {
 			return false
 		}
-		if f.Level != 1000 && c.Level != f.Level {
+		if f.Level != -1 && c.Level != f.Level {
 			return false
 		}
-		if c.Value < f.ValAbove {
+		if f.ValAbove != -1 && c.Value < f.ValAbove {
 			return false
 		}
-		if c.Value > f.ValBelow {
+		if f.ValAbove != -1 && c.Value > f.ValBelow {
 			return false
 		}
 		if f.Rarity != -1 && c.Rarity != f.Rarity {
 			return false
 		}
-		if f.Buffs != 0 && c.Buffs != f.Buffs {
+		if f.Buffs != -1 && c.Buffs != f.Buffs {
 			return false
 		}
 	}
