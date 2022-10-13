@@ -19,14 +19,14 @@ var OrderCommand = &discord.Command{
 
 func order(ctx *discord.CmdContext) {
 	menu := []string{
-		"1️⃣ - Alphabetical (A-Z)",
-		"2️⃣ - Alphabetical (Z-A)",
-		"3️⃣ - Rarity (Common-Collector)",
-		"4️⃣ - Rarity (Collector-Common)",
-		"5️⃣ - Value (Low-High)",
-		"6️⃣ - Value (High-Low)",
-		"7️⃣ - Level (Low-High)",
-		"8️⃣ - Level (High-Low)",
+		"1️⃣ - **Alphabetical** (A-Z)",
+		"2️⃣ - **Alphabetical** (Z-A)",
+		"3️⃣ - **Rarity** (Common-Collector)",
+		"4️⃣ - **Rarity** (Collector-Common)",
+		"5️⃣ - **Value** (Low-High)",
+		"6️⃣ - **Value** (High-Low)",
+		"7️⃣ - **Level** (Low-High)",
+		"8️⃣ - **Level** (High-Low)",
 	}
 	description := "Choose how you want to order your inventory.\n\n"
 	for _, option := range menu {
@@ -88,8 +88,8 @@ func orderComponent(menuID string) []discordgo.MessageComponent {
 			row = discordgo.ActionsRow{}
 		}
 		row.Components = append(row.Components, discordgo.Button{
-			Label:    emoji,
 			Style:    discordgo.PrimaryButton,
+			Emoji:    discordgo.ComponentEmoji{Name: emoji},
 			CustomID: fmt.Sprintf("%s-%d", menuID, i),
 		})
 	}
