@@ -191,10 +191,9 @@ func gamble(ctx *discord.CmdContext) {
 		},
 		Footer: discord.DefaultFooter,
 	}
-	_, err := ctx.Reply(discord.ReplyParams{
+	ctx.Reply(discord.ReplyParams{
 		Content: embed,
 	})
-	fmt.Println(err)
 
 	time.Sleep(5 * time.Second)
 	//ANIMATION

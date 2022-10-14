@@ -294,6 +294,7 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	ctx.Command = deepestLink
+	ctx.Command.Path = ""
 	// Logging
 	msg := fmt.Sprintf("[COMMAND] \033[1;36m%s#%s\033[0m (%s) : r!%s ", ctx.Author.Username, ctx.Author.Discriminator, ctx.Author.ID, ctx.Command.Path)
 	for _, arg := range ctx.Arguments {
@@ -387,8 +388,9 @@ func routeInteraction(s *discordgo.Session, interaction *discordgo.InteractionCr
 	}
 
 	ctx.Command = deepestLink
+	ctx.Command.Path = ""
 	// Logging
-	msg := fmt.Sprintf("[COMMAND] \033[1;36m%s#%s\033[0m (%s) : r!%s ", ctx.Author.Username, ctx.Author.Discriminator, ctx.Author.ID, ctx.Command.Path)
+	msg := fmt.Sprintf("[COMMAND] \033[1;36m%s#%s\033[0m (%s) : /%s ", ctx.Author.Username, ctx.Author.Discriminator, ctx.Author.ID, ctx.Command.Path)
 	for _, arg := range ctx.Arguments {
 		msg += fmt.Sprintf("%s:%v ", arg.Name, arg.Value)
 	}
