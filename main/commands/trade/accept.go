@@ -76,7 +76,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		trade.Delete()
 		return
 	}
-
+	// We check that the player has enough money
 	if sender.TotalBalance() < int64(trade.UserSends.Money) {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s they don't have enough balance.", errStr),
@@ -86,6 +86,7 @@ func AcceptTrade(ctx *discord.CmdContext) {
 		trade.Delete()
 		return
 	}
+	// We check that the target has enough money
 	if receiver.TotalBalance() < int64(trade.TargetSends.Money) {
 		ctx.Reply(discord.ReplyParams{
 			Content:   fmt.Sprintf("%s you don't have enough balance.", errStr),
