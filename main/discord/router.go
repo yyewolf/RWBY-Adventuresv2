@@ -251,6 +251,7 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if cmd == nil {
 		return
 	}
+	cmd.Path = ""
 	deepestLink, argsLeft := cmd.findDeepestLink(splt[1:])
 
 	var realArgs []*CommandArg
@@ -294,7 +295,6 @@ func routeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	ctx.Command = deepestLink
-	ctx.Command.Path = ""
 	// Logging
 	msg := fmt.Sprintf("[COMMAND] \033[1;36m%s#%s\033[0m (%s) : r!%s ", ctx.Author.Username, ctx.Author.Discriminator, ctx.Author.ID, ctx.Command.Path)
 	for _, arg := range ctx.Arguments {
@@ -353,6 +353,7 @@ func routeInteraction(s *discordgo.Session, interaction *discordgo.InteractionCr
 	if cmd == nil {
 		return
 	}
+	cmd.Path = ""
 	deepestLink, _ := cmd.findDeepestLink(splt[1:])
 	var realArgs []*CommandArg
 	for _, arg := range parsedArgs {
@@ -388,7 +389,6 @@ func routeInteraction(s *discordgo.Session, interaction *discordgo.InteractionCr
 	}
 
 	ctx.Command = deepestLink
-	ctx.Command.Path = ""
 	// Logging
 	msg := fmt.Sprintf("[COMMAND] \033[1;36m%s#%s\033[0m (%s) : /%s ", ctx.Author.Username, ctx.Author.Discriminator, ctx.Author.ID, ctx.Command.Path)
 	for _, arg := range ctx.Arguments {
