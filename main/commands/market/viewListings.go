@@ -26,7 +26,7 @@ func ViewListings(ctx *discord.CmdContext) {
 
 	//Takes out the page from the message
 	arg := ctx.Arguments.GetArg("page", 0, 1)
-	page := arg.Raw.IntValue()
+	page := arg.Value.(int64)
 	if page <= 0 {
 		page = 1
 	}
