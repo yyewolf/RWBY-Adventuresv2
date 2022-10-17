@@ -2,8 +2,6 @@ package commands_temporary
 
 import (
 	"rwby-adventures/main/discord"
-
-	"github.com/bwmarrin/discordgo"
 )
 
 var TemporaryCommand = &discord.Command{
@@ -47,38 +45,6 @@ var TemporaryCommand = &discord.Command{
 			Description: "Resets your dungeon.",
 			Menu:        discord.GeneralMenu,
 			Call:        ResetDungeon,
-		},
-		{
-			Name:        "addbox",
-			Description: "Adds boxes to your inventory.",
-			Menu:        discord.GeneralMenu,
-			Call:        AddBox,
-			Args: []discord.Arg{
-				{
-					Name:        "type",
-					Description: "The type of box to add.",
-					Type:        discordgo.ApplicationCommandOptionInteger,
-					Choices: []*discord.Choice{
-						{
-							Value: 0,
-							Name:  "Character Boxes",
-						},
-						{
-							Value: 1,
-							Name:  "Rare Character Boxes",
-						},
-						{
-							Value: 2,
-							Name:  "Grimm Boxes",
-						},
-						{
-							Value: 3,
-							Name:  "Rare Grimm Boxes",
-						},
-					},
-					Required: true,
-				},
-			},
 		},
 	},
 }

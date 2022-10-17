@@ -56,7 +56,7 @@ func StartDiscord() {
 	discord.AddCmd(commands_shop.ShopCommand)
 	discord.AddCmd(commands_gamble.GambleCommand)
 
-	discord.AddCmd(commands_admin.UpdateCommand)
+	discord.AddCmd(commands_admin.AdminCommands)
 
 	discord.CommandRouter.LoadSlashCommands([]*discordgo.Session{discord.Session})
 }

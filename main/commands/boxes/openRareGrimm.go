@@ -22,6 +22,6 @@ func OpenRareGrimm(ctx *discord.CmdContext) {
 		RarityRate: 1.175,
 	}
 	if OpenGrimm(ctx, b) {
-		config.Database.Model(ctx.Player.Boxes).Update("rare_char_boxes", gorm.Expr("rare_char_boxes - ?", 1))
+		config.Database.Model(ctx.Player.Boxes).Update("rare_grimm_boxes", gorm.Expr("rare_grimm_boxes - ?", 1))
 	}
 }

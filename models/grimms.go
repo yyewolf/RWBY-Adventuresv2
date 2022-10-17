@@ -144,19 +144,19 @@ func (g *Grimm) CheckConditions(f *InvFilters) bool {
 		if f.Name != "" && !(strings.Contains(strings.ToLower(g.Name), strings.ToLower(f.Name))) {
 			return false
 		}
-		if f.Level != 1000 && g.Level != f.Level {
+		if f.Level != -1 && g.Level != f.Level {
 			return false
 		}
-		if g.Value < f.ValAbove {
+		if f.ValAbove != -1 && g.Value < f.ValAbove {
 			return false
 		}
-		if g.Value > f.ValBelow {
+		if f.ValAbove != -1 && g.Value > f.ValBelow {
 			return false
 		}
 		if f.Rarity != -1 && g.Rarity != f.Rarity {
 			return false
 		}
-		if f.Buffs != 0 && g.Buffs != f.Buffs {
+		if f.Buffs != -1 && g.Buffs != f.Buffs {
 			return false
 		}
 	}
