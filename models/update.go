@@ -15,24 +15,18 @@ type Update struct {
 var message = &discordgo.MessageSend{
 	Embeds: []*discordgo.MessageEmbed{
 		{
-			Title: "Update - RWBY Adventures V2",
+			Title: "OC Contest - RWBY Adventures V2",
 			Description: "Hello there, adventurer!\n" +
-				"I'm here to tell you about the new update of RWBY Adventures V2 because I haven't had the time to tell you about it!\n" +
-				"You probably noticed most of it but here are the changes :\n" +
-				" - **Slash Commands** (ty Discord)\n" +
-				" - **Complete rewrite**\n" +
-				" - **New market looks**\n" +
-				" - **New arenas looks**\n" +
-				" - **New trade looks**\n" +
-				" - **New dungeons**\n" +
-				" - **New [OC Contest](https://oc.rwbyadventures.com/)**\n\n" +
-				"And here are some upcoming features :\n" +
-				" - **New arenas mechanics**\n" +
-				" - **New dungeons loots**\n" +
-				" - **Trade update**\n" +
-				" - **New characters/grimms**\n\n" +
-				"If you have any **suggestions**, please join the [support server](https://discord.gg/3Z5Y4Z5) and tell us!\n" +
-				"I hope you like the news changes.",
+				"I'm here to tell you about the OC Contest currently going on!\n" +
+				"**What is an OC Contest?**\n" +
+				"An OC Contest is a contest where you can create your own character and submit it to the contest.\n" +
+				"**How do I submit my OC?**\n" +
+				"First, you need to create your OC. You can do this by going to the [OC Creation Page](https://oc.rwbyadventures.com/) and filling out the form.\n" +
+				"Once you've done that, you can vote for other OCs on the website.\n\n" +
+				"Thank you for reading this :D.",
+			Image: &discordgo.MessageEmbedImage{
+				URL: "https://media.discordapp.net/attachments/717814612892057610/1026930137884807278/Poster.png",
+			},
 			Color: config.Botcolor,
 		},
 	},
