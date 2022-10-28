@@ -98,11 +98,11 @@ var CompCommand = &discord.Command{
 }
 
 func Compare(ctx *discord.CmdContext) {
-	personaType := ctx.Arguments.GetArg("type", 0, 0).Value.(int64)
+	personaType := ctx.Arguments.GetArg("type", 0, 0).Value.(float64)
 	personaName := ctx.Arguments.GetArg("name", 1, "").Value.(string)
-	personaLevel := ctx.Arguments.GetArg("level", 2, 0).Value.(int64)
+	personaLevel := ctx.Arguments.GetArg("level", 2, 0).Value.(float64)
 	personaValue := ctx.Arguments.GetArg("value", 3, 0).Value.(float64)
-	personaRarity := ctx.Arguments.GetArg("rarity", 4, 0).Value.(int64)
+	personaRarity := ctx.Arguments.GetArg("rarity", 4, 0).Value.(float64)
 	buff := ctx.Arguments.GetArg("buffs", 5, 0)
 	var personaBuffs int64
 	if buff.Found {
