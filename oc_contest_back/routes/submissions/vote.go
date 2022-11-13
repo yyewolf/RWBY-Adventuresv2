@@ -9,6 +9,11 @@ import (
 )
 
 func Vote(c *gin.Context) {
+	c.JSON(404, gin.H{
+		"error": "Votes have been disabled for this contest.",
+	})
+	return
+
 	id := c.Param("id")
 	s := models.GetSubmission(id)
 	if s == nil {
