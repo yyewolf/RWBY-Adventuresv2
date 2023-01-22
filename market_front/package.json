@@ -8,7 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@kyvg/vue3-notification": "^2.3.6",
+    "@kyvg/vue3-notification": "2.7.0",
     "@mdi/font": "5.9.55",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
@@ -16,7 +16,6 @@
     "vue": "^3.2.13",
     "vue-3-socket.io": "^1.0.5",
     "vue-router": "^4.0.13",
-    "vue3-notification": "^1.0.0",
     "vuetify": "npm:@vuetify/nightly@next",
     "vuex": "^4.0.2",
     "vuex-persistedstate": "^4.1.0",
