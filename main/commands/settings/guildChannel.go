@@ -1,6 +1,7 @@
 package commands_settings
 
 import (
+	"errors"
 	"rwby-adventures/main/discord"
 
 	"github.com/bwmarrin/discordgo"
@@ -25,26 +26,36 @@ var GuildCommand = &discord.Command{
 	},
 }
 
-func HasPermission(User *discordgo.Member, s *discordgo.Session, Perm int) (isHe bool) {
+func HasPermission(User *discordgo.Member, s *discordgo.Session, Perm int) (isHe bool, err error) {
+	if s == nil || User == nil {
+		return false, errors.New("nil pointer")
+	}
 	g, err := s.Guild(User.GuildID)
 	if err != nil {
-		return false
+		return false, err
 	}
 	for _, roleID := range User.Roles {
 		for i := 0; i < len(g.Roles); i++ {
 			if g.Roles[i].ID == roleID {
 				if g.Roles[i].Permissions&int64(Perm) == int64(Perm) {
-					return true
+					return true, nil
 				}
 			}
 		}
 	}
-	return false
+	return false, nil
 }
 
 func guildChannel(ctx *discord.CmdContext) {
 	member, _ := ctx.Session.GuildMember(ctx.GuildID, ctx.Author.ID)
-	if !HasPermission(member, ctx.Session, discordgo.PermissionAdministrator) {
+	perm, err := HasPermission(member, ctx.Session, discordgo.PermissionAdministrator)
+	if err != nil {
+		ctx.Reply(discord.ReplyParams{
+			Content:   "An error occurred trying to get your permissions, try again a bit later.",
+			Ephemeral: true,
+		})
+	}
+	if !perm {
 		ctx.Reply(discord.ReplyParams{
 			Content:   "You don't have permission to use this command.",
 			Ephemeral: true,
@@ -61,7 +72,20 @@ func guildChannel(ctx *discord.CmdContext) {
 
 func guildEnable(ctx *discord.CmdContext) {
 	member, _ := ctx.Session.GuildMember(ctx.GuildID, ctx.Author.ID)
-	if !HasPermission(member, ctx.Session, discordgo.PermissionAdministrator) {
+	perm, err := HasPermission(member, ctx.Session, discordgo.PermissionAdministrator)
+	if err != nil {
+		ctx.Reply(discord.ReplyParams{
+			Content:   "An error occurred trying to get your permissions, try again a bit later.",
+			Ephemeral: true,
+		})
+	}
+	if err != nil {
+		ctx.Reply(discord.ReplyParams{
+			Content:   "An error occurred trying to get your permissions, try again a bit later.",
+			Ephemeral: true,
+		})
+	}
+	if !perm {
 		ctx.Reply(discord.ReplyParams{
 			Content:   "You don't have permission to use this command.",
 			Ephemeral: true,
