@@ -1,12 +1,13 @@
-package main
+package metrics
 
 import (
+	"log"
 	"net/http"
-
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	_ "net/http/pprof"
 )
 
 func StartMetrics() {
-	http.Handle("/metrics", promhttp.Handler())
-	go http.ListenAndServe(":2112", nil)
+	go func() {
+		log.Println(http.ListenAndServe(":2112", nil))
+	}()
 }
