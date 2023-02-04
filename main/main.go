@@ -6,6 +6,7 @@ import (
 	commands_admin "rwby-adventures/main/commands/admin"
 	commands_missions "rwby-adventures/main/commands/missions"
 	"rwby-adventures/main/discord"
+	metrics "rwby-adventures/main/metrics"
 	topgg "rwby-adventures/main/topgg"
 	"rwby-adventures/main/web"
 	"rwby-adventures/main/websocket"
@@ -13,6 +14,7 @@ import (
 )
 
 func main() {
+	metrics.StartMetrics()
 	topgg.StartTopGG()
 	websocket.StartWebsocket()
 	web.StartWeb()
