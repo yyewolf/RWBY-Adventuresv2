@@ -6,6 +6,7 @@ import (
 	"rwby-adventures/config"
 	commands_boxes "rwby-adventures/main/commands/boxes"
 	"rwby-adventures/main/discord"
+	"rwby-adventures/main/gambles"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -26,6 +27,10 @@ func gamble(ctx *discord.CmdContext) {
 			Ephemeral: true,
 		})
 		return
+	}
+
+	if !gambles.GambleMicroservice.Connected() {
+		gambles.GambleMicroservice.Connect()
 	}
 
 	canLootChar := ctx.Player.CharAmount() < ctx.Player.MaxChar()
