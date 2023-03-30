@@ -15,15 +15,8 @@ type Update struct {
 var message = &discordgo.MessageSend{
 	Embeds: []*discordgo.MessageEmbed{
 		{
-			Title: "OC Contest - RWBY Adventures V2",
-			Description: "Hello there, adventurer!\n" +
-				"I'm here to tell you about the OC Contest currently going on!\n" +
-				"**What is an OC Contest?**\n" +
-				"An OC Contest is a contest where you can create your own character and submit it to the contest.\n" +
-				"**How do I submit my OC?**\n" +
-				"First, you need to create your OC. You can do this by going to the [OC Creation Page](https://oc.rwbyadventures.com/) and filling out the form.\n" +
-				"Once you've done that, you can vote for other OCs on the website.\n\n" +
-				"Thank you for reading this :D.",
+			Title:       "RWBY Adventures - End of the line",
+			Description: "Hello there, adventurer!\n\nI regret to inform you that the service for RWBY Adventures Discord Bot has come to an end. It has been an amazing journey and I'm grateful for all the support and feedback I've received from the community.\n\nI apologize for any inconvenience this may have caused. If you have any questions or concerns, please feel free to reach out to me.\n\nAlso, for those who are interested, I'm willing to share the source code of the bot. If you'd like to get a copy of it, please send me a direct message.\n\nThank you for your understanding and for being part of this adventure.\nIt was truly a great experience, and I hope to see you around!\n\n- Yewolf\n\nP.S. I will be active on the support server if you have any questions: https://discord.gg/wHhXefjDK4.",
 			Image: &discordgo.MessageEmbedImage{
 				URL: "https://media.discordapp.net/attachments/717814612892057610/1026930137884807278/Poster.png",
 			},
